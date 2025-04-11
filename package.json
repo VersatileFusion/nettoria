@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "smsir-js": "^1.3.1",
+    "zarinpal-checkout": "^0.3.0"
+  }
+}

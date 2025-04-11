@@ -51,6 +51,10 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: true
   },
+  phoneVerificationExpires: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
   emailVerificationToken: {
     type: DataTypes.STRING,
     allowNull: true
@@ -66,6 +70,14 @@ const User = sequelize.define('User', {
   role: {
     type: DataTypes.ENUM('user', 'admin'),
     defaultValue: 'user'
+  },
+  verificationCode: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  verificationCodeExpires: {
+    type: DataTypes.DATE,
+    allowNull: true
   }
 }, {
   timestamps: true,
@@ -91,6 +103,7 @@ User.prototype.generateVerificationCode = function() {
   console.log(`Generating verification code for user ${this.email}`);
   const code = Math.floor(100000 + Math.random() * 900000).toString();
   this.phoneVerificationCode = code;
+  this.phoneVerificationExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
   return code;
 };
 

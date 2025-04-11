@@ -265,6 +265,27 @@ router.post('/reset-password/:token', authController.resetPassword);
  */
 router.patch('/update-profile', authMiddleware.protect, authController.updateProfile);
 
+/**
+ * @swagger
+ * /api/auth/send-phone-verification:
+ *   post:
+ *     summary: Send phone verification code
+ *     description: Sends a verification code to the user's phone number
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Verification code sent successfully
+ *       400:
+ *         description: Phone already verified or invalid request
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
+ */
+router.post('/send-phone-verification', authMiddleware.authenticate, authController.sendPhoneVerification);
+
 console.log('Auth Routes initialized successfully');
 
 module.exports = router; 

@@ -1,6 +1,8 @@
 const User = require('../models/user.model');
 const authUtils = require('../utils/auth.utils');
 const { Sequelize } = require('sequelize');
+const NotificationUtil = require('../utils/notification.util');
+const logger = require('../utils/logger');
 
 console.log('Initializing Auth Controller...');
 
@@ -503,6 +505,64 @@ exports.updateProfile = async (req, res) => {
       status: 'error',
       message: 'Failed to update profile',
       error: error.message
+    });
+  }
+};
+
+/**
+ * Send phone verification code
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.sendPhoneVerification = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    // Get user information
+    const user = await User.findByPk(userId);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    
+    // Check if phone is already verified
+    if (user.isPhoneVerified) {
+      return res.status(400).json({
+        success: false,
+        message: 'Phone number is already verified'
+      });
+    }
+    
+    // Generate verification code
+    const verificationCode = user.generateVerificationCode();
+    await user.save();
+    
+    // Send verification code via SMS
+    const notificationResult = await NotificationUtil.sendVerificationCode({
+      user,
+      code: verificationCode,
+      useSms: true
+    });
+    
+    if (!notificationResult.success) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send verification code'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Verification code sent to your phone'
+    });
+  } catch (error) {
+    logger.error('Error sending phone verification:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send verification code'
     });
   }
 };

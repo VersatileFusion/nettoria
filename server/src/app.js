@@ -17,7 +17,16 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
+      imgSrc: ["'self'", "data:"],
+    },
+  }
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
@@ -37,12 +46,21 @@ const swaggerOptions = {
         description: 'Development server',
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
+    }
   },
   apis: ['./src/routes/*.js'], // Path to the API routes
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, { explorer: true }));
 
 // Database status endpoint
 app.get('/api/status', (req, res) => {
@@ -104,6 +122,8 @@ try {
   const walletRoutes = require('./routes/wallet.routes');
   const ticketRoutes = require('./routes/ticket.routes');
   const vCenterRoutes = require('./routes/vcenter.routes');
+  const paymentRoutes = require('./routes/payment.routes');
+  const smsRoutes = require('./routes/sms.routes');
 
   // Use routes
   app.use('/api/auth', authRoutes);
@@ -113,6 +133,8 @@ try {
   app.use('/api/wallet', walletRoutes);
   app.use('/api/tickets', ticketRoutes);
   app.use('/api/vcenter', vCenterRoutes);
+  app.use('/api/payments', paymentRoutes);
+  app.use('/api/sms', smsRoutes);
   
   console.log('API routes loaded successfully');
 } catch (error) {
