@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
+const serviceController = require('../controllers/service.controller');
 
 console.log("Initializing Service Routes...");
 
@@ -15,6 +16,170 @@ console.log("Initializing Service Routes...");
  * @swagger
  * components:
  *   schemas:
+ *     VMPlan:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "atlas"
+ *         name:
+ *           type: string
+ *           example: "اطلس"
+ *         nameEn:
+ *           type: string
+ *           example: "Atlas"
+ *         specs:
+ *           type: object
+ *           properties:
+ *             cpu:
+ *               type: integer
+ *               example: 1
+ *               description: Number of CPU cores
+ *             ram:
+ *               type: integer
+ *               example: 2
+ *               description: RAM in GB
+ *             storage:
+ *               type: integer
+ *               example: 20
+ *               description: Storage in GB
+ *             traffic:
+ *               type: integer
+ *               example: 1024
+ *               description: Traffic in GB (1 TB)
+ *         description:
+ *           type: string
+ *           example: "مناسب برای وب سایت‌های کوچک و توسعه"
+ *         descriptionEn:
+ *           type: string
+ *           example: "Suitable for small websites and development"
+ *         pricing:
+ *           type: object
+ *           properties:
+ *             monthly:
+ *               type: number
+ *               example: 30000
+ *             quarterly:
+ *               type: number
+ *               example: 85500
+ *             biannual:
+ *               type: number
+ *               example: 162000
+ *             annual:
+ *               type: number
+ *               example: 306000
+ *             hourly:
+ *               type: number
+ *               example: 41
+ *
+ *     OperatingSystem:
+ *       type: object
+ *       properties:
+ *         linux:
+ *           type: object
+ *           properties:
+ *             name:
+ *               type: string
+ *               example: "Linux"
+ *             nameFA:
+ *               type: string
+ *               example: "لینوکس"
+ *             types:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: "ubuntu"
+ *                   name:
+ *                     type: string
+ *                     example: "Ubuntu"
+ *                   nameFA:
+ *                     type: string
+ *                     example: "اوبونتو"
+ *                   versions:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           example: "ubuntu-24"
+ *                         version:
+ *                           type: string
+ *                           example: "24.04"
+ *                         codeName:
+ *                           type: string
+ *                           example: "Noble Numbat"
+ *                         name:
+ *                           type: string
+ *                           example: "Ubuntu 24.04"
+ *                         nameFA:
+ *                           type: string
+ *                           example: "اوبونتو ورژن 24"
+ *
+ *     DataCenter:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "tehran"
+ *         name:
+ *           type: string
+ *           example: "Tehran"
+ *         nameFA:
+ *           type: string
+ *           example: "تهران"
+ *         location:
+ *           type: string
+ *           example: "Iran"
+ *         locationFA:
+ *           type: string
+ *           example: "ایران"
+ *         status:
+ *           type: string
+ *           example: "active"
+ *
+ *     ServiceConfig:
+ *       type: object
+ *       properties:
+ *         specs:
+ *           type: object
+ *           properties:
+ *             cpu:
+ *               type: integer
+ *               example: 2
+ *             ram:
+ *               type: integer
+ *               example: 4
+ *             storage:
+ *               type: integer
+ *               example: 60
+ *             traffic:
+ *               type: integer
+ *               example: 1024
+ *         operatingSystem:
+ *           type: string
+ *           example: "ubuntu-24"
+ *         dataCenter:
+ *           type: string
+ *           example: "tehran"
+ *         paymentPeriod:
+ *           type: string
+ *           example: "monthly"
+ *         pricing:
+ *           type: object
+ *           properties:
+ *             basePrice:
+ *               type: number
+ *               example: 40000
+ *             finalPrice:
+ *               type: number
+ *               example: 40000
+ *             discountPercentage:
+ *               type: number
+ *               example: 0
  *     Service:
  *       type: object
  *       properties:
@@ -952,6 +1117,224 @@ router.patch("/:id/upgrade", authMiddleware.protect, (req, res) => {
     },
   });
 });
+
+/**
+ * @swagger
+ * /api/services/plans:
+ *   get:
+ *     summary: Get all predefined VM plans
+ *     description: Returns a list of all available VM plans with specifications and pricing options
+ *     tags: [Services]
+ *     responses:
+ *       200:
+ *         description: List of VM plans successfully retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     plans:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/VMPlan'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Failed to retrieve VM plans
+ */
+router.get('/plans', serviceController.getVmPlans);
+
+/**
+ * @swagger
+ * /api/services/operating-systems:
+ *   get:
+ *     summary: Get all available operating systems
+ *     description: Returns a list of all available operating systems and their versions
+ *     tags: [Services]
+ *     responses:
+ *       200:
+ *         description: List of operating systems successfully retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     operatingSystems:
+ *                       $ref: '#/components/schemas/OperatingSystem'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Failed to retrieve operating systems
+ */
+router.get('/operating-systems', serviceController.getOperatingSystems);
+
+/**
+ * @swagger
+ * /api/services/configure:
+ *   post:
+ *     summary: Configure custom VM service
+ *     description: Configure a custom VM with specified resources, operating system, and payment period
+ *     tags: [Services]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - cpu
+ *               - ram
+ *               - storage
+ *               - operatingSystem
+ *               - dataCenter
+ *               - paymentPeriod
+ *             properties:
+ *               cpu:
+ *                 type: number
+ *                 example: 2
+ *                 description: Number of CPU cores
+ *               ram:
+ *                 type: number
+ *                 example: 4
+ *                 description: RAM in GB
+ *               storage:
+ *                 type: number
+ *                 example: 60
+ *                 description: Storage in GB
+ *               traffic:
+ *                 type: number
+ *                 example: 1024
+ *                 description: Traffic in GB (1 TB)
+ *               operatingSystem:
+ *                 type: string
+ *                 example: "ubuntu-24"
+ *                 description: Operating system ID
+ *               dataCenter:
+ *                 type: string
+ *                 example: "tehran"
+ *                 description: Data center ID
+ *               paymentPeriod:
+ *                 type: string
+ *                 enum: [hourly, monthly, quarterly, biannual, annual]
+ *                 example: "monthly"
+ *                 description: Payment period
+ *     responses:
+ *       200:
+ *         description: Service configuration with pricing successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     serviceConfig:
+ *                       $ref: '#/components/schemas/ServiceConfig'
+ *       400:
+ *         description: Bad request - missing required parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Missing required configuration parameters
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Failed to configure service
+ */
+router.post('/configure', authMiddleware.protect, serviceController.configureService);
+
+/**
+ * @swagger
+ * /api/services/data-centers:
+ *   get:
+ *     summary: Get available data centers
+ *     description: Returns a list of all available data centers
+ *     tags: [Services]
+ *     responses:
+ *       200:
+ *         description: List of data centers successfully retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     dataCenters:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/DataCenter'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Failed to retrieve data centers
+ */
+router.get('/data-centers', serviceController.getDataCenters);
 
 // For demonstration only - mock endpoint
 router.get("/demo", (req, res) => {
