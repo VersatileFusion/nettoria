@@ -3,7 +3,7 @@ const User = require('../models/user.model');
 const Comment = require('../models/comment.model');
 const logger = require('../utils/logger');
 const { ApiError } = require('../utils/error');
-const mongoose = require('mongoose');
+const { Op } = require('sequelize');
 
 /**
  * Get all tickets with pagination and filtering
@@ -13,24 +13,42 @@ exports.getAllTickets = async (req, res, next) => {
     const { status, page = 1, limit = 10 } = req.query;
     const userId = req.user.id;
     
-    const query = { createdBy: userId };
-    if (status) query.status = status;
+    // Build query conditions
+    const where = { createdBy: userId };
+    if (status) where.status = status;
     
-    const options = {
-      page: parseInt(page, 10),
+    // Calculate offset for pagination
+    const offset = (parseInt(page, 10) - 1) * parseInt(limit, 10);
+    
+    // Get tickets with pagination
+    const tickets = await Ticket.findAndCountAll({
+      where,
       limit: parseInt(limit, 10),
-      sort: { createdAt: -1 },
-      populate: {
-        path: 'assignedTo',
-        select: 'firstName lastName email profilePicture'
-      }
-    };
+      offset,
+      order: [['createdAt', 'DESC']],
+      include: [{
+        model: User,
+        as: 'Assignee',
+        attributes: ['id', 'firstName', 'lastName', 'email', 'profilePicture']
+      }]
+    });
     
-    const tickets = await Ticket.paginate(query, options);
+    // Format response similar to mongoose-paginate
+    const response = {
+      docs: tickets.rows,
+      totalDocs: tickets.count,
+      limit: parseInt(limit, 10),
+      page: parseInt(page, 10),
+      totalPages: Math.ceil(tickets.count / parseInt(limit, 10)),
+      hasPrevPage: parseInt(page, 10) > 1,
+      hasNextPage: parseInt(page, 10) < Math.ceil(tickets.count / parseInt(limit, 10)),
+      prevPage: parseInt(page, 10) > 1 ? parseInt(page, 10) - 1 : null,
+      nextPage: parseInt(page, 10) < Math.ceil(tickets.count / parseInt(limit, 10)) ? parseInt(page, 10) + 1 : null
+    };
     
     res.status(200).json({
       success: true,
-      data: tickets
+      data: response
     });
   } catch (error) {
     logger.error('Error in getAllTickets:', error);
@@ -46,21 +64,29 @@ exports.getTicketById = async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user.id;
     
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return next(new ApiError('Invalid ticket ID', 400));
-    }
-    
-    const ticket = await Ticket.findById(id)
-      .populate('createdBy', 'firstName lastName email profilePicture')
-      .populate('assignedTo', 'firstName lastName email profilePicture');
+    // Find ticket with user data
+    const ticket = await Ticket.findByPk(id, {
+      include: [
+        {
+          model: User,
+          as: 'Creator',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'profilePicture']
+        },
+        {
+          model: User,
+          as: 'Assignee',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'profilePicture']
+        }
+      ]
+    });
     
     if (!ticket) {
       return next(new ApiError('Ticket not found', 404));
     }
     
     // Check if user has access to the ticket
-    if (ticket.createdBy._id.toString() !== userId && 
-        (ticket.assignedTo && ticket.assignedTo._id.toString() !== userId)) {
+    if (ticket.createdBy !== userId && 
+        (ticket.assignedTo && ticket.assignedTo !== userId)) {
       return next(new ApiError('Unauthorized to access this ticket', 403));
     }
     
@@ -82,7 +108,7 @@ exports.createTicket = async (req, res, next) => {
     const { subject, description, priority, attachments } = req.body;
     const userId = req.user.id;
     
-    const newTicket = new Ticket({
+    const newTicket = await Ticket.create({
       subject,
       description,
       priority,
@@ -91,11 +117,14 @@ exports.createTicket = async (req, res, next) => {
       attachments: attachments || []
     });
     
-    const savedTicket = await newTicket.save();
-    
-    // Populate user data for response
-    const populatedTicket = await Ticket.findById(savedTicket._id)
-      .populate('createdBy', 'firstName lastName email profilePicture');
+    // Get the populated ticket with user data
+    const populatedTicket = await Ticket.findByPk(newTicket.id, {
+      include: [{
+        model: User,
+        as: 'Creator',
+        attributes: ['id', 'firstName', 'lastName', 'email', 'profilePicture']
+      }]
+    });
     
     res.status(201).json({
       success: true,
@@ -116,55 +145,56 @@ exports.updateTicket = async (req, res, next) => {
     const { subject, description, priority, status, assignedTo } = req.body;
     const userId = req.user.id;
     
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return next(new ApiError('Invalid ticket ID', 400));
-    }
-    
     // Find the ticket
-    const ticket = await Ticket.findById(id);
+    const ticket = await Ticket.findByPk(id);
     
     if (!ticket) {
       return next(new ApiError('Ticket not found', 404));
     }
     
     // Check if user has permission to update the ticket
-    if (ticket.createdBy.toString() !== userId) {
+    if (ticket.createdBy !== userId) {
       return next(new ApiError('Unauthorized to update this ticket', 403));
     }
     
-    // Update ticket fields if provided
-    if (subject) ticket.subject = subject;
-    if (description) ticket.description = description;
-    if (priority) ticket.priority = priority;
-    if (status) ticket.status = status;
+    // Update fields
+    const updateData = {};
+    if (subject) updateData.subject = subject;
+    if (description) updateData.description = description;
+    if (priority) updateData.priority = priority;
+    if (status) updateData.status = status;
     if (assignedTo) {
       // Validate if assignedTo is a valid user
-      if (mongoose.Types.ObjectId.isValid(assignedTo)) {
-        const userExists = await User.exists({ _id: assignedTo });
-        if (userExists) {
-          ticket.assignedTo = assignedTo;
-        } else {
-          return next(new ApiError('Assigned user not found', 400));
-        }
+      const userExists = await User.findByPk(assignedTo);
+      if (userExists) {
+        updateData.assignedTo = assignedTo;
       } else {
-        return next(new ApiError('Invalid user ID for assignment', 400));
+        return next(new ApiError('Assigned user not found', 400));
       }
     }
     
-    // Add update timestamp
-    ticket.updatedAt = Date.now();
+    // Update the ticket
+    await ticket.update(updateData);
     
-    // Save the updated ticket
-    const updatedTicket = await ticket.save();
-    
-    // Populate user data for response
-    const populatedTicket = await Ticket.findById(updatedTicket._id)
-      .populate('createdBy', 'firstName lastName email profilePicture')
-      .populate('assignedTo', 'firstName lastName email profilePicture');
+    // Get the updated ticket with user data
+    const updatedTicket = await Ticket.findByPk(id, {
+      include: [
+        {
+          model: User,
+          as: 'Creator',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'profilePicture']
+        },
+        {
+          model: User,
+          as: 'Assignee',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'profilePicture']
+        }
+      ]
+    });
     
     res.status(200).json({
       success: true,
-      data: populatedTicket
+      data: updatedTicket
     });
   } catch (error) {
     logger.error('Error in updateTicket:', error);
@@ -180,26 +210,23 @@ exports.deleteTicket = async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user.id;
     
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return next(new ApiError('Invalid ticket ID', 400));
-    }
-    
-    const ticket = await Ticket.findById(id);
+    // Find the ticket
+    const ticket = await Ticket.findByPk(id);
     
     if (!ticket) {
       return next(new ApiError('Ticket not found', 404));
     }
     
     // Check if user has permission to delete the ticket
-    if (ticket.createdBy.toString() !== userId) {
+    if (ticket.createdBy !== userId) {
       return next(new ApiError('Unauthorized to delete this ticket', 403));
     }
     
     // Delete associated comments
-    await Comment.deleteMany({ ticket: id });
+    await Comment.destroy({ where: { ticketId: id } });
     
     // Delete the ticket
-    await Ticket.findByIdAndDelete(id);
+    await ticket.destroy();
     
     res.status(200).json({
       success: true,
@@ -220,34 +247,31 @@ exports.addComment = async (req, res, next) => {
     const { content, attachments } = req.body;
     const userId = req.user.id;
     
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return next(new ApiError('Invalid ticket ID', 400));
-    }
-    
     // Check if ticket exists
-    const ticket = await Ticket.findById(id);
+    const ticket = await Ticket.findByPk(id);
     
     if (!ticket) {
       return next(new ApiError('Ticket not found', 404));
     }
     
     // Create a new comment
-    const newComment = new Comment({
+    const newComment = await Comment.create({
       content,
-      user: userId,
-      ticket: id,
+      userId,
+      ticketId: id,
       attachments: attachments || []
     });
     
-    const savedComment = await newComment.save();
-    
     // Update ticket's lastActivity
-    ticket.lastActivity = Date.now();
-    await ticket.save();
+    await ticket.update({ lastActivity: new Date() });
     
-    // Populate user data for response
-    const populatedComment = await Comment.findById(savedComment._id)
-      .populate('user', 'firstName lastName email profilePicture');
+    // Get the populated comment with user data
+    const populatedComment = await Comment.findByPk(newComment.id, {
+      include: [{
+        model: User,
+        attributes: ['id', 'firstName', 'lastName', 'email', 'profilePicture']
+      }]
+    });
     
     res.status(201).json({
       success: true,
@@ -267,27 +291,28 @@ exports.getComments = async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user.id;
     
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return next(new ApiError('Invalid ticket ID', 400));
-    }
-    
     // Check if ticket exists and user has access
-    const ticket = await Ticket.findById(id);
+    const ticket = await Ticket.findByPk(id);
     
     if (!ticket) {
       return next(new ApiError('Ticket not found', 404));
     }
     
     // Check if user has access to the ticket
-    if (ticket.createdBy.toString() !== userId && 
-        (ticket.assignedTo && ticket.assignedTo.toString() !== userId)) {
+    if (ticket.createdBy !== userId && 
+        (ticket.assignedTo && ticket.assignedTo !== userId)) {
       return next(new ApiError('Unauthorized to access this ticket', 403));
     }
     
     // Get comments
-    const comments = await Comment.find({ ticket: id })
-      .sort({ createdAt: 1 })
-      .populate('user', 'firstName lastName email profilePicture');
+    const comments = await Comment.findAll({
+      where: { ticketId: id },
+      order: [['createdAt', 'ASC']],
+      include: [{
+        model: User,
+        attributes: ['id', 'firstName', 'lastName', 'email', 'profilePicture']
+      }]
+    });
     
     res.status(200).json({
       success: true,

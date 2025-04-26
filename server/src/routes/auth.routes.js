@@ -1,10 +1,24 @@
-const express = require('express');
-const authController = require('../controllers/auth.controller');
-const authMiddleware = require('../middleware/auth.middleware');
+const express = require("express");
+const authController = require("../controllers/auth.controller");
+const authMiddleware = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
-console.log('Initializing Auth Routes...');
+console.log("Initializing Auth Routes...");
+
+/**
+ * @swagger
+ * /api/auth/demo:
+ *   get:
+ *     summary: Demo endpoint for testing auth API
+ *     tags: [Authentication]
+ *     responses:
+ *       200:
+ *         description: Auth API is working
+ */
+router.get("/demo", (req, res) => {
+  res.json({ message: "Auth API is working" });
+});
 
 /**
  * @swagger
@@ -43,7 +57,6 @@ console.log('Initializing Auth Routes...');
  *       400:
  *         description: Bad request or user already exists
  */
-router.post('/register', authController.register);
 
 /**
  * @swagger
@@ -71,7 +84,6 @@ router.post('/register', authController.register);
  *       400:
  *         description: Invalid verification code
  */
-router.post('/verify-phone', authController.verifyPhone);
 
 /**
  * @swagger
@@ -92,7 +104,6 @@ router.post('/verify-phone', authController.verifyPhone);
  *       400:
  *         description: Invalid token
  */
-router.get('/verify-email/:token', authController.verifyEmail);
 
 /**
  * @swagger
@@ -122,7 +133,6 @@ router.get('/verify-email/:token', authController.verifyEmail);
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login', authController.login);
 
 /**
  * @swagger
@@ -147,7 +157,6 @@ router.post('/login', authController.login);
  *       404:
  *         description: User not found
  */
-router.post('/request-otp', authController.requestOTPLogin);
 
 /**
  * @swagger
@@ -175,7 +184,6 @@ router.post('/request-otp', authController.requestOTPLogin);
  *       400:
  *         description: Invalid verification code
  */
-router.post('/verify-otp', authController.verifyOTPLogin);
 
 /**
  * @swagger
@@ -201,7 +209,6 @@ router.post('/verify-otp', authController.verifyOTPLogin);
  *       404:
  *         description: User not found
  */
-router.post('/forgot-password', authController.forgotPassword);
 
 /**
  * @swagger
@@ -234,7 +241,6 @@ router.post('/forgot-password', authController.forgotPassword);
  *       400:
  *         description: Invalid or expired token
  */
-router.post('/reset-password/:token', authController.resetPassword);
 
 /**
  * @swagger
@@ -263,7 +269,6 @@ router.post('/reset-password/:token', authController.resetPassword);
  *       401:
  *         description: Unauthorized
  */
-router.patch('/update-profile', authMiddleware.protect, authController.updateProfile);
 
 /**
  * @swagger
@@ -284,8 +289,45 @@ router.patch('/update-profile', authMiddleware.protect, authController.updatePro
  *       500:
  *         description: Server error
  */
-router.post('/send-phone-verification', authMiddleware.authenticate, authController.sendPhoneVerification);
 
-console.log('Auth Routes initialized successfully');
+// Register
+router.post("/register", authController.register);
 
-module.exports = router; 
+// Verify phone
+router.post("/verify-phone", authController.verifyPhone);
+
+// Verify email
+router.get("/verify-email/:token", authController.verifyEmail);
+
+// Login
+router.post("/login", authController.login);
+
+// Request OTP for login
+router.post("/request-otp", authController.requestOTPLogin);
+
+// Verify OTP and login
+router.post("/verify-otp", authController.verifyOTPLogin);
+
+// Forgot password
+router.post("/forgot-password", authController.forgotPassword);
+
+// Reset password
+router.post("/reset-password/:token", authController.resetPassword);
+
+// Update profile (protected)
+router.patch(
+  "/update-profile",
+  authMiddleware.protect,
+  authController.updateProfile
+);
+
+// Send phone verification (protected)
+router.post(
+  "/send-phone-verification",
+  authMiddleware.authenticate,
+  authController.sendPhoneVerification
+);
+
+console.log("Auth Routes initialized successfully");
+
+module.exports = router;
