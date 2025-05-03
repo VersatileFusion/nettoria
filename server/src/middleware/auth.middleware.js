@@ -38,6 +38,25 @@ const authMiddleware = {
         });
       }
 
+      // 4) Check if user is active
+      if (user.status === 'pending') {
+        return res.status(403).json({
+          status: "error",
+          message: "Your account is pending verification. Please verify your phone number.",
+          data: {
+            requiresPhoneVerification: true,
+            phoneNumber: user.phoneNumber
+          }
+        });
+      }
+      
+      if (user.status === 'suspended' || user.status === 'blocked') {
+        return res.status(403).json({
+          status: "error",
+          message: `Your account is ${user.status}. Please contact support.`
+        });
+      }
+
       // GRANT ACCESS TO PROTECTED ROUTE
       req.user = user;
       next();

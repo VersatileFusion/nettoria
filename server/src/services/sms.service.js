@@ -8,9 +8,13 @@ const logger = require('../utils/logger');
 class SmsService {
   constructor() {
     // Initialize SMS client with API key and line number from config
+    // Make sure the line number is correct - use format without country code (3000211985)
+    const lineNumber = config.SMS_LINE_NUMBER;
+    logger.info(`Initializing SMS service with line number: ${lineNumber}`);
+    
     this.smsClient = new Smsir(
       config.SMS_API_KEY,
-      config.SMS_LINE_NUMBER
+      lineNumber
     );
   }
 
@@ -37,7 +41,7 @@ class SmsService {
       logger.info(`Verification SMS sent to ${mobile}`);
       return {
         success: true,
-        messageId: response.messageId,
+        messageId: response.data?.data?.messageId,
         message: 'Verification code sent successfully'
       };
     } catch (error) {
@@ -62,13 +66,13 @@ class SmsService {
         message,
         [mobile],
         null,  // SendDateTime (null for immediate sending)
-        null   // line_number (use default)
+        config.SMS_LINE_NUMBER  // Use the configured line number from .env
       );
 
       logger.info(`SMS sent to ${mobile}`);
       return {
         success: true,
-        messageId: response.messageId,
+        messageId: response.data?.data?.messageIds?.[0],
         message: 'SMS sent successfully'
       };
     } catch (error) {
@@ -93,13 +97,13 @@ class SmsService {
         message,
         mobiles,
         null,  // SendDateTime (null for immediate sending)
-        null   // line_number (use default)
+        config.SMS_LINE_NUMBER  // Use the configured line number from .env
       );
 
       logger.info(`Bulk SMS sent to ${mobiles.length} recipients`);
       return {
         success: true,
-        messageId: response.messageId,
+        messageIds: response.data?.data?.messageIds,
         message: 'Bulk SMS sent successfully'
       };
     } catch (error) {
@@ -120,7 +124,7 @@ class SmsService {
       const response = await this.smsClient.getCredit();
       return {
         success: true,
-        credit: response.credit
+        credit: response.data
       };
     } catch (error) {
       logger.error('Error getting SMS credit:', error);

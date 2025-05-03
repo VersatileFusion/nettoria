@@ -1,7 +1,7 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const smsController = require('../controllers/sms.controller');
-const authMiddleware = require('../middleware/auth.middleware');
+const smsController = require("../controllers/sms.controller");
+const authMiddleware = require("../middleware/auth.middleware");
 
 /**
  * @swagger
@@ -34,7 +34,11 @@ const authMiddleware = require('../middleware/auth.middleware');
  *       500:
  *         description: Server error
  */
-router.post('/verification/send', authMiddleware.authenticate, smsController.sendVerificationCode);
+router.post(
+  "/verification/send",
+  authMiddleware.authenticate,
+  smsController.sendVerificationCode
+);
 
 /**
  * @swagger
@@ -67,7 +71,11 @@ router.post('/verification/send', authMiddleware.authenticate, smsController.sen
  *       500:
  *         description: Server error
  */
-router.post('/verification/verify', authMiddleware.authenticate, smsController.verifyCode);
+router.post(
+  "/verification/verify",
+  authMiddleware.authenticate,
+  smsController.verifyCode
+);
 
 /**
  * @swagger
@@ -104,7 +112,12 @@ router.post('/verification/verify', authMiddleware.authenticate, smsController.v
  *       500:
  *         description: Server error
  */
-router.post('/notification', authMiddleware.authenticate, authMiddleware.isAdmin, smsController.sendNotification);
+router.post(
+  "/notification",
+  authMiddleware.authenticate,
+  authMiddleware.isAdmin,
+  smsController.sendNotification
+);
 
 /**
  * @swagger
@@ -123,6 +136,6 @@ router.post('/notification', authMiddleware.authenticate, authMiddleware.isAdmin
  *       500:
  *         description: Server error
  */
-router.get('/credit', authMiddleware.authenticate, authMiddleware.isAdmin, smsController.getCredit);
+router.get("/credit", authMiddleware.authenticate, smsController.getCredit);
 
-module.exports = router; 
+module.exports = router;

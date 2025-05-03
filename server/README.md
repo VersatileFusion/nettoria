@@ -188,4 +188,79 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ## License
 
-This project is licensed under the ISC License. 
+This project is licensed under the ISC License.
+
+## SMS Integration
+
+The server integrates with SMS.ir for sending SMS messages. The integration has been tested and is working correctly with the following configuration:
+
+- SMS.ir API Key: `aAReyrM7hYwvqd7ZSTfNyO0PsrpR1amentcIDaDz1im5graJ`
+- SMS Line Number: `3000211985` (format without country code)
+
+### SMS Features
+
+- Send verification codes to users
+- Check SMS credit balance
+- Send notification SMS (admin only)
+
+## Testing
+
+A comprehensive test suite is available to verify the functionality of the server:
+
+```bash
+# Run the test suite
+node test-suite.js
+```
+
+The test suite includes:
+- Database connectivity tests
+- User authentication tests
+- SMS functionality tests
+
+**Note:** A running PostgreSQL database is required for all tests to pass. The SMS direct integration tests will work even without a database.
+
+## Environment Setup
+
+Configure your environment variables in the `.env` file:
+
+```
+# Server Configuration
+PORT=5000
+NODE_ENV=development
+BASE_URL=http://localhost:5000
+
+# Database Configuration - PostgreSQL
+DB_DIALECT=postgres
+DB_HOST=localhost
+DB_USER=postgres
+DB_PASS=1
+DB_NAME=nettoria_db
+DB_PORT=4000
+
+# JWT Configuration
+JWT_SECRET=nettoria-super-secret-key-for-authentication-2023
+JWT_EXPIRES_IN=30d
+JWT_COOKIE_EXPIRES_IN=7
+
+# SMS Configuration
+SMS_API_KEY=aAReyrM7hYwvqd7ZSTfNyO0PsrpR1amentcIDaDz1im5graJ
+SMS_LINE_NUMBER=3000211985
+SMS_VERIFICATION_TEMPLATE_ID=100000
+```
+
+## Running the Server
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Start production server
+npm start
+```
+
+## API Documentation
+
+API documentation is available at `/api-docs` when the server is running. 

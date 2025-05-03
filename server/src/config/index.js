@@ -30,9 +30,9 @@ module.exports = {
   SMS_VERIFICATION_TEMPLATE_ID: process.env.SMS_VERIFICATION_TEMPLATE_ID || 100000,
   
   // VCenter integration
-  VCENTER_HOST: process.env.VCENTER_HOST || 'vcenter.example.com',
+  VCENTER_HOST: process.env.VCENTER_HOST || 'Test.vahabstormzone.info',
   VCENTER_USER: process.env.VCENTER_USER || 'administrator@vsphere.local',
-  VCENTER_PASS: process.env.VCENTER_PASS || 'password',
+  VCENTER_PASS: process.env.VCENTER_PASS || 'l>122kf<2XBm',
   
   // Email service
   EMAIL_HOST: process.env.EMAIL_HOST || 'smtp.example.com',

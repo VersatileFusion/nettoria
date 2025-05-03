@@ -71,6 +71,11 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM('user', 'admin'),
     defaultValue: 'user'
   },
+  status: {
+    type: DataTypes.ENUM('pending', 'active', 'suspended', 'blocked'),
+    defaultValue: 'pending',
+    comment: 'User status (pending until verification is complete)'
+  },
   verificationCode: {
     type: DataTypes.STRING,
     allowNull: true

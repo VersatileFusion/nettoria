@@ -19,8 +19,9 @@ try {
     });
   } else if (dialect === 'postgres') {
     console.log('Using PostgreSQL database');
+    // Use the 'postgres' database directly instead of 'nettoria_db'
     sequelize = new Sequelize(
-      process.env.DB_NAME,
+      'postgres', // Use the default postgres database
       process.env.DB_USER,
       process.env.DB_PASS,
       {

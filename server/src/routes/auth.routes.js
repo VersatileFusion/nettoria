@@ -136,7 +136,7 @@ router.get("/demo", (req, res) => {
 
 /**
  * @swagger
- * /api/auth/request-otp:
+ * /api/auth/request-login-otp:
  *   post:
  *     summary: Request OTP for login
  *     tags: [Authentication]
@@ -160,7 +160,7 @@ router.get("/demo", (req, res) => {
 
 /**
  * @swagger
- * /api/auth/verify-otp:
+ * /api/auth/verify-login-otp:
  *   post:
  *     summary: Verify OTP and login
  *     tags: [Authentication]
@@ -303,10 +303,10 @@ router.get("/verify-email/:token", authController.verifyEmail);
 router.post("/login", authController.login);
 
 // Request OTP for login
-router.post("/request-otp", authController.requestOTPLogin);
+router.post("/request-login-otp", authController.requestLoginOTP);
 
 // Verify OTP and login
-router.post("/verify-otp", authController.verifyOTPLogin);
+router.post("/verify-login-otp", authController.verifyLoginOTP);
 
 // Forgot password
 router.post("/forgot-password", authController.forgotPassword);
@@ -314,12 +314,33 @@ router.post("/forgot-password", authController.forgotPassword);
 // Reset password
 router.post("/reset-password/:token", authController.resetPassword);
 
-// Update profile (protected)
+// Get current user
+router.get("/me", authMiddleware.protect, authController.getCurrentUser);
+
+// Update user details
 router.patch(
-  "/update-profile",
+  "/update-me",
   authMiddleware.protect,
-  authController.updateProfile
+  authController.updateCurrentUser
 );
+
+// Update password
+router.patch(
+  "/update-password",
+  authMiddleware.protect,
+  authController.updatePassword
+);
+
+// Check token
+router.get("/check-token", authMiddleware.protect, (req, res) => {
+  res.status(200).json({
+    status: "success",
+    message: "Token is valid",
+    data: {
+      user: req.user,
+    },
+  });
+});
 
 // Send phone verification (protected)
 router.post(

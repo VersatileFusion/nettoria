@@ -3,6 +3,7 @@ const authUtils = require("../utils/auth.utils");
 const { Sequelize } = require("sequelize");
 const NotificationUtil = require("../utils/notification.util");
 const logger = require("../utils/logger");
+const smsService = require("../services/sms.service");
 
 console.log("Initializing Auth Controller...");
 
@@ -13,7 +14,17 @@ const authController = {
     console.log("Processing registration request", req.body);
 
     try {
-      const { firstName, lastName, email, phoneNumber, password } = req.body;
+      const { firstName, lastName, email, phoneNumber, password, role } =
+        req.body;
+
+      // Validate required fields
+      if (!firstName || !lastName || !email || !phoneNumber || !password) {
+        return res.status(400).json({
+          status: "error",
+          message:
+            "Please provide all required fields: firstName, lastName, email, phoneNumber, password",
+        });
+      }
 
       // Check if user already exists
       const existingUser = await User.findOne({
@@ -32,44 +43,55 @@ const authController = {
         });
       }
 
-      // Create new user
+      // Create new user with pending status
       const newUser = await User.create({
         firstName,
         lastName,
         email,
         phoneNumber,
         password,
+        role: role || "user", // Default to 'user' if role not specified
+        status: "pending", // User is pending until phone verification is complete
       });
 
-      console.log(`User created with ID: ${newUser.id}`);
+      console.log(
+        `User created with ID: ${newUser.id} - pending OTP verification`
+      );
 
       // Generate verification code for phone
-      const verificationCode = newUser.generateVerificationCode();
+      const verificationCode = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
+      newUser.phoneVerificationCode = verificationCode;
+      newUser.phoneVerificationExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
       await newUser.save();
 
       // Send SMS verification
-      await authUtils.sendSmsVerification(phoneNumber, verificationCode);
+      try {
+        await smsService.sendVerificationCode(phoneNumber, verificationCode);
+        console.log(`Verification SMS sent to ${phoneNumber}`);
+      } catch (smsError) {
+        console.error("Error sending verification SMS:", smsError);
+        // Continue with registration even if SMS fails, but notify the user
+        return res.status(201).json({
+          status: "warning",
+          message:
+            "Registration created but SMS verification could not be sent. Please contact support.",
+          data: {
+            userId: newUser.id,
+            phoneNumber: newUser.phoneNumber,
+          },
+        });
+      }
 
-      // Generate token
-      const token = authUtils.generateToken(newUser);
-
-      console.log(`Registration successful for ${email}`);
-
-      // Return user data and token
+      // Return response without generating token yet
       res.status(201).json({
         status: "success",
-        message: "Registration successful. Please verify your phone number.",
+        message:
+          "Registration initiated. Please verify your phone number with the OTP sent.",
         data: {
-          user: {
-            id: newUser.id,
-            firstName: newUser.firstName,
-            lastName: newUser.lastName,
-            email: newUser.email,
-            phoneNumber: newUser.phoneNumber,
-            isPhoneVerified: newUser.isPhoneVerified,
-            isEmailVerified: newUser.isEmailVerified,
-          },
-          token,
+          userId: newUser.id,
+          phoneNumber: newUser.phoneNumber,
         },
       });
     } catch (error) {
@@ -82,7 +104,7 @@ const authController = {
     }
   },
 
-  // Verify phone number
+  // Verify phone number after registration
   verifyPhone: async (req, res) => {
     console.log("Processing phone verification request", req.body);
 
@@ -104,25 +126,34 @@ const authController = {
         });
       }
 
-      // Check verification code
-      if (user.phoneVerificationCode !== verificationCode) {
+      // Check if verification code is valid and not expired
+      if (
+        !user.phoneVerificationCode ||
+        user.phoneVerificationCode !== verificationCode ||
+        !user.phoneVerificationExpires ||
+        user.phoneVerificationExpires < new Date()
+      ) {
         console.log(
-          `Phone verification failed: Invalid code for ${phoneNumber}`
+          `Phone verification failed: Invalid or expired code for ${phoneNumber}`
         );
         return res.status(400).json({
           status: "error",
-          message: "Invalid verification code",
+          message: "Invalid or expired verification code",
         });
       }
 
-      // Update user
+      // Update user status
       user.isPhoneVerified = true;
       user.phoneVerificationCode = null;
+      user.status = "active"; // Activate the user
       await user.save();
 
       console.log(`Phone verification successful for ${phoneNumber}`);
 
-      // Generate email verification token and send email
+      // Generate token now that the user is verified
+      const token = authUtils.generateToken(user);
+
+      // Generate email verification token and send email (optional)
       const emailVerificationToken = authUtils.generateRandomToken();
       user.emailVerificationToken = emailVerificationToken;
       await user.save();
@@ -130,18 +161,185 @@ const authController = {
       const verificationUrl = `${req.protocol}://${req.get(
         "host"
       )}/api/auth/verify-email/${emailVerificationToken}`;
-      await authUtils.sendVerificationEmail(user, verificationUrl);
+
+      try {
+        await authUtils.sendVerificationEmail(user, verificationUrl);
+      } catch (emailError) {
+        console.error("Email verification sending failed:", emailError);
+        // Continue even if email fails
+      }
 
       res.status(200).json({
         status: "success",
-        message:
-          "Phone verified successfully. Please check your email to verify your email address.",
+        message: "Phone verified successfully. You can now log in.",
+        data: {
+          user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            isPhoneVerified: user.isPhoneVerified,
+            isEmailVerified: user.isEmailVerified,
+            role: user.role,
+          },
+          token,
+        },
       });
     } catch (error) {
       console.error("Phone verification error:", error);
       res.status(500).json({
         status: "error",
         message: "Phone verification failed",
+        error: error.message,
+      });
+    }
+  },
+
+  // Request login OTP
+  requestLoginOTP: async (req, res) => {
+    console.log("Processing login OTP request", req.body);
+
+    try {
+      const { phoneNumber } = req.body;
+
+      if (!phoneNumber) {
+        return res.status(400).json({
+          status: "error",
+          message: "Phone number is required",
+        });
+      }
+
+      // Find user by phone number
+      const user = await User.findOne({
+        where: { phoneNumber },
+      });
+
+      if (!user) {
+        console.log(
+          `Login OTP request failed: User with phone ${phoneNumber} not found`
+        );
+        return res.status(404).json({
+          status: "error",
+          message: "User not found with this phone number",
+        });
+      }
+
+      // Generate OTP
+      const verificationCode = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
+      user.phoneVerificationCode = verificationCode;
+      user.phoneVerificationExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+      await user.save();
+
+      // Send SMS with OTP
+      try {
+        await smsService.sendVerificationCode(phoneNumber, verificationCode);
+        console.log(`Login OTP sent to ${phoneNumber}`);
+      } catch (smsError) {
+        console.error("Error sending login OTP SMS:", smsError);
+        return res.status(500).json({
+          status: "error",
+          message: "Failed to send login OTP. Please try again later.",
+        });
+      }
+
+      res.status(200).json({
+        status: "success",
+        message: "Login OTP sent successfully. Please verify to continue.",
+        data: {
+          phoneNumber,
+          expiresIn: "10 minutes",
+        },
+      });
+    } catch (error) {
+      console.error("Login OTP request error:", error);
+      res.status(500).json({
+        status: "error",
+        message: "Failed to process login OTP request",
+        error: error.message,
+      });
+    }
+  },
+
+  // Verify login OTP
+  verifyLoginOTP: async (req, res) => {
+    console.log("Processing login OTP verification", req.body);
+
+    try {
+      const { phoneNumber, verificationCode } = req.body;
+
+      if (!phoneNumber || !verificationCode) {
+        return res.status(400).json({
+          status: "error",
+          message: "Phone number and verification code are required",
+        });
+      }
+
+      // Find user by phone number
+      const user = await User.findOne({
+        where: { phoneNumber },
+      });
+
+      if (!user) {
+        console.log(
+          `Login OTP verification failed: User with phone ${phoneNumber} not found`
+        );
+        return res.status(404).json({
+          status: "error",
+          message: "User not found with this phone number",
+        });
+      }
+
+      // Check if verification code is valid and not expired
+      if (
+        !user.phoneVerificationCode ||
+        user.phoneVerificationCode !== verificationCode ||
+        !user.phoneVerificationExpires ||
+        user.phoneVerificationExpires < new Date()
+      ) {
+        console.log(
+          `Login OTP verification failed: Invalid or expired code for ${phoneNumber}`
+        );
+        return res.status(400).json({
+          status: "error",
+          message: "Invalid or expired verification code",
+        });
+      }
+
+      // Clear the verification code
+      user.phoneVerificationCode = null;
+      user.phoneVerificationExpires = null;
+      await user.save();
+
+      // Generate token
+      const token = authUtils.generateToken(user);
+
+      console.log(`Login OTP verification successful for ${phoneNumber}`);
+
+      res.status(200).json({
+        status: "success",
+        message: "Login successful",
+        data: {
+          user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            isPhoneVerified: user.isPhoneVerified,
+            isEmailVerified: user.isEmailVerified,
+            role: user.role,
+          },
+          token,
+        },
+      });
+    } catch (error) {
+      console.error("Login OTP verification error:", error);
+      res.status(500).json({
+        status: "error",
+        message: "Login failed",
         error: error.message,
       });
     }
@@ -193,9 +391,13 @@ const authController = {
     console.log("Processing login request", req.body);
 
     try {
-      const { identifier, password } = req.body;
+      // Support both 'identifier' field (from API docs) and direct email/phoneNumber
+      const { identifier, email, phoneNumber, password } = req.body;
 
-      if (!identifier || !password) {
+      // Determine which identifier to use (prioritize explicit identifier field)
+      const userIdentifier = identifier || email || phoneNumber;
+
+      if (!userIdentifier || !password) {
         console.log("Login failed: Missing identifier or password");
         return res.status(400).json({
           status: "error",
@@ -207,41 +409,68 @@ const authController = {
       const user = await User.findOne({
         where: {
           [Sequelize.Op.or]: [
-            { email: identifier },
-            { phoneNumber: identifier },
+            { email: userIdentifier },
+            { phoneNumber: userIdentifier },
           ],
         },
       });
 
       if (!user || !(await user.comparePassword(password))) {
-        console.log(`Login failed: Invalid credentials for ${identifier}`);
+        console.log(`Login failed: Invalid credentials for ${userIdentifier}`);
         return res.status(401).json({
           status: "error",
           message: "Invalid credentials",
         });
       }
 
-      // Generate token
-      const token = authUtils.generateToken(user);
+      // Validate user status
+      if (user.status === 'pending') {
+        return res.status(403).json({
+          status: "error",
+          message: "Your account is pending verification. Please verify your phone number first.",
+          data: {
+            requiresPhoneVerification: true,
+            phoneNumber: user.phoneNumber
+          }
+        });
+      }
+      
+      if (user.status === 'suspended' || user.status === 'blocked') {
+        return res.status(403).json({
+          status: "error",
+          message: `Your account is ${user.status}. Please contact support.`
+        });
+      }
 
-      console.log(`Login successful for ${identifier}`);
+      // Instead of direct login, send OTP for verification
+      // Generate verification code for phone
+      const verificationCode = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
+      user.phoneVerificationCode = verificationCode;
+      user.phoneVerificationExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+      await user.save();
 
+      // Send SMS verification
+      try {
+        await smsService.sendVerificationCode(user.phoneNumber, verificationCode);
+        console.log(`Login OTP sent to ${user.phoneNumber}`);
+      } catch (smsError) {
+        console.error("Error sending login OTP SMS:", smsError);
+        return res.status(500).json({
+          status: "error",
+          message: "Password verified but failed to send OTP. Please try again or contact support.",
+        });
+      }
+
+      // Return response requesting OTP verification
       res.status(200).json({
         status: "success",
-        message: "Login successful",
+        message: "Password verified. Please verify with the OTP sent to your phone.",
         data: {
-          user: {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            isPhoneVerified: user.isPhoneVerified,
-            isEmailVerified: user.isEmailVerified,
-            nationalId: user.nationalId,
-            role: user.role,
-          },
-          token,
+          requiresOtp: true,
+          phoneNumber: user.phoneNumber,
+          expiresIn: "10 minutes"
         },
       });
     } catch (error) {
@@ -249,119 +478,6 @@ const authController = {
       res.status(500).json({
         status: "error",
         message: "Login failed",
-        error: error.message,
-      });
-    }
-  },
-
-  // Login with OTP
-  requestOTPLogin: async (req, res) => {
-    console.log("Processing OTP login request", req.body);
-
-    try {
-      const { phoneNumber } = req.body;
-
-      // Find user by phone
-      const user = await User.findOne({
-        where: { phoneNumber },
-      });
-
-      if (!user) {
-        console.log(
-          `OTP request failed: User with phone ${phoneNumber} not found`
-        );
-        return res.status(404).json({
-          status: "error",
-          message: "User not found",
-        });
-      }
-
-      // Generate verification code
-      const verificationCode = user.generateVerificationCode();
-      await user.save();
-
-      // Send SMS verification
-      await authUtils.sendSmsVerification(phoneNumber, verificationCode);
-
-      console.log(`OTP sent to ${phoneNumber}`);
-
-      res.status(200).json({
-        status: "success",
-        message: "OTP sent to your phone number",
-      });
-    } catch (error) {
-      console.error("OTP request error:", error);
-      res.status(500).json({
-        status: "error",
-        message: "Failed to send OTP",
-        error: error.message,
-      });
-    }
-  },
-
-  // Verify OTP and login
-  verifyOTPLogin: async (req, res) => {
-    console.log("Processing OTP verification for login", req.body);
-
-    try {
-      const { phoneNumber, verificationCode } = req.body;
-
-      // Find user by phone
-      const user = await User.findOne({
-        where: { phoneNumber },
-      });
-
-      if (!user) {
-        console.log(
-          `OTP verification failed: User with phone ${phoneNumber} not found`
-        );
-        return res.status(404).json({
-          status: "error",
-          message: "User not found",
-        });
-      }
-
-      // Check verification code
-      if (user.phoneVerificationCode !== verificationCode) {
-        console.log(`OTP verification failed: Invalid code for ${phoneNumber}`);
-        return res.status(400).json({
-          status: "error",
-          message: "Invalid verification code",
-        });
-      }
-
-      // Reset verification code
-      user.phoneVerificationCode = null;
-      await user.save();
-
-      // Generate token
-      const token = authUtils.generateToken(user);
-
-      console.log(`OTP login successful for ${phoneNumber}`);
-
-      res.status(200).json({
-        status: "success",
-        message: "Login successful",
-        data: {
-          user: {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            isPhoneVerified: user.isPhoneVerified,
-            isEmailVerified: user.isEmailVerified,
-            nationalId: user.nationalId,
-            role: user.role,
-          },
-          token,
-        },
-      });
-    } catch (error) {
-      console.error("OTP verification error:", error);
-      res.status(500).json({
-        status: "error",
-        message: "OTP verification failed",
         error: error.message,
       });
     }
@@ -555,6 +671,129 @@ const authController = {
       });
     }
   },
+
+  // Get current user
+  getCurrentUser: async (req, res) => {
+    console.log("Getting current user profile", req.user.id);
+
+    try {
+      res.status(200).json({
+        status: "success",
+        data: {
+          user: {
+            id: req.user.id,
+            firstName: req.user.firstName,
+            lastName: req.user.lastName,
+            email: req.user.email,
+            phoneNumber: req.user.phoneNumber,
+            isPhoneVerified: req.user.isPhoneVerified,
+            isEmailVerified: req.user.isEmailVerified,
+            nationalId: req.user.nationalId,
+            role: req.user.role,
+            status: req.user.status
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Get current user error:", error);
+      res.status(500).json({
+        status: "error",
+        message: "Failed to get user profile",
+        error: error.message,
+      });
+    }
+  },
+
+  // Update current user
+  updateCurrentUser: async (req, res) => {
+    console.log("Processing update user request", req.user.id, req.body);
+
+    try {
+      // Fields that can be updated
+      const { firstName, lastName, nationalId } = req.body;
+
+      // Update user fields
+      if (firstName) req.user.firstName = firstName;
+      if (lastName) req.user.lastName = lastName;
+      if (nationalId) req.user.nationalId = nationalId;
+
+      await req.user.save();
+
+      console.log(`User profile updated for ${req.user.email}`);
+
+      res.status(200).json({
+        status: "success",
+        message: "Profile updated successfully",
+        data: {
+          user: {
+            id: req.user.id,
+            firstName: req.user.firstName,
+            lastName: req.user.lastName,
+            email: req.user.email,
+            phoneNumber: req.user.phoneNumber,
+            isPhoneVerified: req.user.isPhoneVerified,
+            isEmailVerified: req.user.isEmailVerified,
+            nationalId: req.user.nationalId,
+            role: req.user.role,
+            status: req.user.status
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Update user error:", error);
+      res.status(500).json({
+        status: "error",
+        message: "Failed to update profile",
+        error: error.message,
+      });
+    }
+  },
+
+  // Update password
+  updatePassword: async (req, res) => {
+    console.log("Processing password update request", req.user.id);
+
+    try {
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({
+          status: "error",
+          message: "Please provide current and new password"
+        });
+      }
+
+      // Verify current password
+      if (!(await req.user.comparePassword(currentPassword))) {
+        return res.status(401).json({
+          status: "error",
+          message: "Current password is incorrect"
+        });
+      }
+
+      // Update password
+      req.user.password = newPassword;
+      await req.user.save();
+
+      // Generate new token
+      const token = authUtils.generateToken(req.user);
+
+      console.log(`Password updated for ${req.user.email}`);
+
+      res.status(200).json({
+        status: "success",
+        message: "Password updated successfully",
+        data: { token }
+      });
+    } catch (error) {
+      console.error("Password update error:", error);
+      res.status(500).json({
+        status: "error",
+        message: "Failed to update password",
+        error: error.message
+      });
+    }
+  }
 };
 
 // Export all controller methods
