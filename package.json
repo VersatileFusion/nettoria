@@ -1,7 +1,35 @@
 {
+  "name": "vcenter-api-test-suite",
+  "version": "1.0.0",
+  "description": "Test suite for VMware vCenter API connectivity through VPN",
+  "main": "run-api-test.js",
+  "scripts": {
+    "start": "node run-api-test.js",
+    "test-vpn": "node test-vpn-connection.js",
+    "test-basic": "node test-internal-ip.js",
+    "test-rest": "node test-vcenter-rest-auto.js",
+    "test-soap": "node test-vcenter-auto.js",
+    "test-all": "node run-api-test.js"
+  },
+  "keywords": [
+    "vmware",
+    "vcenter",
+    "api",
+    "vpn",
+    "connectivity",
+    "test"
+  ],
+  "author": "",
+  "license": "MIT",
   "dependencies": {
+    "axios": "^1.6.2",
+    "bcrypt": "^6.0.0",
+    "child_process": "^1.0.2",
+    "dotenv": "^16.5.0",
     "node-vsphere-soap": "^0.0.2-5",
-    "smsir-js": "^1.3.1",
-    "zarinpal-checkout": "^0.3.0"
+    "pg": "^8.16.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

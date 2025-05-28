@@ -1,6 +1,9 @@
-const Client = require("node-vsphere-soap");
+const vsphereSoap = require("node-vsphere-soap");
 const config = require("../config");
 const logger = require("../utils/logger");
+
+// Extract the Client constructor from the module
+const Client = vsphereSoap.Client;
 
 class VCenterService {
   constructor() {
@@ -21,8 +24,8 @@ class VCenterService {
 
       this.vCenterClient = new Client(
         config.VCENTER_HOST,
-        config.VCENTER_USERNAME,
-        config.VCENTER_PASSWORD,
+        config.VCENTER_USER,
+        config.VCENTER_PASS,
         false
       );
 

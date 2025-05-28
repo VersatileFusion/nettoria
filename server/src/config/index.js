@@ -13,9 +13,9 @@ module.exports = {
   DB_DIALECT: process.env.DB_DIALECT || 'postgres',
   DB_HOST: process.env.DB_HOST || 'localhost',
   DB_PORT: process.env.DB_PORT || 4000,
-  DB_NAME: process.env.DB_NAME || 'nettoria_db',
+  DB_NAME: process.env.DB_NAME || 'nettoria',
   DB_USER: process.env.DB_USER || 'postgres',
-  DB_PASS: process.env.DB_PASS || '1',
+  DB_PASS: process.env.DB_PASS || 'postgres',
   
   // JWT secret
   JWT_SECRET: process.env.JWT_SECRET || 'nettoria-secret-key',
