@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی">
+    <title>ورود</title>
+    <link rel="stylesheet" href="./Assets/Css/login.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+      rel="shortcut icon"
+      href="./Assets/img/icon.ico"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+
+    <header class="header">
+      <i class="bx bx-menu" id="menu-icon"></i>
+      <button id="login"><a href="./login.html">ورود / ثبت نام</a></button>
+      <nav class="navbar">
+        <a href="./domain.html">دامنه</a>
+        <a href="./cloud-host.html">هاست</a>
+        <a href="./virtual-server.html">سرور مجازی</a>
+          <a href="./cloud-server.html">سرور ابری</a>
+          <a href="./blogs.html">وبلاگ</a>
+        <a href="./Contact-us.html">ارتباط باما</a>
+      </nav>
+      <a href="./index.html" class="logo">Netto<span>ria</span></a>
+      <a href="./login.html" id="login-icon"><i class='bx bx-user'></i></a>
+    </header>
+
+    <section class="login-page">
+    <div class="form">
+      <h1>خوش آمدید!</h1>
+      <form id="loginForm">
+        <div class="index-box">
+          <input type="text" name="identifier" placeholder="ایمیل یا شماره تلفن خود را وارد کنید." required />
+          <i class="bx bx-user"></i>
+        </div>
+        <div class="index-box">
+          <input type="password" id="password" name="password" placeholder="رمزعبور خود را وارد کنید." required />
+          <span id="toggle">
+            <i class="fa-regular fa-eye"></i>
+          </span>
+        </div>
+        <div class="remember-forgot">
+          <label for="rememberMe"><input type="checkbox" id="rememberMe" name="rememberMe" class="ui-checkbox">مرا بخاطر بسپار</label>
+          <a href="./forgot-password1.html">فراموشی رمز عبور</a>
+        </div>
+        <div class="login-buttons">
+          <button type="submit" class="btn">ورود</button>
+          <button type="button" class="one-time-login"><a href="./one-time-login.html">ورود یک بار مصرف</a></button>
+        </div>
+        <div id="errorMessage" class="error-message" style="display: none; color: red; margin-top: 10px; text-align: center;"></div>
+      </form>
+      <div class="regester-link">
+        <p>حساب کاربری ندارید؟<a href="./signup.html">ثبت نام</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Load auth.js before login.js -->
+  <script src="./js/auth.js"></script>
+  <script src="./Assets/Js/login.js"></script>
+  </body>
+</html>

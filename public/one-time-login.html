@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
+    <title>ورود یک بار مصرف</title>
+    <link rel="stylesheet" href="./Assets/Css/one-time-login.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="./Assets/img/icon.ico"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <header class="header">
+      <i class="bx bx-menu" id="menu-icon"></i>
+      <button id="login"><a href="./login.html">ورود / ثبت نام</a></button>
+      <nav class="navbar">
+        <a href="./domain.html">دامنه</a>
+        <a href="./cloud-host.html">هاست</a>
+        <a href="./virtual-server.html">سرور مجازی</a>
+        <a href="./cloud-server.html">سرور ابری</a>
+        <a href="./blogs.html">وبلاگ</a>
+        <a href="./Contact-us.html">ارتباط باما</a>
+      </nav>
+      <a href="./index.html" class="logo">Netto<span>ria</span></a>
+      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+    </header>
+
+    <section class="one-time-login-page">
+      <div class="form">
+        <h1>ورود یک بار مصرف</h1>
+        <form id="otpForm">
+          <div class="index-box">
+            <input
+              type="tel"
+              name="phoneNumber"
+              placeholder="شماره تلفن خود را وارد کنید"
+              required
+              pattern="[0-9]{10,11}"
+              maxlength="11"
+              inputmode="numeric"
+              autocomplete="tel"
+            />
+            <i class="bx bx-phone"></i>
+          </div>
+          <div class="otp-section" style="display: none;">
+            <div class="form-group">
+              <input type="text" name="otp" placeholder="کد تایید را وارد کنید" pattern="[0-9]{6}" maxlength="6">
+            </div>
+            <div class="timer">
+              <span id="timer">02:00</span>
+            </div>
+            <button type="button" id="resendButton" disabled>ارسال مجدد کد</button>
+          </div>
+          <div id="errorMessage" class="error-message" style="display: none; color: red; margin-top: 10px; text-align: center;"></div>
+          <button type="submit" class="btn">ارسال کد تایید</button>
+        </form>
+        <div class="login-link">
+          <p>حساب کاربری دارید؟<a href="./login.html">ورود با رمز عبور</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Load auth scripts -->
+    <script src="./js/auth.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const otpForm = document.getElementById('otpForm');
+        const otpSection = document.querySelector('.otp-section');
+        const errorMessage = document.getElementById('errorMessage');
+        const resendButton = document.getElementById('resendButton');
+        const timer = document.getElementById('timer');
+        let timerInterval;
+
+        function showError(message) {
+          errorMessage.textContent = message;
+          errorMessage.style.display = 'block';
+        }
+
+        function hideError() {
+          errorMessage.style.display = 'none';
+        }
+
+        function startTimer() {
+          let timeLeft = 120; // 2 minutes in seconds
+          timer.textContent = formatTime(timeLeft);
+          resendButton.disabled = true;
+
+          clearInterval(timerInterval);
+          timerInterval = setInterval(() => {
+            timeLeft--;
+            timer.textContent = formatTime(timeLeft);
+
+            if (timeLeft <= 0) {
+              clearInterval(timerInterval);
+              timer.textContent = 'زمان به اتمام رسید';
+              resendButton.disabled = false;
+            }
+          }, 1000);
+        }
+
+        function formatTime(seconds) {
+          const minutes = Math.floor(seconds / 60);
+          const remainingSeconds = seconds % 60;
+          return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+        }
+
+        otpForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          hideError();
+
+          let phoneNumber = this.phoneNumber.value;
+          // Ensure phone number starts with '0'
+          if (!phoneNumber.startsWith('0')) {
+            phoneNumber = '0' + phoneNumber;
+          }
+          const otpInput = this.querySelector('input[name="otp"]');
+
+          try {
+            if (!otpInput.value) {
+              // Request OTP
+              const response = await auth.requestOTP(phoneNumber);
+              if (response.status === "success") {
+                otpSection.style.display = 'block';
+                otpInput.setAttribute('required', '');
+                startTimer();
+              }
+            } else {
+              // Verify OTP
+              const response = await auth.verifyOTP(phoneNumber, otpInput.value);
+              if (response.status === "success") {
+                window.location.href = '/index.html';
+              }
+            }
+          } catch (error) {
+            showError(error.message || 'خطا در ارتباط با سرور. لطفا دوباره تلاش کنید.');
+          }
+        });
+
+        resendButton.addEventListener('click', async function() {
+          let phoneNumber = otpForm.phoneNumber.value;
+          // Ensure phone number starts with '0'
+          if (!phoneNumber.startsWith('0')) {
+            phoneNumber = '0' + phoneNumber;
+          }
+          try {
+            await auth.requestOTP(phoneNumber);
+            startTimer();
+            hideError();
+          } catch (error) {
+            showError(error.message || 'خطا در ارسال مجدد کد. لطفا دوباره تلاش کنید.');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

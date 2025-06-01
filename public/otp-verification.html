@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
+    <title>تایید کد یک بار مصرف</title>
+    <link rel="stylesheet" href="./Assets/Css/otp-verification.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="./Assets/img/icon.ico"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <header class="header">
+      <i class="bx bx-menu" id="menu-icon"></i>
+      <button id="login"><a href="./login.html">ورود / ثبت نام</a></button>
+      <nav class="navbar">
+        <a href="./domain.html">دامنه</a>
+        <a href="./cloud-host.html">هاست</a>
+        <a href="./virtual-server.html">سرور مجازی</a>
+        <a href="./cloud-server.html">سرور ابری</a>
+        <a href="./blogs.html">وبلاگ</a>
+        <a href="./Contact-us.html">ارتباط باما</a>
+      </nav>
+      <a href="./index.html" class="logo">Netto<span>ria</span></a>
+      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+    </header>
+
+    <section class="login-page">
+      <div class="form">
+        <h1>تایید کد یک بار مصرف</h1>
+        <p class="phone-number">
+          کد تایید به شماره <span id="display-phone"></span> ارسال شد
+        </p>
+        <form id="otpForm">
+          <div class="otp-container">
+            <input
+              type="text"
+              maxlength="1"
+              class="otp-input"
+              pattern="[0-9]"
+              inputmode="numeric"
+              required
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="otp-input"
+              pattern="[0-9]"
+              inputmode="numeric"
+              required
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="otp-input"
+              pattern="[0-9]"
+              inputmode="numeric"
+              required
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="otp-input"
+              pattern="[0-9]"
+              inputmode="numeric"
+              required
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="otp-input"
+              pattern="[0-9]"
+              inputmode="numeric"
+              required
+            />
+            <input
+              type="text"
+              maxlength="1"
+              class="otp-input"
+              pattern="[0-9]"
+              inputmode="numeric"
+              required
+            />
+          </div>
+          <div id="errorMessage" class="error-message" style="display: none; color: red; margin-top: 10px; text-align: center;"></div>
+          <div class="timer">
+            <span id="countdown">02:00</span>
+            <button type="button" id="resend-btn" class="resend-btn" disabled>
+              ارسال مجدد
+            </button>
+          </div>
+          <button type="submit" class="btn verify-btn">تایید</button>
+        </form>
+      </div>
+    </section>
+    <script src="./Assets/Js/otp-verification.js"></script>
+  </body>
+</html>
