@@ -16,15 +16,45 @@ console.log("Starting app...");
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:8080",
+    credentials: true,
+  })
+);
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
-        styleSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
-        imgSrc: ["'self'", "data:"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "cdn.jsdelivr.net",
+          "ajax.googleapis.com",
+          "cdnjs.cloudflare.com",
+          "unpkg.com",
+        ],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "cdn.jsdelivr.net",
+          "cdnjs.cloudflare.com",
+          "unpkg.com",
+          "db.onlinewebfonts.com",
+        ],
+        imgSrc: ["'self'", "data:", "cdn.jsdelivr.net", "unpkg.com"],
+        connectSrc: ["'self'"],
+        fontSrc: [
+          "'self'",
+          "cdn.jsdelivr.net",
+          "cdnjs.cloudflare.com",
+          "db.onlinewebfonts.com",
+          "unpkg.com",
+        ],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        frameSrc: ["'none'"],
       },
     },
   })
@@ -32,6 +62,9 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, "../../public")));
 
 // Swagger configuration
 const swaggerOptions = {
@@ -230,31 +263,31 @@ try {
 }
 
 // Add diagnostic route
-app.get('/api/debug', (req, res) => {
+app.get("/api/debug", (req, res) => {
   // Check if auth routes are loaded
   const routes = app._router.stack
-    .filter(r => r.route)
-    .map(r => ({
+    .filter((r) => r.route)
+    .map((r) => ({
       path: r.route.path,
-      methods: Object.keys(r.route.methods).join(',')
+      methods: Object.keys(r.route.methods).join(","),
     }));
-  
+
   // Check mounted routers
   const routers = app._router.stack
-    .filter(r => r.name === 'router')
-    .map(r => ({
+    .filter((r) => r.name === "router")
+    .map((r) => ({
       path: r.regexp.toString(),
     }));
-  
+
   res.json({
-    status: 'ok',
+    status: "ok",
     mockMode: false,
     routes: routes,
     routers: routers,
     environment: {
       nodeEnv: process.env.NODE_ENV,
-      port: process.env.PORT
-    }
+      port: process.env.PORT,
+    },
   });
 });
 
