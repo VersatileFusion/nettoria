@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
+    <title>ناحیه کاربری</title>
+    <link rel="stylesheet" href="./Assets/Css/panel.css" />
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="shortcut icon"
+      href="./Assets/img/icon.ico"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <!-- Start Header -->
+    <header class="header">
+      <i class="bx bx-menu" id="menu-icon" dir="rtl"></i>
+      <button id="login">
+        <a href="./login.html">ورود / ثبت نام</a>
+      </button>
+      <nav class="navbar">
+        <a href="./domain.html">دامنه</a>
+        <a href="./cloud-host.html">هاست</a>
+        <a href="./virtual-server.html">سرور مجازی</a>
+        <a href="./cloud-server.html">سرور ابری</a>
+        <a href="./blogs.html">وبلاگ</a>
+        <a href="./Contact-us.html">ارتباط باما</a>
+      </nav>
+      <a href="./index.html" class="logo">Netto<span>ria</span></a>
+      <a href="#" id="login-icon"><i class="bx bxs-grid"></i></a>
+    </header>
+    <!-- End Header -->
+    <!-- Start Panel Content -->
+    <!-- Add User Menu - Mobile Only -->
+    <div class="user-menu mobile-only">
+      <div class="user-info">
+        <i class="bx bx-user"></i>
+        <span class="user-name">محمد فک کج</span>
+        <i class="bx bx-chevron-down"></i>
+      </div>
+      <div class="user-menu-dropdown">
+        <a href="./user-account.html"><i class="bx bx-user"></i> مدیریت حساب</a>
+        <a href="#"><i class="bx bx-wallet"></i> کیف پول</a>
+        <a href="#"><i class="bx bx-key"></i> تغییر رمز عبور</a>
+        <a href="./login.html" class="logout"
+          ><i class="bx bx-log-out"></i> خروج از حساب</a
+        >
+      </div>
+    </div>
+
+    <div class="services-container">
+      <h2 class="services-title">سرویس های شما</h2>
+
+      <!-- Mobile Service Select -->
+      <div class="mobile-service-select">
+        <select id="serviceSelector">
+          <option value="" selected disabled>
+            نوع سرویس خود را انتخاب کنید
+          </option>
+          <option value="all">همه سرویس ها</option>
+          <option value="domain">دامنه های من</option>
+          <option value="host">هاست های من</option>
+          <option value="vps">سرور های من</option>
+          <option value="cloud">سرور های ابری من</option>
+          <option value="vpn">پنل های وی پی ان من</option>
+        </select>
+      </div>
+
+      <div class="services-grid">
+        <!-- All Services Summary Section -->
+        <div class="services-section">
+          <div class="services-row">
+            <div class="service-box">
+              <div class="service-content">
+                <i class="bx bx-globe"></i>
+                <span class="service-title">دامنه</span>
+              </div>
+              <span class="service-count">1 عدد</span>
+            </div>
+            <div class="service-box">
+              <div class="service-content">
+                <i class="bx bx-server"></i>
+                <span class="service-title">هاست</span>
+              </div>
+              <span class="service-count">2 عدد</span>
+            </div>
+            <div class="service-box">
+              <div class="service-content">
+                <i class="bx bx-cloud"></i>
+                <span class="service-title">سرور ابری</span>
+              </div>
+              <span class="service-count">0 عدد</span>
+            </div>
+            <div class="service-box">
+              <div class="service-content">
+                <i class="bx bx-shield"></i>
+                <span class="service-title">پنل وی پی ان</span>
+              </div>
+              <span class="service-count">0 عدد</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- دامنه Section -->
+        <div class="services-section" data-category="domain">
+          <h3 class="services-section-title">دامنه</h3>
+          <div class="services-row">
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">دامنه</span>
+                  <span class="service-domain">ZibaGRP.COM</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- هاست Section -->
+        <div class="services-section" data-category="host">
+          <h3 class="services-section-title">هاست</h3>
+          <div class="services-row">
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">هاست اروپا</span>
+                  <span class="service-domain">ZibaGRP.COM</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">هاست ایران</span>
+                  <span class="service-domain">ZibaGRP.IR</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- سرور های مجازی Section -->
+        <div class="services-section" data-category="vps">
+          <h3 class="services-section-title">سرور مجازی</h3>
+          <div class="services-row">
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">سرور آلمان</span>
+                  <span class="service-domain">154.41.17.29</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">سرور ایران</span>
+                  <span class="service-domain">124.120.48.16</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">سرور ایران</span>
+                  <span class="service-domain">124.120.12.10</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cloud Server Section -->
+        <div class="services-section" data-category="cloud">
+          <h3 class="services-section-title">سرور ابری</h3>
+          <div class="services-row">
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">سرور ابری آلمان</span>
+                  <span class="service-domain">194.233.89.10</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">سرور ابری فرانسه</span>
+                  <span class="service-domain">45.128.156.22</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">سرور ابری هلند</span>
+                  <span class="service-domain">185.142.67.89</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">سرور ابری ترکیه</span>
+                  <span class="service-domain">176.53.45.123</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- VPN Section -->
+        <div class="services-section" data-category="vpn">
+          <h3 class="services-section-title">سرویس های VPN</h3>
+          <div class="services-row">
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">پنل PPP</span>
+                  <span class="service-domain">185.126.45.12</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Panel Content -->
+
+    <!-- Start Side Menu -->
+    <div class="side-menu">
+      <div class="side-menu-header">
+        <div class="user-dropdown">
+          <button class="user-button">
+            <span id="username-display">محمد فک کج</span
+            ><i class="bx bx-chevron-down"></i>
+          </button>
+          <div class="dropdown-content">
+            <a href="./user-account.html"
+              ><i class="bx bx-user"></i> مدیریت حساب</a
+            >
+            <a href="#"><i class="bx bx-wallet"></i> کیف پول</a>
+            <a href="#"><i class="bx bx-key"></i> تغییر رمز عبور</a>
+            <a href="./login.html" class="logout"
+              ><i class="bx bx-log-out"></i> خروج از حساب</a
+            >
+          </div>
+        </div>
+      </div>
+      <div class="side-menu-items">
+        <div class="menu-item desktop-only" data-category="domain">
+          <i class="bx bx-globe"></i>
+          <span>دامنه های من</span>
+        </div>
+        <div class="menu-item desktop-only" data-category="host">
+          <i class="bx bx-cloud"></i>
+          <span>هاست های من</span>
+        </div>
+        <div class="menu-item desktop-only" data-category="vps">
+          <i class="bx bx-server"></i>
+          <span>سرورهای من</span>
+        </div>
+        <div class="menu-item desktop-only" data-category="vpn">
+          <i class="bx bx-shield"></i>
+          <span>پنل های وی پی ان من</span>
+        </div>
+        <div class="menu-item">
+          <i class="bx bx-cart"></i>
+          <a href="./cart.html"><span>سبد خرید</span></a>
+        </div>
+        <div class="menu-item">
+          <i class="bx bx-support"></i>
+          <a href="./tickets.html"><span>پشتیبانی</span></a>
+        </div>
+        <div class="menu-item">
+          <i class="bx bx-envelope"></i>
+          <span><a href="./Contact-us.html">ارتباط با ما</a></span>
+        </div>
+      </div>
+    </div>
+    <!-- End Side Menu -->
+    <script src="./Assets/Js/panel.js"></script>
+    <script>
+      // Remember username functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const usernameDisplay = document.getElementById("username-display");
+        const storedUsername = localStorage.getItem("username");
+
+        if (storedUsername) {
+          usernameDisplay.textContent = storedUsername;
+        }
+
+        // Update username in mobile menu
+        const mobileUsername = document.querySelector(".user-name");
+        if (mobileUsername && storedUsername) {
+          mobileUsername.textContent = storedUsername;
+        }
+      });
+    </script>
+  </body>
+</html>

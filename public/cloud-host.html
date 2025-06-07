@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
+    <title>نتوریا - هاست سی پنل</title>
+    <link rel="stylesheet" href="./Assets/Css/cloud-host.css" />
+    <link rel="stylesheet" href="./Assets/Css/common.css" />
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="shortcut icon"
+      href="./Assets/img/icon.ico"
+      type="image/x-icon"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="./Assets/Js/utils.js"></script>
+    <script src="./Assets/Js/cart.js"></script>
+    <script src="./Assets/Js/cloud-host.js" defer></script>
+  </head>
+  <body>
+    <!-- Start Header -->
+    <header class="header">
+      <i class="bx bx-menu" id="menu-icon"></i>
+      <button id="login">
+        <a href="./login.html">ورود / ثبت نام</a>
+      </button>
+      <a href="./cart.html" id="cart-icon">
+        <i class="bx bx-cart"></i>
+        <span class="cart-count">0</span>
+      </a>
+      <nav class="navbar">
+        <a href="./domain.html">دامنه</a>
+        <a href="./cloud-host.html">هاست</a>
+        <a href="./virtual-server.html">سرور مجازی</a>
+        <a href="./cloud-server.html">سرور ابری</a>
+        <a href="./blogs.html">وبلاگ</a>
+        <a href="./Contact-us.html">ارتباط باما</a>
+      </nav>
+      <a href="./index.html" class="logo">Netto<span>ria</span></a>
+      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+    </header>
+    <!-- End Header -->
+    <div class="toast"></div>
+    <!-- After the header section -->
+    <section class="server-section">
+      <h2 class="server-title">هاست وبسایت</h2>
+      <p class="server-description">
+        سرعت، پایداری و امنیت در یک پکیج! به دنبال یک هاست با کیفیت بالا برای
+        وب‌سایت خود هستید؟ هاست‌های ما با سرعت بارگذاری فوق‌العاده و پایداری
+        تضمین‌شده یکی از بهترین گزینه برای کسب‌وکارهای آنلاین، فروشگاه‌ها و
+        وب‌سایت‌های شخصی شما هستند. ✨ ویژگی‌ها: - منابع قدرتمند و تضمین‌شده -
+        سازگاری با انواع سیستم‌های مدیریت محتوا (WordPress، Joomla و ...) و
+        پلن‌های متنوع 🚀 همین امروز هاست وب‌سایت خود را انتخاب کنید و تجربه‌ای
+        بی‌نظیر داشته باشید!
+      </p>
+
+      <div class="server-cards">
+        <div class="server-card">
+          <div class="icon"><i class="bx bx-file"></i></div>
+          <h3>هاست پایه</h3>
+          <p>اقتصادی و مطمئن</p>
+          <p>مناسب برای شروع</p>
+          <p>لوکیشن : ایران</p>
+          <p>به همراه پشتیبانی 24/7</p>
+          <div class="price">79,000 تومان</div>
+          <button class="more-info">اطلاعات بیشتر</button>
+          <div class="details">
+            <i class="bx bx-x close-details"></i>
+            <h4>مشخصات فنی</h4>
+            <ul>
+              <li><i class="bx bx-check"></i>2vCore(s) پردازنده</li>
+              <li><i class="bx bx-check"></i>رم 3 گیگابایت</li>
+              <li><i class="bx bx-check"></i>15TB ترافیک</li>
+              <li><i class="bx bx-check"></i>40 گیگابایت فضا</li>
+              <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
+              <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
+              <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
+              <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
+            </ul>
+            <button class="order-btn">ثبت سفارش</button>
+          </div>
+        </div>
+
+        <div class="server-card">
+          <div class="icon"><i class="bx bx-file"></i></div>
+          <h3>هاست استارت آپ</h3>
+          <p>مناسب و حرفه ای</p>
+          <p>مناسب برای کسب و کارهای کوچک</p>
+          <p>امکان انتخاب لوکیشن</p>
+          <p>به همراه پشتیبانی 24/7</p>
+          <div class="price">139,000 تومان</div>
+          <button class="more-info">اطلاعات بیشتر</button>
+          <div class="details">
+            <i class="bx bx-x close-details"></i>
+            <h4>مشخصات فنی</h4>
+            <ul>
+              <li><i class="bx bx-check"></i>4vCore(s) پردازنده</li>
+              <li><i class="bx bx-check"></i>رم 6 گیگابایت</li>
+              <li><i class="bx bx-check"></i>20TB ترافیک</li>
+              <li><i class="bx bx-check"></i>60 گیگابایت فضا</li>
+              <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
+              <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
+              <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
+              <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
+            </ul>
+            <button class="order-btn">ثبت سفارش</button>
+          </div>
+        </div>
+
+        <div class="server-card">
+          <div class="icon"><i class="bx bx-file"></i></div>
+          <h3>هاست پربازدید</h3>
+          <p>قدرتمند و سریع</p>
+          <p>مناسب برای وبسایت هایی با بازدید بالا</p>
+          <p>امکان انتخاب لوکیشن</p>
+          <p>به همراه پشتیبانی 24/7</p>
+          <div class="price">234,000 تومان</div>
+          <button class="more-info">اطلاعات بیشتر</button>
+          <div class="details">
+            <i class="bx bx-x close-details"></i>
+            <h4>مشخصات فنی</h4>
+            <ul>
+              <li><i class="bx bx-check"></i>6vCore(s) پردازنده</li>
+              <li><i class="bx bx-check"></i>رم 8 گیگابایت</li>
+              <li><i class="bx bx-check"></i>25TB ترافیک</li>
+              <li><i class="bx bx-check"></i>80 گیگابایت فضا</li>
+              <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
+              <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
+              <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
+              <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
+            </ul>
+            <button class="order-btn">ثبت سفارش</button>
+          </div>
+        </div>
+
+        <div class="server-card">
+          <div class="icon"><i class="bx bx-file"></i></div>
+          <h3>هاست حرفه ای</h3>
+          <p>بی حد و مرز و توانمند</p>
+          <p>مناسب برای سنگین ترین وبسایت ها</p>
+          <p>امکان انتخاب لوکیشن</p>
+          <p>به همراه پشتیبانی 24/7</p>
+          <div class="price">412,000 تومان</div>
+          <button class="more-info">اطلاعات بیشتر</button>
+          <div class="details">
+            <i class="bx bx-x close-details"></i>
+            <h4>مشخصات فنی</h4>
+            <ul>
+              <li><i class="bx bx-check"></i>8vCore(s) پردازنده</li>
+              <li><i class="bx bx-check"></i>رم 16 گیگابایت</li>
+              <li><i class="bx bx-check"></i>30TB ترافیک</li>
+              <li><i class="bx bx-check"></i>120 گیگابایت فضا</li>
+              <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
+              <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
+              <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
+              <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
+            </ul>
+            <button class="order-btn">ثبت سفارش</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  </body>
+</html>

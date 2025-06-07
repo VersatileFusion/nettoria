@@ -37,35 +37,31 @@
     <section class="login-page">
     <div class="form">
       <h1>خوش آمدید!</h1>
-      <form id="loginForm">
-        <div class="index-box">
-          <input type="text" name="identifier" placeholder="ایمیل یا شماره تلفن خود را وارد کنید." required />
-          <i class="bx bx-user"></i>
-        </div>
-        <div class="index-box">
-          <input type="password" id="password" name="password" placeholder="رمزعبور خود را وارد کنید." required />
-          <span id="toggle">
-            <i class="fa-regular fa-eye"></i>
-          </span>
-        </div>
-        <div class="remember-forgot">
-          <label for="rememberMe"><input type="checkbox" id="rememberMe" name="rememberMe" class="ui-checkbox">مرا بخاطر بسپار</label>
-          <a href="./forgot-password1.html">فراموشی رمز عبور</a>
-        </div>
-        <div class="login-buttons">
-          <button type="submit" class="btn">ورود</button>
-          <button type="button" class="one-time-login"><a href="./one-time-login.html">ورود یک بار مصرف</a></button>
-        </div>
-        <div id="errorMessage" class="error-message" style="display: none; color: red; margin-top: 10px; text-align: center;"></div>
-      </form>
+      <div class="index-box">
+        <input type="text" placeholder="ایمیل یا شماره تلفن خود را وارد کنید." required />
+        <i class="bx bx-user"></i>
+      </div>
+      <div class="index-box">
+        <input type="password" id="password" placeholder="رمزعبور خود را وارد کنید." required />
+        <span id="toggle">
+          <i class="fa-regular fa-eye"></i>
+        </span>
+      </div>
+      <div class="remember-forgot">
+        <label for=""><input type="checkbox" class="ui-checkbox">مرا بخاطر بسپار</label>
+        <a href="./forgot-password1.html">فراموشی رمز عبور</a>
+      </div>
+      <div class="login-buttons">
+        <button type="submit" class="btn">ورود</button>
+        <button class="one-time-login"><a href="./one-time-login.html">ورود یک بار مصرف</a></button>
+      </div>
+
       <div class="regester-link">
         <p>حساب کاربری ندارید؟<a href="./signup.html">ثبت نام</a></p>
       </div>
+      </div>
     </div>
   </section>
-
-  <!-- Load auth.js before login.js -->
-  <script src="./js/auth.js"></script>
   <script src="./Assets/Js/login.js"></script>
   </body>
 </html>

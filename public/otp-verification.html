@@ -42,66 +42,57 @@
         <p class="phone-number">
           کد تایید به شماره <span id="display-phone"></span> ارسال شد
         </p>
-        <form id="otpForm">
-          <div class="otp-container">
-            <input
-              type="text"
-              maxlength="1"
-              class="otp-input"
-              pattern="[0-9]"
-              inputmode="numeric"
-              required
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="otp-input"
-              pattern="[0-9]"
-              inputmode="numeric"
-              required
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="otp-input"
-              pattern="[0-9]"
-              inputmode="numeric"
-              required
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="otp-input"
-              pattern="[0-9]"
-              inputmode="numeric"
-              required
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="otp-input"
-              pattern="[0-9]"
-              inputmode="numeric"
-              required
-            />
-            <input
-              type="text"
-              maxlength="1"
-              class="otp-input"
-              pattern="[0-9]"
-              inputmode="numeric"
-              required
-            />
-          </div>
-          <div id="errorMessage" class="error-message" style="display: none; color: red; margin-top: 10px; text-align: center;"></div>
-          <div class="timer">
-            <span id="countdown">02:00</span>
-            <button type="button" id="resend-btn" class="resend-btn" disabled>
-              ارسال مجدد
-            </button>
-          </div>
-          <button type="submit" class="btn verify-btn">تایید</button>
-        </form>
+        <div class="otp-container">
+          <input
+            type="text"
+            maxlength="1"
+            class="otp-input"
+            pattern="[0-9]"
+            inputmode="numeric"
+          />
+          <input
+            type="text"
+            maxlength="1"
+            class="otp-input"
+            pattern="[0-9]"
+            inputmode="numeric"
+          />
+          <input
+            type="text"
+            maxlength="1"
+            class="otp-input"
+            pattern="[0-9]"
+            inputmode="numeric"
+          />
+          <input
+            type="text"
+            maxlength="1"
+            class="otp-input"
+            pattern="[0-9]"
+            inputmode="numeric"
+          />
+          <input
+            type="text"
+            maxlength="1"
+            class="otp-input"
+            pattern="[0-9]"
+            inputmode="numeric"
+          />
+          <input
+            type="text"
+            maxlength="1"
+            class="otp-input"
+            pattern="[0-9]"
+            inputmode="numeric"
+          />
+        </div>
+        <div class="timer">
+          <span id="countdown">02:00</span>
+          <button id="resend-btn" class="resend-btn" disabled>
+            ارسال مجدد
+          </button>
+        </div>
+        <button type="submit" class="btn verify-btn">تایید</button>
       </div>
     </section>
     <script src="./Assets/Js/otp-verification.js"></script>

@@ -1,0 +1,530 @@
+@import url(https://db.onlinewebfonts.com/c/ae238c3ee498c52a23aab0d9f5e94d6b?family=dana-fanum+regular);
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "dana-fanum regular";
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-color: #1e3a8a;
+  --second-bg-color: #e1b373;
+  --text-color: #fff;
+  --main-color: #ffd700;
+}
+
+html {
+  font-size: 62.5%;
+  overflow-x: hidden;
+}
+
+body {
+  background: rgb(26, 26, 26);
+  background: linear-gradient(
+    98deg,
+    rgba(26, 26, 26, 1) 0%,
+    rgb(22, 1, 93) 100%
+  );
+  color: var(--text-color);
+}
+
+section {
+  min-height: 100vh;
+  padding: 10rem 9% 2rem;
+}
+
+.header {
+  position: absolute;
+  top: 5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 75%;
+  height: 11%;
+  padding: 3rem;
+  display: flex;
+  background: rgba(255, 255, 255, 0.052);
+  border: 3px solid rgba(255, 255, 255, 0.171);
+  box-shadow: 0 0 10px rgba(215, 214, 214, 0.022);
+  backdrop-filter: blur(20px);
+  border-radius: 50px;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 3.8rem;
+  color: #1e3a8a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.logo span {
+  color: var(--second-bg-color);
+}
+
+.navbar {
+  margin-left: 8rem;
+}
+
+.navbar a {
+  font-size: 3rem;
+  color: var(--text-color);
+  margin-right: 7rem;
+  transition: 0.3s;
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  color: var(--second-bg-color);
+}
+
+#login {
+  cursor: pointer;
+  position: relative;
+  padding: 10px 24px;
+  font-size: 18px;
+  color: var(--text-color);
+  border: 2px solid var(--bg-color);
+  border-radius: 34px;
+  background-color: var(--bg-color);
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+  text-decoration: none;
+}
+
+#login a {
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+#login::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 50px;
+  height: 50px;
+  border-radius: inherit;
+  scale: 0;
+  z-index: -1;
+  background-color: var(--second-bg-color);
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+#login:hover::before {
+  scale: 3;
+}
+
+#login:hover {
+  color: #212121;
+  scale: 1.1;
+  border: 2px solid var(--second-bg-color);
+  box-shadow: 0 0px 20px var(--second-bg-color);
+}
+
+#login:active {
+  scale: 1;
+}
+
+#menu-icon {
+  font-size: 3.6rem;
+  color: var(--text-color);
+  display: none;
+}
+
+#login-icon {
+  font-size: 3.6rem;
+  color: var(--text-color);
+  display: none;
+}
+
+.st-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form {
+  justify-content: center;
+  align-items: center;
+  width: 490px;
+  background: rgba(26, 26, 26, 0.345);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  border-radius: 23px;
+  padding: 30px 40px;
+  text-align: center;
+}
+
+.verification-inputs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.verification-inputs input {
+  width: 60px;
+  height: 60px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 24px;
+  background: transparent;
+  color: #fff;
+  outline: none;
+  direction: ltr !important;
+  text-align: center !important;
+}
+
+.verification-inputs input:focus {
+  border-color: var(--second-bg-color);
+  box-shadow: 0 0 10px rgba(225, 179, 115, 0.3);
+}
+
+.form h1 {
+  font-size: 36px;
+  text-align: center;
+}
+
+.form .index-box {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin: 30px 0;
+}
+.index-box::placeholder {
+  color: white;
+  margin-right: 1rem;
+}
+
+.index-box i {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+}
+
+.form .remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16.5px;
+  margin: 24px 0 24px;
+}
+
+.remember-forgot label input {
+  accent-color: #fff;
+  text-decoration: none;
+}
+
+#toggle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 16px;
+  color: #85888c;
+}
+
+#toggle:hover {
+  color: #fff;
+}
+
+.remember-forgot a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.remember-forgot a:hover {
+  text-decoration: underline;
+}
+
+.form .btn {
+  width: 100%;
+  height: 48px;
+  cursor: pointer;
+  position: relative;
+  padding: 10px 24px;
+  font-size: 18px;
+  color: var(--text-color);
+  border: 2px solid var(--bg-color);
+  border-radius: 34px;
+  background-color: var(--bg-color);
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 100%;
+  height: 45px;
+  border-radius: inherit;
+  scale: 0;
+  z-index: -1;
+  background-color: var(--second-bg-color);
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.btn:hover::before {
+  scale: 3;
+}
+
+.btn:hover {
+  color: #212121;
+  scale: 1.1;
+  border: 2px solid var(--second-bg-color);
+  box-shadow: 0 0px 20px var(--second-bg-color);
+}
+
+.btn:active {
+  scale: 1;
+}
+
+.form .regester-link {
+  font-size: 14.5px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.back-link {
+  margin-top: 20px;
+}
+
+.back-link a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.back-link a:hover {
+  color: var(--second-bg-color);
+}
+
+.regester-link p a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.regester-link p a:hover {
+  text-decoration: underline;
+}
+
+.timer {
+  margin: 20px 0;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.resend-link {
+  color: var(--second-bg-color);
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.resend-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1948px) {
+  html {
+    font-size: 55%;
+  }
+}
+
+@media (max-width: 1800px) {
+  html {
+    font-size: 53%;
+  }
+
+  .navbar a {
+    font-size: 2.6rem;
+  }
+}
+
+@media (max-width: 1600px) {
+  .header {
+    position: absolute;
+    top: 4rem;
+    width: 94%;
+  }
+}
+
+@media (max-width: 991px) {
+  #menu-icon {
+    display: block;
+    font-size: 3.6rem;
+    color: var(--text-color);
+    cursor: pointer;
+  }
+
+  .header {
+    position: fixed;
+    top: 13px;
+    padding: 2rem 3%;
+    background: rgba(26, 26, 26, 0.345);
+    backdrop-filter: blur(20px);
+  }
+
+  .navbar a {
+    font-size: 2.5rem;
+    margin-right: 4rem;
+  }
+
+  .navbar {
+    position: fixed;
+    top: -13px;
+    right: -100%;
+    width: 300px;
+    height: 100vh;
+    background: rgba(26, 26, 26, 0.761);
+    display: flex;
+    flex-direction: column;
+    padding-top: 60px;
+    transition: 0.5s ease;
+    z-index: 999;
+  }
+
+  .navbar.active {
+    right: -4%;
+  }
+
+  #login {
+    display: none;
+  }
+
+  .navbar a {
+    display: block;
+    font-size: 1.8rem;
+    margin: 1.5rem 0;
+    padding: 1rem 3rem;
+    text-align: right;
+    color: var(--text-color);
+  }
+
+  .navbar a:hover {
+    color: var(--second-bg-color);
+  }
+
+  .menu-links {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #login {
+    display: none;
+  }
+
+  #login-icon {
+    display: block;
+    font-size: 3.6rem;
+    color: var(--text-color);
+    padding: 0rem 0.5rem;
+    text-align: right;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 50%;
+  }
+
+  .navbar {
+    width: 270px;
+  }
+
+  #menu-icon,
+  #login-icon {
+    font-size: 3.2rem;
+  }
+
+  .logo {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    width: 250px;
+  }
+
+  .navbar a {
+    font-size: 1.6rem;
+  }
+
+  #menu-icon,
+  #login-icon {
+    font-size: 2.8rem;
+  }
+
+  .logo {
+    font-size: 2.5rem;
+  }
+}
+
+/* Additional mobile adjustments */
+@media (max-width: 480px) {
+  .form {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .verification-inputs {
+    gap: 6px;
+  }
+
+  .verification-inputs input {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .form h1 {
+    font-size: 24px;
+  }
+
+  .form p {
+    font-size: 14px;
+  }
+
+  .btn {
+    font-size: 16px;
+    padding: 8px 20px;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 350px) {
+  .verification-inputs input {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+
+  .form {
+    padding: 15px;
+  }
+}
+
+.form h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.form p {
+  font-size: 16px;
+  margin-bottom: 30px;
+  color: rgba(255, 255, 255, 0.8);
+}

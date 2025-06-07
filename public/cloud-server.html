@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
+    <title>نتوریا - سرور ابری</title>
+    <link rel="stylesheet" href="./Assets/Css/cloud-server.css" />
+    <link rel="stylesheet" href="./Assets/Css/common.css" />
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="shortcut icon"
+      href="./Assets/img/icon.ico"
+      type="image/x-icon"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="./Assets/Js/utils.js"></script>
+    <script src="./Assets/Js/cart-new.js"></script>
+    <script src="./Assets/Js/cloud-server.js" defer></script>
+  </head>
+  <body>
+    <!-- Start Header -->
+    <header class="header">
+      <i class="bx bx-menu" id="menu-icon"></i>
+      <button id="login">
+        <a href="./login.html">ورود / ثبت نام</a>
+      </button>
+      <a href="./cart.html" id="cart-icon">
+        <i class="bx bx-cart"></i>
+        <span class="cart-count">0</span>
+      </a>
+      <nav class="navbar">
+        <a href="./domain.html">دامنه</a>
+        <a href="./cloud-host.html">هاست</a>
+        <a href="./virtual-server.html">سرور مجازی</a>
+        <a href="./cloud-server.html">سرور ابری</a>
+        <a href="./blogs.html">وبلاگ</a>
+        <a href="./Contact-us.html">ارتباط باما</a>
+      </nav>
+      <a href="./index.html" class="logo">Netto<span>ria</span></a>
+      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+    </header>
+    <!-- End Header -->
+    <div class="toast"></div>
+
+    <!-- Server Section -->
+    <section class="server-section">
+      <h2 class="server-title">سرور ابری</h2>
+
+      <!-- Selection Tabs -->
+      <div class="selection-tabs">
+        <div class="tab-group">
+          <button class="selection-tab active">ایران</button>
+          <button class="selection-tab" data-location="europe">اروپا</button>
+        </div>
+        <div class="tab-group">
+          <button class="selection-tab active">لینوکس</button>
+          <button class="selection-tab">ویندوز</button>
+        </div>
+      </div>
+
+      <!-- Price Display -->
+      <div class="price-display">
+        <h3>
+          هزینه سرور ابری: <span id="total-price">18,830</span> تومان / روزانه
+        </h3>
+      </div>
+
+      <!-- Configuration Container -->
+      <div class="config-container">
+        <!-- CPU Slider -->
+        <div class="spec-slider">
+          <div class="slider-value">
+            <div class="slider-value-label">
+              <i class="fas fa-microchip"></i>
+              پردازشگر (vCPU)
+            </div>
+            <span id="cpu-value">2 Core</span>
+          </div>
+          <div class="slider-container">
+            <div class="slider-track"></div>
+            <div class="slider-fill" id="cpu-fill" style="width: 25%"></div>
+            <div class="slider-handle" id="cpu-handle" style="right: 25%"></div>
+          </div>
+          <div class="slider-labels">
+            <span>8 Core</span>
+            <span>6 Core</span>
+            <span>4 Core</span>
+            <span>2 Core</span>
+            <span>1 Core</span>
+          </div>
+        </div>
+        <!-- RAM Slider -->
+        <div class="spec-slider">
+          <div class="slider-value">
+            <div class="slider-value-label">
+              <i class="fas fa-memory"></i>
+              حافظه اصلی (RAM)
+            </div>
+            <span id="ram-value">4096 MB</span>
+          </div>
+          <div class="slider-container">
+            <div class="slider-track"></div>
+            <div class="slider-fill" id="ram-fill" style="width: 45%"></div>
+            <div class="slider-handle" id="ram-handle" style="right: 45%"></div>
+          </div>
+          <div class="slider-labels">
+            <span>16384 MB</span>
+            <span>8192 MB</span>
+            <span>4096 MB</span>
+            <span>2048 MB</span>
+            <span>1024 MB</span>
+          </div>
+        </div>
+
+        <!-- Disk Slider -->
+        <div class="spec-slider">
+          <div class="slider-value">
+            <div class="slider-value-label">
+              <i class="fas fa-hdd"></i>
+              ظرفیت دیسک (SSD)
+            </div>
+            <span id="disk-value">25 GB</span>
+          </div>
+          <div class="slider-container">
+            <div class="slider-track"></div>
+            <div class="slider-fill" id="disk-fill" style="width: 30%"></div>
+            <div
+              class="slider-handle"
+              id="disk-handle"
+              style="right: 30%"
+            ></div>
+          </div>
+          <div class="slider-labels">
+            <span>200 GB</span>
+            <span>100 GB</span>
+            <span>50 GB</span>
+            <span>25 GB</span>
+            <span>15 GB</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Button -->
+      <button class="order-btn">
+        <i class="fas fa-shopping-cart"></i>
+        سفارش سرور
+      </button>
+    </section>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    `n
+    <script src="./europe-notification.js"></script>
+  </body>
+</html>

@@ -36,132 +36,31 @@
       <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
     </header>
 
-    <section class="one-time-login-page">
+    <section class="login-page">
       <div class="form">
         <h1>ورود یک بار مصرف</h1>
-        <form id="otpForm">
-          <div class="index-box">
-            <input
-              type="tel"
-              name="phoneNumber"
-              placeholder="شماره تلفن خود را وارد کنید"
-              required
-              pattern="[0-9]{10,11}"
-              maxlength="11"
-              inputmode="numeric"
-              autocomplete="tel"
-            />
-            <i class="bx bx-phone"></i>
-          </div>
-          <div class="otp-section" style="display: none;">
-            <div class="form-group">
-              <input type="text" name="otp" placeholder="کد تایید را وارد کنید" pattern="[0-9]{6}" maxlength="6">
-            </div>
-            <div class="timer">
-              <span id="timer">02:00</span>
-            </div>
-            <button type="button" id="resendButton" disabled>ارسال مجدد کد</button>
-          </div>
-          <div id="errorMessage" class="error-message" style="display: none; color: red; margin-top: 10px; text-align: center;"></div>
-          <button type="submit" class="btn">ارسال کد تایید</button>
-        </form>
-        <div class="login-link">
-          <p>حساب کاربری دارید؟<a href="./login.html">ورود با رمز عبور</a></p>
+        <div class="index-box">
+          <input
+            type="tel"
+            id="phone"
+            placeholder="شماره تلفن خود را وارد کنید"
+            required
+            pattern="[0-9]{10}"
+            maxlength="10"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
+          />
+          <i class="bx bx-phone"></i>
+          <span class="error-message">لطفا شماره تلفن را کامل وارد کنید</span>
         </div>
+        <button type="submit" class="btn">
+          <a href="./otp-verification.html">دریافت کد تایید</a>
+        </button>
+        <a href="./login.html" class="back-link">
+          <i class="bx bx-arrow-back"></i>
+          بازگشت
+        </a>
       </div>
     </section>
-
-    <!-- Load auth scripts -->
-    <script src="./js/auth.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const otpForm = document.getElementById('otpForm');
-        const otpSection = document.querySelector('.otp-section');
-        const errorMessage = document.getElementById('errorMessage');
-        const resendButton = document.getElementById('resendButton');
-        const timer = document.getElementById('timer');
-        let timerInterval;
-
-        function showError(message) {
-          errorMessage.textContent = message;
-          errorMessage.style.display = 'block';
-        }
-
-        function hideError() {
-          errorMessage.style.display = 'none';
-        }
-
-        function startTimer() {
-          let timeLeft = 120; // 2 minutes in seconds
-          timer.textContent = formatTime(timeLeft);
-          resendButton.disabled = true;
-
-          clearInterval(timerInterval);
-          timerInterval = setInterval(() => {
-            timeLeft--;
-            timer.textContent = formatTime(timeLeft);
-
-            if (timeLeft <= 0) {
-              clearInterval(timerInterval);
-              timer.textContent = 'زمان به اتمام رسید';
-              resendButton.disabled = false;
-            }
-          }, 1000);
-        }
-
-        function formatTime(seconds) {
-          const minutes = Math.floor(seconds / 60);
-          const remainingSeconds = seconds % 60;
-          return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
-        }
-
-        otpForm.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          hideError();
-
-          let phoneNumber = this.phoneNumber.value;
-          // Ensure phone number starts with '0'
-          if (!phoneNumber.startsWith('0')) {
-            phoneNumber = '0' + phoneNumber;
-          }
-          const otpInput = this.querySelector('input[name="otp"]');
-
-          try {
-            if (!otpInput.value) {
-              // Request OTP
-              const response = await auth.requestOTP(phoneNumber);
-              if (response.status === "success") {
-                otpSection.style.display = 'block';
-                otpInput.setAttribute('required', '');
-                startTimer();
-              }
-            } else {
-              // Verify OTP
-              const response = await auth.verifyOTP(phoneNumber, otpInput.value);
-              if (response.status === "success") {
-                window.location.href = '/index.html';
-              }
-            }
-          } catch (error) {
-            showError(error.message || 'خطا در ارتباط با سرور. لطفا دوباره تلاش کنید.');
-          }
-        });
-
-        resendButton.addEventListener('click', async function() {
-          let phoneNumber = otpForm.phoneNumber.value;
-          // Ensure phone number starts with '0'
-          if (!phoneNumber.startsWith('0')) {
-            phoneNumber = '0' + phoneNumber;
-          }
-          try {
-            await auth.requestOTP(phoneNumber);
-            startTimer();
-            hideError();
-          } catch (error) {
-            showError(error.message || 'خطا در ارسال مجدد کد. لطفا دوباره تلاش کنید.');
-          }
-        });
-      });
-    </script>
+    <script src="./Assets/Js/one-time-login.js"></script>
   </body>
 </html>

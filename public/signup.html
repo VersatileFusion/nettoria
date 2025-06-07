@@ -36,55 +36,53 @@
       <div class="toast"></div>
     <div class="form">
       <h1>ثبت نام!</h1>
-      <form id="signupForm">
-        <div class="index-box">
-          <input type="text" name="fullName" placeholder="نام و نام خانوادگی خود را وارد کنید." required />
+      <div class="index-box">
+        <input type="text" placeholder="نام و نام خانوادگی خود را وارد کنید." required />
+      </div>
+      <div class="index-box phone-input-container">
+        <span class="country-code">98+</span>
+        <input type="tel" id="phone" placeholder="شماره تلفن خود را وارد کنید(بدون 0)" required />
+      </div>
+      <div class="index-box">
+        <input type="email" placeholder="آدرس ایمیل خود را وارد کنید." required />
+      </div>
+      <div id="box">
+        <input type="password" id="password" placeholder="رمز عبور خود را وارد کنید." required />
+        <span id="toggle">
+          <i class="fa-regular fa-eye"></i>
+        </span>
+        <div class="indicator">
+          <span class="weak"></span>
+          <span class="medium"></span>
+          <span class="strong"></span>
         </div>
-        <div class="index-box phone-input-container">
-          <span class="country-code">98+</span>
-          <input type="tel" id="phone" name="phone" placeholder="شماره تلفن خود را وارد کنید(بدون 0)" required />
+        <h2>سطح پسورد:<span id="text"></span></h2>
+      </div>
+      <div class="password-policies">
+        <div class="policy-length">8 تا کلمه</div>
+        <div class="policy-number">عدد داشته باشه</div>
+        <div class="policy-uppercase">حروف بزرگ داشته باشه</div>
+        <div class="policy-special">کارکتر خاص داشته باشه</div>
+      </div>
+      <div class="index-box">
+        <input type="password" id="confirm-password" placeholder="مجددا رمز عبور خود را وارد کنید" required />
+        <span id="toggle-confirm">
+          <i class="fa-regular fa-eye"></i>
+        </span>
+        <div class="password-match"></div>
+      </div>
+      <div class="remember">
+        <label for="">
+          <input type="checkbox" class="ui-checkbox">
+        </label>
+        <div class="terms-container">
+          <a href="#" class="terms-link">شرایط سرویس</a> را خواندم و با آن موافقم.
         </div>
-        <div class="index-box">
-          <input type="email" name="email" placeholder="آدرس ایمیل خود را وارد کنید." required />
-        </div>
-        <div id="box">
-          <input type="password" id="password" name="password" placeholder="رمز عبور خود را وارد کنید." required />
-          <span id="toggle">
-            <i class="fa-regular fa-eye"></i>
-          </span>
-          <div class="indicator">
-            <span class="weak"></span>
-            <span class="medium"></span>
-            <span class="strong"></span>
-          </div>
-          <h2>سطح پسورد:<span id="text"></span></h2>
-        </div>
-        <div class="password-policies">
-          <div class="policy-length">8 تا کلمه</div>
-          <div class="policy-number">عدد داشته باشه</div>
-          <div class="policy-uppercase">حروف بزرگ داشته باشه</div>
-          <div class="policy-special">کارکتر خاص داشته باشه</div>
-        </div>
-        <div class="index-box">
-          <input type="password" id="confirm-password" name="confirmPassword" placeholder="مجددا رمز عبور خود را وارد کنید" required />
-          <span id="toggle-confirm">
-            <i class="fa-regular fa-eye"></i>
-          </span>
-          <div class="password-match"></div>
-        </div>
-        <div class="remember">
-          <label for="terms">
-            <input type="checkbox" id="terms" name="terms" class="ui-checkbox" required>
-          </label>
-          <div class="terms-container">
-            <a href="#" class="terms-link">شرایط سرویس</a> را خواندم و با آن موافقم.
-          </div>
-        </div>
-        <button type="submit" class="btn">ایجاد حساب</button>
-        <div class="regester-link">
-          <p>اگر حساب کاربری دارید <a href="./login.html">ورود</a></p>
-        </div>
-      </form>
+      </div>
+      <button type="submit" class="btn">ایجاد حساب</button>
+      <div class="regester-link">
+        <p>اگر حساب کاربری دارید <a href="./login.html">ورود</a></p>
+      </div>
     </div>
     </div>
     <!-- Terms and Conditions Popup -->

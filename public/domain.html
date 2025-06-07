@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
+    <title>نتوریا - دامنه</title>
+    <link rel="stylesheet" href="./Assets/Css/domain.css" />
+    <link rel="stylesheet" href="./Assets/Css/common.css" />
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="shortcut icon"
+      href="./Assets/img/icon.ico"
+      type="image/x-icon"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  </head>
+  <body>
+    <!-- Start Header -->
+    <header class="header">
+      <i class="bx bx-menu" id="menu-icon" dir="rtl"></i>
+      <button id="login">
+        <a href="./login.html">ورود / ثبت نام</a>
+      </button>
+      <a href="./cart.html" id="cart-icon">
+        <i class="bx bx-cart"></i>
+        <span class="cart-count">0</span>
+      </a>
+      <nav class="navbar">
+        <a href="./domain.html">دامنه</a>
+        <a href="./cloud-host.html">هاست</a>
+        <a href="./virtual-server.html">سرور مجازی</a>
+        <a href="./cloud-server.html">سرور ابری</a>
+        <a href="./blogs.html">وبلاگ</a>
+        <a href="./Contact-us.html">ارتباط باما</a>
+      </nav>
+      <a href="./index.html" class="logo">Netto<span>ria</span></a>
+      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+    </header>
+    <!-- End Header -->
+
+    <section class="domain-section">
+      <div class="coming-soon-content">
+        <h1 class="animate-item">!Available Soon</h1>
+        <h3 class="animate-item">به زودی در دسترس</h3>
+        <p class="animate-item">صفحه خرید دامنه به زودی در دسترس قرار خواهد گرفت</p>
+      </div>
+    </section>
+
+    <script src="./Assets/Js/utils.js"></script>
+    <script>
+      // Menu icon toggle
+      let menuIcon = document.querySelector('#menu-icon');
+      let navbar = document.querySelector('.navbar');
+      
+      menuIcon.onclick = () => {
+        menuIcon.classList.toggle('bx-x');
+        navbar.classList.toggle('active');
+      };
+      
+      // Coming soon animation
+      document.addEventListener('DOMContentLoaded', function() {
+        // Animate the coming soon content
+        anime.timeline({
+          easing: 'easeOutExpo',
+        })
+        .add({
+          targets: '.animate-item',
+          translateY: [50, 0],
+          opacity: [0, 1],
+          duration: 1200,
+          delay: (el, i) => 300 + 150 * i
+        });
+        
+        // Add a subtle floating animation to the heading
+        anime({
+          targets: '.coming-soon-content h1',
+          translateY: [0, -15],
+          direction: 'alternate',
+          loop: true,
+          easing: 'easeInOutSine',
+          duration: 2000
+        });
+      });
+    </script>
+  </body>
+</html>
