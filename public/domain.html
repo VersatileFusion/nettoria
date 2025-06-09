@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
-    <title>نتوریا - دامنه</title>
-    <link rel="stylesheet" href="./Assets/Css/domain.css" />
+    <title>Domain Management - Nettoria</title>
+    <link rel="stylesheet" href="./Assets/css/style.css" />
+    <link rel="stylesheet" href="./Assets/css/domain.css" />
     <link rel="stylesheet" href="./Assets/Css/common.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
@@ -19,73 +24,171 @@
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
   </head>
+
   <body>
-    <!-- Start Header -->
+    <!-- Header -->
     <header class="header">
-      <i class="bx bx-menu" id="menu-icon" dir="rtl"></i>
-      <button id="login">
-        <a href="./login.html">ورود / ثبت نام</a>
-      </button>
-      <a href="./cart.html" id="cart-icon">
-        <i class="bx bx-cart"></i>
-        <span class="cart-count">0</span>
-      </a>
-      <nav class="navbar">
-        <a href="./domain.html">دامنه</a>
-        <a href="./cloud-host.html">هاست</a>
-        <a href="./virtual-server.html">سرور مجازی</a>
-        <a href="./cloud-server.html">سرور ابری</a>
-        <a href="./blogs.html">وبلاگ</a>
-        <a href="./Contact-us.html">ارتباط باما</a>
+      <nav class="nav">
+        <div class="logo">
+          <a href="index.html">
+            <img src="Assets/images/logo.png" alt="Nettoria Logo" />
+          </a>
+        </div>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="about-us.html">About Us</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="login.html" class="btn btn-primary">Login</a></li>
+        </ul>
       </nav>
-      <a href="./index.html" class="logo">Netto<span>ria</span></a>
-      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
     </header>
-    <!-- End Header -->
 
-    <section class="domain-section">
-      <div class="coming-soon-content">
-        <h1 class="animate-item">!Available Soon</h1>
-        <h3 class="animate-item">به زودی در دسترس</h3>
-        <p class="animate-item">صفحه خرید دامنه به زودی در دسترس قرار خواهد گرفت</p>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Domain Search Section -->
+      <section id="domainSearch" class="domain-search">
+        <div class="container">
+          <h1>Find Your Perfect Domain Name</h1>
+          <p>Search for available domain names and register them instantly</p>
+          <form id="domainSearchForm" class="domain-search-form">
+            <input
+              type="text"
+              id="domainName"
+              placeholder="Enter domain name (e.g., example.com)"
+              required
+            />
+            <button type="submit">Search Domain</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Domain Results Section -->
+      <section id="domainResults" class="domain-results">
+        <!-- Results will be loaded here dynamically -->
+      </section>
+
+      <!-- Domain Management Section -->
+      <section class="domain-management">
+        <div class="container">
+          <h2 class="section-title">Your Domains</h2>
+          <div id="userDomains" class="domains-container">
+            <!-- User's domains will be loaded here dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Domain Features Section -->
+      <section class="domain-features">
+        <div class="container">
+          <h2 class="section-title">Domain Features</h2>
+          <div class="features-grid">
+            <div class="feature-card">
+              <i class="fas fa-shield-alt"></i>
+              <h3>Free SSL Certificate</h3>
+              <p>
+                Secure your website with a free SSL certificate included with
+                every domain registration.
+              </p>
+            </div>
+            <div class="feature-card">
+              <i class="fas fa-globe"></i>
+              <h3>DNS Management</h3>
+              <p>
+                Easy-to-use DNS management tools to configure your domain
+                settings.
+              </p>
+            </div>
+            <div class="feature-card">
+              <i class="fas fa-sync"></i>
+              <h3>Auto-renewal</h3>
+              <p>
+                Never worry about your domain expiring with our automatic
+                renewal service.
+              </p>
+            </div>
+            <div class="feature-card">
+              <i class="fas fa-headset"></i>
+              <h3>24/7 Support</h3>
+              <p>
+                Our support team is available around the clock to help you with
+                any domain-related issues.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Domain Pricing Section -->
+      <section class="domain-pricing">
+        <div class="container">
+          <h2 class="section-title">Domain Pricing</h2>
+          <div class="pricing-grid">
+            <div class="pricing-card">
+              <h3>.com</h3>
+              <p class="price">$12.99<span>/year</span></p>
+              <ul class="features">
+                <li>Most popular TLD</li>
+                <li>Global recognition</li>
+                <li>Professional look</li>
+              </ul>
+              <button class="btn btn-primary">Register Now</button>
+            </div>
+            <div class="pricing-card">
+              <h3>.net</h3>
+              <p class="price">$14.99<span>/year</span></p>
+              <ul class="features">
+                <li>Network focused</li>
+                <li>Tech industry standard</li>
+                <li>High availability</li>
+              </ul>
+              <button class="btn btn-primary">Register Now</button>
+            </div>
+            <div class="pricing-card">
+              <h3>.org</h3>
+              <p class="price">$13.99<span>/year</span></p>
+              <ul class="features">
+                <li>Non-profit focused</li>
+                <li>Trusted by organizations</li>
+                <li>Community oriented</li>
+              </ul>
+              <button class="btn btn-primary">Register Now</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>About Nettoria</h3>
+            <p>Your trusted partner in cloud hosting and IT solutions.</p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="about-us.html">About Us</a></li>
+              <li><a href="services.html">Services</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact Us</h3>
+            <p>Email: info@nettoria.com</p>
+            <p>Phone: +1 (555) 123-4567</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2024 Nettoria. All rights reserved.</p>
+        </div>
       </div>
-    </section>
+    </footer>
 
-    <script src="./Assets/Js/utils.js"></script>
-    <script>
-      // Menu icon toggle
-      let menuIcon = document.querySelector('#menu-icon');
-      let navbar = document.querySelector('.navbar');
-      
-      menuIcon.onclick = () => {
-        menuIcon.classList.toggle('bx-x');
-        navbar.classList.toggle('active');
-      };
-      
-      // Coming soon animation
-      document.addEventListener('DOMContentLoaded', function() {
-        // Animate the coming soon content
-        anime.timeline({
-          easing: 'easeOutExpo',
-        })
-        .add({
-          targets: '.animate-item',
-          translateY: [50, 0],
-          opacity: [0, 1],
-          duration: 1200,
-          delay: (el, i) => 300 + 150 * i
-        });
-        
-        // Add a subtle floating animation to the heading
-        anime({
-          targets: '.coming-soon-content h1',
-          translateY: [0, -15],
-          direction: 'alternate',
-          loop: true,
-          easing: 'easeInOutSine',
-          duration: 2000
-        });
-      });
-    </script>
+    <!-- Scripts -->
+    <script src="Assets/js/utils.js"></script>
+    <script src="Assets/js/domain.js"></script>
   </body>
 </html>

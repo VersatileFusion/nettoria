@@ -1,6 +1,6 @@
-const paymentService = require('../services/payment.service');
-const { Order, User } = require('../models');
-const logger = require('../utils/logger');
+const paymentService = require("../services/payment.service");
+const { Order, User } = require("../models");
+const logger = require("../utils/logger");
 
 /**
  * Handle payment request
@@ -16,17 +16,21 @@ exports.createPayment = async (req, res) => {
     const order = await Order.findOne({
       where: {
         id: orderId,
-        userId
-      }
+        userId,
+      },
     });
 
     if (!order) {
-      return res.status(404).json({ success: false, message: 'Order not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
     }
 
     // Check if order is already paid
-    if (order.paymentStatus === 'COMPLETED') {
-      return res.status(400).json({ success: false, message: 'Order is already paid' });
+    if (order.paymentStatus === "COMPLETED") {
+      return res
+        .status(400)
+        .json({ success: false, message: "Order is already paid" });
     }
 
     // Get user details for payment
@@ -36,24 +40,28 @@ exports.createPayment = async (req, res) => {
     const paymentResult = await paymentService.createPaymentRequest({
       amount: order.totalAmount,
       description: `Payment for order #${order.id}`,
-      email: user.email || '',
-      mobile: user.phone || '',
+      email: user.email || "",
+      mobile: user.phone || "",
       orderId: order.id,
-      userId: user.id
+      userId: user.id,
     });
 
     if (!paymentResult.success) {
-      return res.status(400).json({ success: false, message: paymentResult.error });
+      return res
+        .status(400)
+        .json({ success: false, message: paymentResult.error });
     }
 
     res.json({
       success: true,
       paymentUrl: paymentResult.paymentUrl,
-      authority: paymentResult.authority
+      authority: paymentResult.authority,
     });
   } catch (error) {
-    logger.error('Error creating payment:', error);
-    res.status(500).json({ success: false, message: 'Failed to create payment' });
+    logger.error("Error creating payment:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to create payment" });
   }
 };
 
@@ -71,12 +79,14 @@ exports.verifyPayment = async (req, res) => {
     const order = await Order.findOne({
       where: {
         id: orderId,
-        userId
-      }
+        userId,
+      },
     });
 
     if (!order) {
-      return res.status(404).json({ success: false, message: 'Order not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
     }
 
     // Verify payment
@@ -84,7 +94,7 @@ exports.verifyPayment = async (req, res) => {
       authority: Authority,
       status: Status,
       amount: order.totalAmount,
-      orderId: order.id
+      orderId: order.id,
     });
 
     if (verifyResult.success) {
@@ -93,18 +103,20 @@ exports.verifyPayment = async (req, res) => {
         success: true,
         refId: verifyResult.refId,
         orderId: orderId,
-        message: 'Payment was successful'
+        message: "Payment was successful",
       });
     } else {
       // Return failure JSON response instead of redirecting
       return res.status(400).json({
         success: false,
         orderId: orderId,
-        message: verifyResult.error
+        message: verifyResult.error,
       });
     }
   } catch (error) {
-    logger.error('Error verifying payment:', error);
-    res.status(500).json({ success: false, message: 'Failed to verify payment' });
+    logger.error("Error verifying payment:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to verify payment" });
   }
-}; 
+};

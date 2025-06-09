@@ -1,0 +1,237 @@
+/* Profile Container */
+.profile-container {
+  display: flex;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* Sidebar */
+.profile-sidebar {
+  flex: 0 0 250px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.profile-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-menu li {
+  padding: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.profile-menu li:hover {
+  background-color: #f5f5f5;
+}
+
+.profile-menu li.active {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+/* Content Area */
+.profile-content {
+  flex: 1;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.profile-section {
+  display: none;
+}
+
+.profile-section.active {
+  display: block;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Security Settings */
+.security-settings {
+  margin-bottom: 2rem;
+}
+
+.setting-item {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.setting-description {
+  margin-top: 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Password Change */
+.password-change {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #eee;
+}
+
+/* Login History */
+.login-list {
+  margin-top: 1rem;
+}
+
+.login-item {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.login-item:last-child {
+  border-bottom: none;
+}
+
+.login-info {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.login-date {
+  color: #666;
+}
+
+.login-ip {
+  color: #1976d2;
+}
+
+.login-device {
+  color: #666;
+}
+
+/* Notification Settings */
+.notification-settings {
+  margin-bottom: 2rem;
+}
+
+/* Buttons */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primary {
+  background-color: #1976d2;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #1565c0;
+}
+
+/* Messages */
+.message {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  display: none;
+  z-index: 1000;
+}
+
+.message.error {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.message.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-container {
+    flex-direction: column;
+  }
+
+  .profile-sidebar {
+    flex: none;
+    width: 100%;
+  }
+
+  .profile-menu {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+  }
+
+  .profile-menu li {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .login-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* RTL Specific Styles */
+[dir="rtl"] .profile-menu li {
+  text-align: right;
+}
+
+[dir="rtl"] .form-group label {
+  text-align: right;
+}
+
+[dir="rtl"] .setting-description {
+  margin-right: 1.5rem;
+  margin-left: 0;
+}
+
+[dir="rtl"] .login-info {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .message {
+  right: auto;
+  left: 1rem;
+}

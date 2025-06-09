@@ -1,84 +1,513 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
-    <title>نتوریا - سرور مجازی ایران</title>
-    <link rel="stylesheet" href="./Assets/Css/virtual-server.css" />
-    <link rel="stylesheet" href="./Assets/Css/common.css" />
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="shortcut icon"
-      href="./Assets/img/icon.ico"
-      type="image/x-icon"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="./Assets/Js/utils.js"></script>
-    <script src="./Assets/Js/cart-new.js"></script>
-    <script src="./Assets/Js/virtual-server.js" defer></script>
-  </head>
-  <body>
-    <!-- Start Header -->
-    <header class="header">
-      <i class="bx bx-menu" id="menu-icon" dir="rtl"></i>
-      <button id="login">
-        <a href="./login.html">ورود / ثبت نام</a>
-      </button>
-      <a href="./cart.html" id="cart-icon">
-        <i class="bx bx-cart"></i>
-        <span class="cart-count">0</span>
-      </a>
-      <nav class="navbar">
-        <a href="./domain.html">دامنه</a>
-        <a href="./cloud-host.html">هاست</a>
-        <a href="./virtual-server.html">سرور مجازی</a>
-        <a href="./cloud-server.html">سرور ابری</a>
-        <a href="./blogs.html">وبلاگ</a>
-        <a href="./Contact-us.html">ارتباط باما</a>
-      </nav>
-      <a href="./index.html" class="logo">Netto<span>ria</span></a>
-      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
-    </header>
-    <!-- End Header -->
-    <div class="toast"></div>
-    <!-- After the header section -->
-    <section class="server-section">
-      <div class="switch-container">
-        <div class="switch">
-          <input type="checkbox" id="server-location" />
-          <label for="server-location">
-            <span class="iran">ایران</span>
-            <span class="europe">اروپا</span>
-          </label>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
+  <title>نتوریا - سرور مجازی ایران</title>
+  <link rel="stylesheet" href="./Assets/Css/virtual-server.css" />
+  <link rel="stylesheet" href="./Assets/Css/common.css" />
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="shortcut icon" href="./Assets/img/icon.ico" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="./Assets/Js/utils.js"></script>
+  <script src="./Assets/Js/api-client.js"></script>
+  <script src="./Assets/Js/vcenter-client.js"></script>
+  <script src="./Assets/Js/task-monitor.js"></script>
+  <script src="./Assets/Js/vm-monitor.js"></script>
+  <script src="./Assets/Js/cart-new.js"></script>
+  <script src="./Assets/Js/virtual-server.js" defer></script>
+  <script src="Assets/Js/network-manager.js"></script>
+  <script src="Assets/Js/snapshot-manager.js"></script>
+  <script src="Assets/Js/resource-manager.js"></script>
+  <script src="./Assets/Js/vm-scaler.js"></script>
+</head>
+
+<body>
+  <!-- Start Header -->
+  <header class="header">
+    <i class="bx bx-menu" id="menu-icon" dir="rtl"></i>
+    <button id="login">
+      <a href="./login.html">ورود / ثبت نام</a>
+    </button>
+    <a href="./cart.html" id="cart-icon">
+      <i class="bx bx-cart"></i>
+      <span class="cart-count">0</span>
+    </a>
+    <nav class="navbar">
+      <a href="./domain.html">دامنه</a>
+      <a href="./cloud-host.html">هاست</a>
+      <a href="./virtual-server.html">سرور مجازی</a>
+      <a href="./cloud-server.html">سرور ابری</a>
+      <a href="./blogs.html">وبلاگ</a>
+      <a href="./Contact-us.html">ارتباط باما</a>
+    </nav>
+    <a href="./index.html" class="logo">Netto<span>ria</span></a>
+    <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+  </header>
+  <!-- End Header -->
+  <div class="toast"></div>
+  <!-- VM Management Section (Hidden by default) -->
+  <section id="vm-management" class="vm-management" style="display: none;">
+    <h2>مدیریت سرورهای مجازی</h2>
+    <div class="vm-controls">
+      <button id="refresh-vms" class="btn"><i class="bx bx-refresh"></i> بروزرسانی</button>
+      <button id="create-vm" class="btn"><i class="bx bx-plus"></i> ایجاد سرور جدید</button>
+    </div>
+    <div id="vm-list" class="vm-list">
+      <!-- VMs will be populated here -->
+    </div>
+
+    <!-- Task Monitoring Section -->
+    <div class="task-monitoring">
+      <h3>وضعیت عملیات</h3>
+      <div id="task-list" class="task-list">
+        <!-- Tasks will be populated here -->
+      </div>
+    </div>
+
+    <!-- VM Metrics Section -->
+    <div class="vm-metrics">
+      <h3>متریک‌های سرور</h3>
+      <div id="metrics-container" class="metrics-container">
+        <!-- Metrics will be populated here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- VM Details Modal -->
+  <div class="modal" id="vm-details-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>جزئیات سرور مجازی</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="vm-info">
+          <!-- Basic VM information -->
+        </div>
+
+        <!-- Optimization Section -->
+        <div class="optimization-section">
+          <h3>بهینه‌سازی منابع</h3>
+          <div class="optimization-controls">
+            <button id="optimize-vm" class="btn">
+              <i class="bx bx-optimize"></i> بهینه‌سازی خودکار
+            </button>
+          </div>
+          <div id="recommendations-list" class="recommendations-list">
+            <!-- Recommendations will be populated here -->
+          </div>
+        </div>
+
+        <!-- Performance Analytics Section -->
+        <div class="analytics-section">
+          <h3>تحلیل عملکرد</h3>
+          <div class="analytics-controls">
+            <select id="analytics-period" class="form-control">
+              <option value="day">۲۴ ساعت گذشته</option>
+              <option value="week">هفته گذشته</option>
+              <option value="month">ماه گذشته</option>
+            </select>
+          </div>
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <h4>CPU</h4>
+              <div class="chart-container">
+                <canvas id="cpu-analytics-chart"></canvas>
+              </div>
+            </div>
+            <div class="analytics-card">
+              <h4>حافظه</h4>
+              <div class="chart-container">
+                <canvas id="memory-analytics-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resource Forecasting Section -->
+        <div class="forecast-section">
+          <h3>پیش‌بینی مصرف منابع</h3>
+          <div class="forecast-controls">
+            <select id="forecast-horizon" class="form-control">
+              <option value="24h">۲۴ ساعت آینده</option>
+              <option value="7d">۷ روز آینده</option>
+              <option value="30d">۳۰ روز آینده</option>
+            </select>
+          </div>
+          <div class="forecast-grid">
+            <div class="forecast-card">
+              <h4>پیش‌بینی CPU</h4>
+              <div class="chart-container">
+                <canvas id="cpu-forecast-chart"></canvas>
+              </div>
+            </div>
+            <div class="forecast-card">
+              <h4>پیش‌بینی حافظه</h4>
+              <div class="chart-container">
+                <canvas id="memory-forecast-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Section -->
+        <div class="metrics-section">
+          <h3>عملکرد سرور</h3>
+          <div class="metrics-controls">
+            <select id="metrics-duration">
+              <option value="1h">1 ساعت گذشته</option>
+              <option value="6h">6 ساعت گذشته</option>
+              <option value="24h">24 ساعت گذشته</option>
+              <option value="7d">7 روز گذشته</option>
+            </select>
+          </div>
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <h4>CPU</h4>
+              <div class="metric-value" id="cpu-usage">0%</div>
+              <div class="metric-chart" id="cpu-chart"></div>
+            </div>
+            <div class="metric-card">
+              <h4>حافظه</h4>
+              <div class="metric-value" id="memory-usage">0 GB / 0 GB</div>
+              <div class="metric-chart" id="memory-chart"></div>
+            </div>
+            <div class="metric-card">
+              <h4>دیسک</h4>
+              <div class="metric-value" id="disk-io">0 MB/s</div>
+              <div class="metric-chart" id="disk-chart"></div>
+            </div>
+            <div class="metric-card">
+              <h4>شبکه</h4>
+              <div class="metric-value" id="network-io">0 MB/s</div>
+              <div class="metric-chart" id="network-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resource Quotas Section -->
+        <div class="quotas-section">
+          <h3>سهمیه‌های منابع</h3>
+          <div class="quotas-grid">
+            <div class="quota-card">
+              <h4>CPU</h4>
+              <div class="quota-progress">
+                <div class="progress-bar" id="cpu-quota-bar"></div>
+              </div>
+              <div class="quota-info">
+                <span id="cpu-quota-used">0</span> / <span id="cpu-quota-limit">0</span> vCPU
+              </div>
+            </div>
+            <div class="quota-card">
+              <h4>حافظه</h4>
+              <div class="quota-progress">
+                <div class="progress-bar" id="memory-quota-bar"></div>
+              </div>
+              <div class="quota-info">
+                <span id="memory-quota-used">0</span> / <span id="memory-quota-limit">0</span> GB
+              </div>
+            </div>
+            <div class="quota-card">
+              <h4>فضای ذخیره‌سازی</h4>
+              <div class="quota-progress">
+                <div class="progress-bar" id="storage-quota-bar"></div>
+              </div>
+              <div class="quota-info">
+                <span id="storage-quota-used">0</span> / <span id="storage-quota-limit">0</span> GB
+              </div>
+            </div>
+            <div class="quota-card">
+              <h4>پهنای باند</h4>
+              <div class="quota-progress">
+                <div class="progress-bar" id="network-quota-bar"></div>
+              </div>
+              <div class="quota-info">
+                <span id="network-quota-used">0</span> / <span id="network-quota-limit">0</span> Mbps
+              </div>
+            </div>
+          </div>
+          <div class="scale-resources">
+            <h4>تغییر منابع</h4>
+            <form id="scaleForm" class="scale-form">
+              <div class="form-group">
+                <label for="cpuCount">تعداد CPU</label>
+                <input type="number" id="cpuCount" min="1" max="32" step="1">
+              </div>
+              <div class="form-group">
+                <label for="memoryGB">حافظه (GB)</label>
+                <input type="number" id="memoryGB" min="1" max="128" step="1">
+              </div>
+              <div class="form-group">
+                <label for="diskGB">فضای دیسک (GB)</label>
+                <input type="number" id="diskGB" min="10" max="1000" step="10">
+              </div>
+              <button type="submit" class="btn">اعمال تغییرات</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Alerts Section -->
+        <div class="alerts-section">
+          <h3>هشدارهای نظارتی</h3>
+          <div class="alerts-controls">
+            <select id="alertStatus">
+              <option value="active">فعال</option>
+              <option value="resolved">برطرف شده</option>
+            </select>
+            <select id="alertSeverity">
+              <option value="all">همه سطوح</option>
+              <option value="critical">بحرانی</option>
+              <option value="warning">هشدار</option>
+              <option value="info">اطلاعات</option>
+            </select>
+          </div>
+          <div id="alertsList" class="alerts-list">
+            <!-- Alerts will be populated here -->
+          </div>
+        </div>
+
+        <!-- Backup Section -->
+        <div class="backup-section">
+          <h3>پشتیبان‌گیری</h3>
+          <div class="backup-controls">
+            <button id="create-backup" class="btn">
+              <i class="bx bx-plus"></i> ایجاد پشتیبان جدید
+            </button>
+          </div>
+          <div id="backup-list" class="backup-list">
+            <!-- Backups will be populated here -->
+          </div>
+        </div>
+
+        <!-- Backup Modal -->
+        <div id="backupModal" class="modal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>ایجاد پشتیبان جدید</h2>
+            <form id="backupForm">
+              <div class="form-group">
+                <label for="backupName">نام پشتیبان</label>
+                <input type="text" id="backupName" required maxlength="50">
+              </div>
+              <div class="form-group">
+                <label for="backupDescription">توضیحات</label>
+                <textarea id="backupDescription" maxlength="255"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="backupRetention">مدت نگهداری (روز)</label>
+                <input type="number" id="backupRetention" min="1" max="30" value="7">
+              </div>
+              <button type="submit" class="btn">ایجاد پشتیبان</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Network Adapters Section -->
+        <div class="network-section">
+          <!-- Network adapters content -->
+        </div>
+
+        <!-- Snapshots Section -->
+        <div class="snapshots-section">
+          <!-- Snapshots content -->
         </div>
       </div>
-      <h2 class="server-title">سرور مجازی ایران</h2>
-      <p class="server-description">
-        سرعت و امنیت بی‌نظیر! به دنبال یک سرور مجازی پرقدرت با لوکیشن ایران
-        هستید؟ سرورهای مجازی ما با پینگ پایین، هارد NVMe پرسرعت، منابع اختصاصی و
-        پشتیبانی 24/7 بهترین انتخاب برای وب‌سایت‌ها، اپلیکیشن‌ها و حتی سرورهای
-        گیمینگ هستند.
-      </p>
+    </div>
+  </div>
 
-      <div class="server-cards">
-        <!-- Iran Servers -->
-        <div class="iran-servers">
+  <!-- Network Adapter Modal -->
+  <div id="networkAdapterModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Network Adapter</h2>
+      <form id="networkAdapterForm">
+        <div class="form-group">
+          <label for="networkType">Network Type</label>
+          <select id="networkType" required>
+            <option value="vmxnet3">VMXNET3</option>
+            <option value="e1000">E1000</option>
+            <option value="e1000e">E1000E</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="networkName">Network Name</label>
+          <select id="networkName" required></select>
+        </div>
+        <div class="form-group">
+          <label for="macAddress">MAC Address (Optional)</label>
+          <input type="text" id="macAddress" pattern="^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$">
+        </div>
+        <button type="submit" class="btn">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Snapshot Modal -->
+  <div id="snapshotModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Create Snapshot</h2>
+      <form id="snapshotForm">
+        <div class="form-group">
+          <label for="snapshotName">Name</label>
+          <input type="text" id="snapshotName" required maxlength="50">
+        </div>
+        <div class="form-group">
+          <label for="snapshotDescription">Description</label>
+          <textarea id="snapshotDescription" maxlength="255"></textarea>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="snapshotMemory">
+            Include VM memory
+          </label>
+        </div>
+        <button type="submit" class="btn">Create</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- After the header section -->
+  <section class="server-section">
+    <div class="switch-container">
+      <div class="switch">
+        <input type="checkbox" id="server-location" />
+        <label for="server-location">
+          <span class="iran">ایران</span>
+          <span class="europe">اروپا</span>
+        </label>
+      </div>
+    </div>
+    <h2 class="server-title">سرور مجازی ایران</h2>
+    <p class="server-description">
+      سرعت و امنیت بی‌نظیر! به دنبال یک سرور مجازی پرقدرت با لوکیشن ایران
+      هستید؟ سرورهای مجازی ما با پینگ پایین، هارد NVMe پرسرعت، منابع اختصاصی و
+      پشتیبانی 24/7 بهترین انتخاب برای وب‌سایت‌ها، اپلیکیشن‌ها و حتی سرورهای
+      گیمینگ هستند.
+    </p>
+
+    <div class="server-cards">
+      <!-- Iran Servers -->
+      <div class="iran-servers">
+        <div class="server-card">
+          <div class="icon"><i class="bx bx-file"></i></div>
+          <h3>اطلس</h3>
+          <p>اقتصادی و مطمئن</p>
+          <p>قابل ارتقا و شخصی سازی</p>
+          <p>به همراه پشتیبانی 24/7</p>
+          <div class="price">399,000 تومان</div>
+          <button class="more-info">اطلاعات بیشتر</button>
+
+          <div class="details">
+            <i class="bx bx-x close-details"></i>
+            <h4>مشخصات فنی</h4>
+            <ul>
+              <li><i class="bx bx-check"></i>2vCore(s) پردازنده</li>
+              <li><i class="bx bx-check"></i>رم 3 گیگابایت</li>
+              <li><i class="bx bx-check"></i>15TB ترافیک</li>
+              <li><i class="bx bx-check"></i>40 گیگابایت فضا</li>
+              <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
+              <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
+              <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
+              <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
+            </ul>
+            <button class="order-btn">ثبت سفارش</button>
+          </div>
+        </div>
+
+        <div class="server-card">
+          <div class="icon"><i class="bx bx-file"></i></div>
+          <h3>ققنوس</h3>
+          <p>مناسب و حرفه ای</p>
+          <p>قابل ارتقا و شخصی سازی</p>
+          <p>به همراه پشتیبانی 24/7</p>
+          <div class="price">599,000 تومان</div>
+          <button class="more-info">اطلاعات بیشتر</button>
+          <div class="details">
+            <i class="bx bx-x close-details"></i>
+            <h4>مشخصات فنی</h4>
+            <ul>
+              <li><i class="bx bx-check"></i>4vCore(s) پردازنده</li>
+              <li><i class="bx bx-check"></i>رم 6 گیگابایت</li>
+              <li><i class="bx bx-check"></i>20TB ترافیک</li>
+              <li><i class="bx bx-check"></i>60 گیگابایت فضا</li>
+              <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
+              <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
+              <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
+              <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
+            </ul>
+            <button class="order-btn">ثبت سفارش</button>
+          </div>
+        </div>
+
+        <div class="server-card">
+          <div class="icon"><i class="bx bx-file"></i></div>
+          <h3>تهمتن</h3>
+          <p>قدرتمند و سریع</p>
+          <p>قابل ارتقا و شخصی سازی</p>
+          <p>به همراه پشتیبانی 24/7</p>
+          <div class="price">899,000 تومان</div>
+          <button class="more-info">اطلاعات بیشتر</button>
+          <div class="details">
+            <i class="bx bx-x close-details"></i>
+            <h4>مشخصات فنی</h4>
+            <ul>
+              <li><i class="bx bx-check"></i>6vCore(s) پردازنده</li>
+              <li><i class="bx bx-check"></i>رم 8 گیگابایت</li>
+              <li><i class="bx bx-check"></i>25TB ترافیک</li>
+              <li><i class="bx bx-check"></i>80 گیگابایت فضا</li>
+              <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
+              <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
+              <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
+              <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
+            </ul>
+            <button class="order-btn">ثبت سفارش</button>
+          </div>
+        </div>
+
+        <div class="server-card">
+          <div class="icon"><i class="bx bx-file"></i></div>
+          <h3>گرشاسب</h3>
+          <p>بی حد و مرز و توانمند</p>
+          <p>قابل ارتقا و شخصی سازی</p>
+          <p>به همراه پشتیبانی 24/7</p>
+          <div class="price">1,199,000 تومان</div>
+          <button class="more-info">اطلاعات بیشتر</button>
+          <div class="details">
+            <i class="bx bx-x close-details"></i>
+            <h4>مشخصات فنی</h4>
+            <ul>
+              <li><i class="bx bx-check"></i>8vCore(s) پردازنده</li>
+              <li><i class="bx bx-check"></i>رم 16 گیگابایت</li>
+              <li><i class="bx bx-check"></i>30TB ترافیک</li>
+              <li><i class="bx bx-check"></i>120 گیگابایت فضا</li>
+              <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
+              <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
+              <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
+              <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
+            </ul>
+            <button class="order-btn">ثبت سفارش</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Europe Servers -->
+      <div class="europe-servers" style="display: none">
+        <div class="unavailable-notice">
+          <i class="bx bx-lock-alt"></i>
+          <h3>به زودی</h3>
+          <p>سرورهای اروپا به زودی در دسترس خواهند بود</p>
+        </div>
+        <div class="server-cards-wrapper" style="opacity: 0.5; pointer-events: none;">
           <div class="server-card">
             <div class="icon"><i class="bx bx-file"></i></div>
-            <h3>اطلس</h3>
+            <h3>اسکای‌ لاین</h3>
             <p>اقتصادی و مطمئن</p>
             <p>قابل ارتقا و شخصی سازی</p>
             <p>به همراه پشتیبانی 24/7</p>
@@ -104,7 +533,7 @@
 
           <div class="server-card">
             <div class="icon"><i class="bx bx-file"></i></div>
-            <h3>ققنوس</h3>
+            <h3>وست‌ نت</h3>
             <p>مناسب و حرفه ای</p>
             <p>قابل ارتقا و شخصی سازی</p>
             <p>به همراه پشتیبانی 24/7</p>
@@ -129,7 +558,7 @@
 
           <div class="server-card">
             <div class="icon"><i class="bx bx-file"></i></div>
-            <h3>تهمتن</h3>
+            <h3>نکس‌ فیر</h3>
             <p>قدرتمند و سریع</p>
             <p>قابل ارتقا و شخصی سازی</p>
             <p>به همراه پشتیبانی 24/7</p>
@@ -154,7 +583,7 @@
 
           <div class="server-card">
             <div class="icon"><i class="bx bx-file"></i></div>
-            <h3>گرشاسب</h3>
+            <h3>پرایم‌ ویو</h3>
             <p>بی حد و مرز و توانمند</p>
             <p>قابل ارتقا و شخصی سازی</p>
             <p>به همراه پشتیبانی 24/7</p>
@@ -177,119 +606,846 @@
             </div>
           </div>
         </div>
-
-        <!-- Europe Servers -->
-        <div class="europe-servers" style="display: none">
-          <div class="unavailable-notice">
-            <i class="bx bx-lock-alt"></i>
-            <h3>به زودی</h3>
-            <p>سرورهای اروپا به زودی در دسترس خواهند بود</p>
-          </div>
-          <div class="server-cards-wrapper" style="opacity: 0.5; pointer-events: none;">
-            <div class="server-card">
-              <div class="icon"><i class="bx bx-file"></i></div>
-              <h3>اسکای‌ لاین</h3>
-              <p>اقتصادی و مطمئن</p>
-              <p>قابل ارتقا و شخصی سازی</p>
-              <p>به همراه پشتیبانی 24/7</p>
-              <div class="price">399,000 تومان</div>
-              <button class="more-info">اطلاعات بیشتر</button>
-
-              <div class="details">
-                <i class="bx bx-x close-details"></i>
-                <h4>مشخصات فنی</h4>
-                <ul>
-                  <li><i class="bx bx-check"></i>2vCore(s) پردازنده</li>
-                  <li><i class="bx bx-check"></i>رم 3 گیگابایت</li>
-                  <li><i class="bx bx-check"></i>15TB ترافیک</li>
-                  <li><i class="bx bx-check"></i>40 گیگابایت فضا</li>
-                  <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
-                  <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
-                  <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
-                  <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
-                </ul>
-                <button class="order-btn">ثبت سفارش</button>
-              </div>
-            </div>
-
-            <div class="server-card">
-              <div class="icon"><i class="bx bx-file"></i></div>
-              <h3>وست‌ نت</h3>
-              <p>مناسب و حرفه ای</p>
-              <p>قابل ارتقا و شخصی سازی</p>
-              <p>به همراه پشتیبانی 24/7</p>
-              <div class="price">599,000 تومان</div>
-              <button class="more-info">اطلاعات بیشتر</button>
-              <div class="details">
-                <i class="bx bx-x close-details"></i>
-                <h4>مشخصات فنی</h4>
-                <ul>
-                  <li><i class="bx bx-check"></i>4vCore(s) پردازنده</li>
-                  <li><i class="bx bx-check"></i>رم 6 گیگابایت</li>
-                  <li><i class="bx bx-check"></i>20TB ترافیک</li>
-                  <li><i class="bx bx-check"></i>60 گیگابایت فضا</li>
-                  <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
-                  <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
-                  <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
-                  <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
-                </ul>
-                <button class="order-btn">ثبت سفارش</button>
-              </div>
-            </div>
-
-            <div class="server-card">
-              <div class="icon"><i class="bx bx-file"></i></div>
-              <h3>نکس‌ فیر</h3>
-              <p>قدرتمند و سریع</p>
-              <p>قابل ارتقا و شخصی سازی</p>
-              <p>به همراه پشتیبانی 24/7</p>
-              <div class="price">899,000 تومان</div>
-              <button class="more-info">اطلاعات بیشتر</button>
-              <div class="details">
-                <i class="bx bx-x close-details"></i>
-                <h4>مشخصات فنی</h4>
-                <ul>
-                  <li><i class="bx bx-check"></i>6vCore(s) پردازنده</li>
-                  <li><i class="bx bx-check"></i>رم 8 گیگابایت</li>
-                  <li><i class="bx bx-check"></i>25TB ترافیک</li>
-                  <li><i class="bx bx-check"></i>80 گیگابایت فضا</li>
-                  <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
-                  <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
-                  <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
-                  <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
-                </ul>
-                <button class="order-btn">ثبت سفارش</button>
-              </div>
-            </div>
-
-            <div class="server-card">
-              <div class="icon"><i class="bx bx-file"></i></div>
-              <h3>پرایم‌ ویو</h3>
-              <p>بی حد و مرز و توانمند</p>
-              <p>قابل ارتقا و شخصی سازی</p>
-              <p>به همراه پشتیبانی 24/7</p>
-              <div class="price">1,199,000 تومان</div>
-              <button class="more-info">اطلاعات بیشتر</button>
-              <div class="details">
-                <i class="bx bx-x close-details"></i>
-                <h4>مشخصات فنی</h4>
-                <ul>
-                  <li><i class="bx bx-check"></i>8vCore(s) پردازنده</li>
-                  <li><i class="bx bx-check"></i>رم 16 گیگابایت</li>
-                  <li><i class="bx bx-check"></i>30TB ترافیک</li>
-                  <li><i class="bx bx-check"></i>120 گیگابایت فضا</li>
-                  <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
-                  <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
-                  <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
-                  <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
-                </ul>
-                <button class="order-btn">ثبت سفارش</button>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
-    </section>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  </body>
+    </div>
+  </section>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- Add VM Management Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      // Check if user is logged in
+      const token = localStorage.getItem('token');
+      if (token) {
+        // Show VM management section
+        document.getElementById('vm-management').style.display = 'block';
+
+        // Load VMs
+        await loadVirtualMachines();
+
+        // Start task monitoring
+        taskMonitor.startPolling();
+        taskMonitor.subscribe(updateTaskList);
+
+        // Add event listeners
+        document.getElementById('refresh-vms').addEventListener('click', loadVirtualMachines);
+        document.getElementById('create-vm').addEventListener('click', () => {
+          window.location.href = 'select-service.html';
+        });
+      }
+
+      // Load virtual machines
+      async function loadVirtualMachines() {
+        try {
+          const vms = await vcenterClient.getVirtualMachines();
+          const vmList = document.getElementById('vm-list');
+          vmList.innerHTML = '';
+
+          vms.forEach(vm => {
+            const vmCard = createVMCard(vm);
+            vmList.appendChild(vmCard);
+
+            // Start monitoring metrics for this VM
+            vmMonitor.startMonitoring(vm.id);
+          });
+
+          // Subscribe to metrics updates
+          vmMonitor.subscribe(updateMetrics);
+        } catch (error) {
+          Alert('خطا', 'خطا در بارگذاری سرورهای مجازی', 3000, 'error');
+        }
+      }
+
+      // Create VM card
+      function createVMCard(vm) {
+        const card = document.createElement('div');
+        card.className = 'vm-card';
+        card.innerHTML = `
+            <div class="vm-header">
+              <h3>${vm.name}</h3>
+              <span class="vm-status ${vm.status.toLowerCase()}">${vm.status}</span>
+            </div>
+            <div class="vm-info">
+              <p><i class="bx bx-chip"></i> ${vm.cpuCount} vCPU</p>
+              <p><i class="bx bx-memory-card"></i> ${vm.memoryGB} GB RAM</p>
+              <p><i class="bx bx-hdd"></i> ${vm.diskGB} GB Storage</p>
+              <p><i class="bx bx-network-chart"></i> ${vm.ipAddress}</p>
+            </div>
+            <div class="vm-actions">
+              <button class="btn view-details" data-vm-id="${vm.id}">
+                <i class="bx bx-info-circle"></i> جزئیات
+              </button>
+            </div>
+          `;
+
+        // Add event listener for view details
+        card.querySelector('.view-details').addEventListener('click', () => {
+          showVMDetails(vm.id);
+        });
+
+        return card;
+      }
+
+      // Show VM details
+      async function showVMDetails(vmId) {
+        try {
+          const vm = await vcenterClient.getVirtualMachineDetails(vmId);
+          const modal = document.getElementById('vm-details-modal');
+          const content = document.querySelector('.modal-body');
+
+          content.innerHTML = `
+              <div class="vm-info">
+                <h3>${vm.name}</h3>
+                <div class="details-grid">
+                  <div class="detail-item">
+                    <i class="bx bx-chip"></i>
+                    <span>پردازنده: ${vm.cpuCount} vCPU</span>
+                  </div>
+                  <div class="detail-item">
+                    <i class="bx bx-memory-card"></i>
+                    <span>حافظه: ${vm.memoryGB} GB</span>
+                  </div>
+                  <div class="detail-item">
+                    <i class="bx bx-hdd"></i>
+                    <span>فضای ذخیره‌سازی: ${vm.diskGB} GB</span>
+                  </div>
+                  <div class="detail-item">
+                    <i class="bx bx-network-chart"></i>
+                    <span>آدرس IP: ${vm.ipAddress}</span>
+                  </div>
+                  <div class="detail-item">
+                    <i class="bx bx-desktop"></i>
+                    <span>سیستم عامل: ${vm.osType}</span>
+                  </div>
+                  <div class="detail-item">
+                    <i class="bx bx-server"></i>
+                    <span>هاست: ${vm.hostSystem}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+
+          // Initialize metrics monitoring
+          initializeMetrics(vm.id);
+
+          // Update action buttons
+          document.getElementById('power-on-vm').onclick = () => powerOnVM(vmId);
+          document.getElementById('power-off-vm').onclick = () => powerOffVM(vmId);
+          document.getElementById('open-console').onclick = () => openConsole(vmId);
+          document.getElementById('create-snapshot').onclick = () => createSnapshot(vmId);
+
+          modal.style.display = 'block';
+
+          // Initialize resource manager
+          await initializeResourceManager();
+          loadBackups(vmId);
+
+          // Initialize VM scaler
+          initializeVMScaler(vmId);
+
+          // Initialize VM Analytics
+          initializeVMAnalytics(vmId);
+
+          // Initialize VM Optimizer
+          initializeVMOptimizer(vmId);
+        } catch (error) {
+          Alert('خطا', 'خطا در بارگذاری جزئیات سرور', 3000, 'error');
+        }
+      }
+
+      // VM Actions
+      async function powerOnVM(vmId) {
+        try {
+          await vcenterClient.powerOnVM(vmId);
+          Alert('موفق', 'سرور با موفقیت روشن شد', 3000, 'success');
+          loadVirtualMachines();
+        } catch (error) {
+          Alert('خطا', 'خطا در روشن کردن سرور', 3000, 'error');
+        }
+      }
+
+      async function powerOffVM(vmId) {
+        try {
+          await vcenterClient.powerOffVM(vmId);
+          Alert('موفق', 'سرور با موفقیت خاموش شد', 3000, 'success');
+          loadVirtualMachines();
+        } catch (error) {
+          Alert('خطا', 'خطا در خاموش کردن سرور', 3000, 'error');
+        }
+      }
+
+      async function openConsole(vmId) {
+        try {
+          const consoleUrl = await vcenterClient.getVMConsoleURL(vmId);
+          window.open(consoleUrl, '_blank');
+        } catch (error) {
+          Alert('خطا', 'خطا در باز کردن کنسول', 3000, 'error');
+        }
+      }
+
+      async function createSnapshot(vmId) {
+        try {
+          const snapshotData = {
+            name: `Snapshot ${new Date().toLocaleString()}`,
+            description: 'Created from web interface'
+          };
+          await vcenterClient.createVMSnapshot(vmId, snapshotData);
+          Alert('موفق', 'اسنپ‌شات با موفقیت ایجاد شد', 3000, 'success');
+        } catch (error) {
+          Alert('خطا', 'خطا در ایجاد اسنپ‌شات', 3000, 'error');
+        }
+      }
+
+      // Modal close button
+      document.querySelector('.close-modal').addEventListener('click', () => {
+        document.getElementById('vm-details-modal').style.display = 'none';
+      });
+
+      // Close modal when clicking outside
+      window.addEventListener('click', (event) => {
+        const modal = document.getElementById('vm-details-modal');
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+
+      // Update task list
+      function updateTaskList(tasks) {
+        const taskList = document.getElementById('task-list');
+        taskList.innerHTML = '';
+
+        tasks.forEach(task => {
+          const taskElement = document.createElement('div');
+          taskElement.className = `task-item ${task.status}`;
+          taskElement.innerHTML = `
+            <div class="task-header">
+              <span class="task-operation">${task.operation}</span>
+              <span class="task-status">${task.status}</span>
+            </div>
+            <div class="task-details">
+              <p>هدف: ${task.target.name}</p>
+              <p>زمان شروع: ${new Date(task.startTime).toLocaleString()}</p>
+              ${task.endTime ? `<p>زمان پایان: ${new Date(task.endTime).toLocaleString()}</p>` : ''}
+            </div>
+          `;
+          taskList.appendChild(taskElement);
+        });
+      }
+
+      // Update metrics display
+      function updateMetrics(vmId, metrics) {
+        const metricsContainer = document.getElementById('metrics-container');
+        const vmMetrics = metricsContainer.querySelector(`[data-vm-id="${vmId}"]`);
+
+        if (!vmMetrics) {
+          const newMetrics = document.createElement('div');
+          newMetrics.className = 'vm-metrics-card';
+          newMetrics.setAttribute('data-vm-id', vmId);
+          newMetrics.innerHTML = `
+            <h4>سرور ${vmId}</h4>
+            <div class="metrics-grid">
+              <div class="metric-item">
+                <i class="bx bx-chip"></i>
+                <span>CPU: ${metrics.cpu?.usage || 0}%</span>
+              </div>
+              <div class="metric-item">
+                <i class="bx bx-memory-card"></i>
+                <span>RAM: ${metrics.memory?.usage || 0}%</span>
+              </div>
+              <div class="metric-item">
+                <i class="bx bx-hdd"></i>
+                <span>دیسک: ${metrics.disk?.usage || 0}%</span>
+              </div>
+              <div class="metric-item">
+                <i class="bx bx-network-chart"></i>
+                <span>شبکه: ${metrics.network?.rx || 0} MB/s</span>
+              </div>
+            </div>
+          `;
+          metricsContainer.appendChild(newMetrics);
+        } else {
+          vmMetrics.querySelector('.metric-item:nth-child(1) span').textContent = `CPU: ${metrics.cpu?.usage || 0}%`;
+          vmMetrics.querySelector('.metric-item:nth-child(2) span').textContent = `RAM: ${metrics.memory?.usage || 0}%`;
+          vmMetrics.querySelector('.metric-item:nth-child(3) span').textContent = `دیسک: ${metrics.disk?.usage || 0}%`;
+          vmMetrics.querySelector('.metric-item:nth-child(4) span').textContent = `شبکه: ${metrics.network?.rx || 0} MB/s`;
+        }
+      }
+
+      // Network Management
+      async function loadNetworkAdapters(vmId) {
+        try {
+          const adapters = await networkManager.getNetworkAdapters(vmId);
+          const networks = await networkManager.getAvailableNetworks();
+
+          const adaptersList = document.getElementById('networkAdaptersList');
+          adaptersList.innerHTML = adapters.map(adapter => `
+            <div class="network-adapter">
+              <div class="adapter-info">
+                <span class="adapter-type">${adapter.type}</span>
+                <span class="adapter-network">${adapter.network}</span>
+                <span class="adapter-mac">${adapter.macAddress || 'Auto'}</span>
+              </div>
+              <div class="adapter-actions">
+                <button onclick="editNetworkAdapter('${vmId}', '${adapter.id}')" class="btn-small">Edit</button>
+                <button onclick="removeNetworkAdapter('${vmId}', '${adapter.id}')" class="btn-small btn-danger">Remove</button>
+              </div>
+            </div>
+          `).join('');
+
+          // Populate network select
+          const networkSelect = document.getElementById('networkName');
+          networkSelect.innerHTML = networks.map(network =>
+            `<option value="${network.id}">${network.name}</option>`
+          ).join('');
+        } catch (error) {
+          showToast('Error loading network adapters', 'error');
+        }
+      }
+
+      // Snapshot Management
+      async function loadSnapshots(vmId) {
+        try {
+          const snapshots = await snapshotManager.getSnapshots(vmId);
+          const snapshotsList = document.getElementById('snapshotsList');
+
+          snapshotsList.innerHTML = snapshots.map(snapshot => `
+            <div class="snapshot">
+              <div class="snapshot-info">
+                <span class="snapshot-name">${snapshot.name}</span>
+                <span class="snapshot-date">${new Date(snapshot.createdAt).toLocaleString()}</span>
+                <span class="snapshot-size">${snapshotManager.formatSnapshotSize(snapshot.size)}</span>
+              </div>
+              <div class="snapshot-actions">
+                <button onclick="revertToSnapshot('${vmId}', '${snapshot.id}')" class="btn-small">Revert</button>
+                <button onclick="deleteSnapshot('${vmId}', '${snapshot.id}')" class="btn-small btn-danger">Delete</button>
+              </div>
+            </div>
+          `).join('');
+        } catch (error) {
+          showToast('Error loading snapshots', 'error');
+        }
+      }
+
+      // Event Listeners
+      document.getElementById('addNetworkAdapter').addEventListener('click', () => {
+        document.getElementById('networkAdapterModal').style.display = 'block';
+      });
+
+      document.getElementById('createSnapshot').addEventListener('click', () => {
+        document.getElementById('snapshotModal').style.display = 'block';
+      });
+
+      document.getElementById('networkAdapterForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const vmId = currentVMId;
+        const adapterData = {
+          type: document.getElementById('networkType').value,
+          networkId: document.getElementById('networkName').value,
+          macAddress: document.getElementById('macAddress').value
+        };
+
+        try {
+          await networkManager.addNetworkAdapter(vmId, adapterData);
+          showToast('Network adapter added successfully', 'success');
+          document.getElementById('networkAdapterModal').style.display = 'none';
+          loadNetworkAdapters(vmId);
+        } catch (error) {
+          showToast(error.message, 'error');
+        }
+      });
+
+      document.getElementById('snapshotForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const vmId = currentVMId;
+        const snapshotData = {
+          name: document.getElementById('snapshotName').value,
+          description: document.getElementById('snapshotDescription').value,
+          includeMemory: document.getElementById('snapshotMemory').checked
+        };
+
+        try {
+          await snapshotManager.createSnapshot(vmId, snapshotData);
+          showToast('Snapshot created successfully', 'success');
+          document.getElementById('snapshotModal').style.display = 'none';
+          loadSnapshots(vmId);
+        } catch (error) {
+          showToast(error.message, 'error');
+        }
+      });
+
+      // Helper Functions
+      async function editNetworkAdapter(vmId, adapterId) {
+        // Implementation for editing network adapter
+      }
+
+      async function removeNetworkAdapter(vmId, adapterId) {
+        if (confirm('Are you sure you want to remove this network adapter?')) {
+          try {
+            await networkManager.removeNetworkAdapter(vmId, adapterId);
+            showToast('Network adapter removed successfully', 'success');
+            loadNetworkAdapters(vmId);
+          } catch (error) {
+            showToast(error.message, 'error');
+          }
+        }
+      }
+
+      let vmMetrics = null;
+      let metricCharts = {};
+
+      function initializeMetrics(vmId) {
+        if (vmMetrics) {
+          vmMetrics.stopMonitoring();
+        }
+
+        vmMetrics = new VMMetrics(vmId);
+        vmMetrics.subscribe(updateMetricsDisplay);
+        vmMetrics.startMonitoring();
+
+        // Initialize charts
+        initializeCharts();
+      }
+
+      function initializeCharts() {
+        const chartConfig = {
+          type: 'line',
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            scales: {
+              x: {
+                type: 'time',
+                time: {
+                  unit: 'minute'
+                }
+              },
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        };
+
+        // CPU Chart
+        metricCharts.cpu = new Chart(
+          document.getElementById('cpu-chart'),
+          {
+            ...chartConfig,
+            data: {
+              datasets: [{
+                label: 'CPU Usage',
+                borderColor: '#4CAF50',
+                data: []
+              }]
+            }
+          }
+        );
+
+        // Memory Chart
+        metricCharts.memory = new Chart(
+          document.getElementById('memory-chart'),
+          {
+            ...chartConfig,
+            data: {
+              datasets: [{
+                label: 'Memory Usage',
+                borderColor: '#2196F3',
+                data: []
+              }]
+            }
+          }
+        );
+
+        // Disk Chart
+        metricCharts.disk = new Chart(
+          document.getElementById('disk-chart'),
+          {
+            ...chartConfig,
+            data: {
+              datasets: [
+                {
+                  label: 'Read',
+                  borderColor: '#FF9800',
+                  data: []
+                },
+                {
+                  label: 'Write',
+                  borderColor: '#F44336',
+                  data: []
+                }
+              ]
+            }
+          }
+        );
+
+        // Network Chart
+        metricCharts.network = new Chart(
+          document.getElementById('network-chart'),
+          {
+            ...chartConfig,
+            data: {
+              datasets: [
+                {
+                  label: 'Receive',
+                  borderColor: '#9C27B0',
+                  data: []
+                },
+                {
+                  label: 'Transmit',
+                  borderColor: '#E91E63',
+                  data: []
+                }
+              ]
+            }
+          }
+        );
+      }
+
+      function updateMetricsDisplay(metrics) {
+        if (!metrics) return;
+
+        // Update CPU usage
+        const cpuUsage = vmMetrics.getCPUUsage();
+        document.getElementById('cpu-usage').textContent = `${cpuUsage.toFixed(1)}%`;
+        updateChart(metricCharts.cpu, metrics.cpu.history, 'value');
+
+        // Update memory usage
+        const memoryUsage = vmMetrics.getMemoryUsage();
+        document.getElementById('memory-usage').textContent =
+          `${(memoryUsage.used / 1024).toFixed(1)} GB / ${(memoryUsage.total / 1024).toFixed(1)} GB`;
+        updateChart(metricCharts.memory, metrics.memory.history, 'value');
+
+        // Update disk I/O
+        const diskIO = vmMetrics.getDiskIO();
+        document.getElementById('disk-io').textContent =
+          `${((diskIO.read + diskIO.write) / 1024).toFixed(1)} MB/s`;
+        updateChart(metricCharts.disk, metrics.disk.history, ['read', 'write']);
+
+        // Update network I/O
+        const networkIO = vmMetrics.getNetworkIO();
+        document.getElementById('network-io').textContent =
+          `${((networkIO.rx + networkIO.tx) / 1024).toFixed(1)} MB/s`;
+        updateChart(metricCharts.network, metrics.network.history, ['rx', 'tx']);
+      }
+
+      function updateChart(chart, data, fields) {
+        if (!data || !data.length) return;
+
+        const datasets = Array.isArray(fields) ? fields : [fields];
+        datasets.forEach((field, index) => {
+          chart.data.datasets[index].data = data.map(point => ({
+            x: new Date(point.timestamp),
+            y: point[field]
+          }));
+        });
+
+        chart.update();
+      }
+
+      // Add event listener for metrics duration change
+      document.getElementById('metrics-duration').addEventListener('change', function (e) {
+        if (vmMetrics) {
+          vmMetrics.setDuration(e.target.value);
+        }
+      });
+
+      // Clean up metrics when modal is closed
+      document.querySelector('.close-modal').addEventListener('click', function () {
+        if (vmMetrics) {
+          vmMetrics.stopMonitoring();
+          vmMetrics = null;
+        }
+
+        // Destroy charts
+        Object.values(metricCharts).forEach(chart => chart.destroy());
+        metricCharts = {};
+      });
+
+      // Initialize resource manager
+      async function initializeResourceManager() {
+        try {
+          await resourceManager.fetchQuotas();
+          resourceManager.subscribe(updateQuotasDisplay);
+        } catch (error) {
+          showToast('خطا در دریافت سهمیه‌های منابع', 'error');
+        }
+      }
+
+      // Update quotas display
+      function updateQuotasDisplay(quotas) {
+        if (!quotas) return;
+
+        // Update CPU quota
+        const cpuQuota = resourceManager.getCPUQuota();
+        document.getElementById('cpu-quota-used').textContent = cpuQuota.used;
+        document.getElementById('cpu-quota-limit').textContent = cpuQuota.limit;
+        document.getElementById('cpu-quota-bar').style.width = `${(cpuQuota.used / cpuQuota.limit) * 100}%`;
+
+        // Update memory quota
+        const memoryQuota = resourceManager.getMemoryQuota();
+        document.getElementById('memory-quota-used').textContent = resourceManager.formatSize(memoryQuota.used);
+        document.getElementById('memory-quota-limit').textContent = resourceManager.formatSize(memoryQuota.limit);
+        document.getElementById('memory-quota-bar').style.width = `${(memoryQuota.used / memoryQuota.limit) * 100}%`;
+
+        // Update storage quota
+        const storageQuota = resourceManager.getStorageQuota();
+        document.getElementById('storage-quota-used').textContent = resourceManager.formatSize(storageQuota.used);
+        document.getElementById('storage-quota-limit').textContent = resourceManager.formatSize(storageQuota.limit);
+        document.getElementById('storage-quota-bar').style.width = `${(storageQuota.used / storageQuota.limit) * 100}%`;
+
+        // Update network quota
+        const networkQuota = resourceManager.getNetworkQuota();
+        document.getElementById('network-quota-used').textContent = networkQuota.used;
+        document.getElementById('network-quota-limit').textContent = networkQuota.bandwidth;
+        document.getElementById('network-quota-bar').style.width = `${(networkQuota.used / networkQuota.bandwidth) * 100}%`;
+      }
+
+      // Backup management
+      async function createBackup(vmId) {
+        const modal = document.getElementById('backupModal');
+        modal.style.display = 'block';
+
+        document.getElementById('backupForm').onsubmit = async (e) => {
+          e.preventDefault();
+          const backupData = {
+            name: document.getElementById('backupName').value,
+            description: document.getElementById('backupDescription').value,
+            retention: parseInt(document.getElementById('backupRetention').value)
+          };
+
+          try {
+            await resourceManager.createBackup(vmId, backupData);
+            showToast('پشتیبان با موفقیت ایجاد شد', 'success');
+            modal.style.display = 'none';
+            loadBackups(vmId);
+          } catch (error) {
+            showToast(error.message, 'error');
+          }
+        };
+      }
+
+      // Load backups
+      async function loadBackups(vmId) {
+        const backupList = document.getElementById('backup-list');
+        try {
+          const backups = await vcenterClient.getVMBackups(vmId);
+          backupList.innerHTML = backups.map(backup => `
+            <div class="backup-item">
+              <div class="backup-info">
+                <span class="backup-name">${backup.name}</span>
+                <span class="backup-date">${new Date(backup.createdAt).toLocaleString()}</span>
+                <span class="backup-size">${resourceManager.formatSize(backup.size)}</span>
+              </div>
+              <div class="backup-actions">
+                <button onclick="restoreBackup('${vmId}', '${backup.id}')" class="btn-small">بازیابی</button>
+                <button onclick="deleteBackup('${vmId}', '${backup.id}')" class="btn-small btn-danger">حذف</button>
+              </div>
+            </div>
+          `).join('');
+        } catch (error) {
+          showToast('خطا در بارگذاری پشتیبان‌ها', 'error');
+        }
+      }
+
+      // Initialize VM scaler
+      function initializeVMScaler(vmId) {
+        vmScaler.setCurrentVM(vmId);
+        vmScaler.subscribe(handleScalerEvents);
+        loadAlerts();
+      }
+
+      // Handle scaler events
+      function handleScalerEvents(event, data) {
+        switch (event) {
+          case 'scale':
+            showToast('تغییر منابع با موفقیت آغاز شد', 'success');
+            loadVirtualMachines();
+            break;
+          case 'alertResolved':
+            showToast('هشدار با موفقیت برطرف شد', 'success');
+            loadAlerts();
+            break;
+        }
+      }
+
+      // Load alerts
+      async function loadAlerts() {
+        const status = document.getElementById('alertStatus').value;
+        const severity = document.getElementById('alertSeverity').value;
+        const filters = { status };
+        if (severity !== 'all') {
+          filters.severity = severity;
+        }
+
+        try {
+          const alerts = await vmScaler.getAlerts(filters);
+          const alertsList = document.getElementById('alertsList');
+          alertsList.innerHTML = alerts.map(alert => `
+            <div class="alert-item ${alert.severity}">
+              <div class="alert-header">
+                <span class="alert-type">${alert.type}</span>
+                <span class="alert-severity">${alert.severity}</span>
+                <span class="alert-time">${new Date(alert.createdAt).toLocaleString()}</span>
+              </div>
+              <div class="alert-message">${alert.message}</div>
+              ${alert.status === 'active' ? `
+                <div class="alert-actions">
+                  <button onclick="resolveAlert('${alert.id}')" class="btn-small">برطرف کردن</button>
+                </div>
+              ` : ''}
+            </div>
+          `).join('');
+        } catch (error) {
+          showToast(error.message, 'error');
+        }
+      }
+
+      // Handle scale form submission
+      document.getElementById('scaleForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const vmId = vmScaler.getCurrentVM();
+        const scaleData = {
+          cpuCount: parseInt(document.getElementById('cpuCount').value),
+          memoryGB: parseInt(document.getElementById('memoryGB').value),
+          diskGB: parseInt(document.getElementById('diskGB').value)
+        };
+
+        try {
+          await vmScaler.scaleResources(vmId, scaleData);
+        } catch (error) {
+          showToast(error.message, 'error');
+        }
+      });
+
+      // Handle alert filters change
+      document.getElementById('alertStatus').addEventListener('change', loadAlerts);
+      document.getElementById('alertSeverity').addEventListener('change', loadAlerts);
+
+      // Resolve alert
+      async function resolveAlert(alertId) {
+        try {
+          await vmScaler.resolveAlert(alertId);
+        } catch (error) {
+          showToast(error.message, 'error');
+        }
+      }
+
+      // Initialize VM Analytics
+      function initializeVMAnalytics(vmId) {
+        vmAnalytics.setCurrentVM(vmId);
+        vmAnalytics.initializeCharts();
+        vmAnalytics.subscribe(handleAnalyticsEvents);
+        loadAnalytics();
+        loadForecast();
+      }
+
+      // Handle analytics events
+      function handleAnalyticsEvents(event, data) {
+        switch (event) {
+          case 'analytics':
+            vmAnalytics.updateAnalyticsCharts(data);
+            break;
+          case 'forecast':
+            vmAnalytics.updateForecastCharts(data);
+            break;
+        }
+      }
+
+      // Load analytics data
+      async function loadAnalytics() {
+        try {
+          const period = document.getElementById('analytics-period').value;
+          await vmAnalytics.getAnalytics(vmAnalytics.getCurrentVM(), period);
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      // Load forecast data
+      async function loadForecast() {
+        try {
+          const horizon = document.getElementById('forecast-horizon').value;
+          await vmAnalytics.getForecast(vmAnalytics.getCurrentVM(), horizon);
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      // Event listeners for analytics controls
+      document.getElementById('analytics-period').addEventListener('change', loadAnalytics);
+      document.getElementById('forecast-horizon').addEventListener('change', loadForecast);
+
+      // Update modal close handler
+      document.getElementById('vm-details-modal').addEventListener('hidden.bs.modal', function () {
+        if (vmMetrics) {
+          vmMetrics.stopMonitoring();
+          vmMetrics = null;
+        }
+
+        // Destroy charts
+        Object.values(metricCharts).forEach(chart => chart.destroy());
+        metricCharts = {};
+      });
+
+      // Initialize VM Optimizer
+      function initializeVMOptimizer(vmId) {
+        vmOptimizer.setCurrentVM(vmId);
+        vmOptimizer.subscribe(handleOptimizerEvents);
+        loadRecommendations();
+      }
+
+      // Handle optimizer events
+      function handleOptimizerEvents(event, data) {
+        switch (event) {
+          case 'recommendations':
+            updateRecommendationsDisplay(data);
+            break;
+          case 'optimization':
+            showToast('بهینه‌سازی منابع سرور آغاز شد', 'success');
+            break;
+        }
+      }
+
+      // Load recommendations
+      async function loadRecommendations() {
+        try {
+          const recommendations = await vmOptimizer.getRecommendations(vmOptimizer.getCurrentVM());
+          updateRecommendationsDisplay(recommendations);
+        } catch (error) {
+          showToast(error.message, 'error');
+        }
+      }
+
+      // Update recommendations display
+      function updateRecommendationsDisplay(recommendations) {
+        const recommendationsList = document.getElementById('recommendations-list');
+        recommendationsList.innerHTML = recommendations.map(rec => {
+          const formatted = vmOptimizer.formatRecommendation(rec);
+          return `
+            <div class="recommendation-item">
+              <div class="recommendation-header">
+                <span class="recommendation-type">${formatted.type}</span>
+              </div>
+              <div class="recommendation-details">
+                <p>مقدار فعلی: ${formatted.current}</p>
+                <p>مقدار پیشنهادی: ${formatted.recommended}</p>
+                <p class="recommendation-reason">${formatted.reason}</p>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Handle optimize button click
+      document.getElementById('optimize-vm').addEventListener('click', async () => {
+        try {
+          await vmOptimizer.optimizeVM(vmOptimizer.getCurrentVM());
+        } catch (error) {
+          showToast(error.message, 'error');
+        }
+      });
+    });
+  </script>
+</body>
+
 </html>

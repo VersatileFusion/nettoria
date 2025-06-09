@@ -1,139 +1,124 @@
-const { Smsir } = require('smsir-js');
-const config = require('../config');
-const logger = require('../utils/logger');
+const axios = require("axios");
+const { SMS } = require("../models");
+const logger = require("../utils/logger");
+
+// SMS service configuration
+const SMS_SERVICE_CONFIG = {
+  apiKey: process.env.SMS_SERVICE_API_KEY,
+  apiUrl: process.env.SMS_SERVICE_API_URL,
+  sender: process.env.SMS_SENDER_ID,
+};
 
 /**
- * SMS Service for sending text messages and verification codes
+ * Send SMS using the configured SMS service
+ * @param {string} recipient - Phone number of the recipient
+ * @param {string} message - Message content
+ * @param {number} userId - ID of the user sending the SMS
+ * @returns {Promise<Object>} - Result of the SMS sending operation
  */
-class SmsService {
-  constructor() {
-    // Initialize SMS client with API key and line number from config
-    // Make sure the line number is correct - use format without country code (3000211985)
-    const lineNumber = config.SMS_LINE_NUMBER;
-    logger.info(`Initializing SMS service with line number: ${lineNumber}`);
-    
-    this.smsClient = new Smsir(
-      config.SMS_API_KEY,
-      lineNumber
-    );
-  }
+async function sendSMS(recipient, message, userId) {
+  try {
+    // Create SMS record in database
+    const smsRecord = await SMS.create({
+      userId,
+      recipient,
+      message,
+      status: "pending",
+    });
 
-  /**
-   * Send verification code to user's phone
-   * @param {string} mobile - User's mobile number
-   * @param {string} code - Verification code to send
-   * @returns {Promise<object>} - Response from SMS service
-   */
-  async sendVerificationCode(mobile, code) {
-    try {
-      // Template parameters for verification code
-      const parameters = [
-        { name: 'CODE', value: code }
-      ];
+    // Send SMS through the service
+    const response = await axios.post(SMS_SERVICE_CONFIG.apiUrl, {
+      apiKey: SMS_SERVICE_CONFIG.apiKey,
+      sender: SMS_SERVICE_CONFIG.sender,
+      recipient,
+      message,
+    });
 
-      // Send verification code using the predefined template
-      const response = await this.smsClient.SendVerifyCode(
-        mobile,
-        config.SMS_VERIFICATION_TEMPLATE_ID,
-        parameters
-      );
-
-      logger.info(`Verification SMS sent to ${mobile}`);
+    // Update SMS record with result
+    if (response.data.success) {
+      await smsRecord.update({
+        status: "sent",
+        messageId: response.data.messageId,
+      });
       return {
         success: true,
-        messageId: response.data?.data?.messageId,
-        message: 'Verification code sent successfully'
+        messageId: response.data.messageId,
       };
-    } catch (error) {
-      logger.error('Error sending verification SMS:', error);
-      return {
-        success: false,
-        error: error.message || 'Failed to send verification code'
-      };
+    } else {
+      await smsRecord.update({
+        status: "failed",
+        error: response.data.error,
+      });
+      throw new Error(response.data.error);
     }
-  }
-
-  /**
-   * Send a custom text message to a user
-   * @param {string} mobile - User's mobile number
-   * @param {string} message - Message content
-   * @returns {Promise<object>} - Response from SMS service
-   */
-  async sendSms(mobile, message) {
-    try {
-      // Send a single SMS to one recipient
-      const response = await this.smsClient.SendBulk(
-        message,
-        [mobile],
-        null,  // SendDateTime (null for immediate sending)
-        config.SMS_LINE_NUMBER  // Use the configured line number from .env
-      );
-
-      logger.info(`SMS sent to ${mobile}`);
-      return {
-        success: true,
-        messageId: response.data?.data?.messageIds?.[0],
-        message: 'SMS sent successfully'
-      };
-    } catch (error) {
-      logger.error('Error sending SMS:', error);
-      return {
-        success: false,
-        error: error.message || 'Failed to send SMS'
-      };
-    }
-  }
-
-  /**
-   * Send bulk SMS to multiple recipients
-   * @param {string[]} mobiles - Array of phone numbers
-   * @param {string} message - Message content
-   * @returns {Promise<object>} - Response from SMS service
-   */
-  async sendBulkSms(mobiles, message) {
-    try {
-      // Send the same message to multiple recipients
-      const response = await this.smsClient.SendBulk(
-        message,
-        mobiles,
-        null,  // SendDateTime (null for immediate sending)
-        config.SMS_LINE_NUMBER  // Use the configured line number from .env
-      );
-
-      logger.info(`Bulk SMS sent to ${mobiles.length} recipients`);
-      return {
-        success: true,
-        messageIds: response.data?.data?.messageIds,
-        message: 'Bulk SMS sent successfully'
-      };
-    } catch (error) {
-      logger.error('Error sending bulk SMS:', error);
-      return {
-        success: false,
-        error: error.message || 'Failed to send bulk SMS'
-      };
-    }
-  }
-
-  /**
-   * Check remaining credit for SMS service
-   * @returns {Promise<object>} - Credit information
-   */
-  async getCredit() {
-    try {
-      const response = await this.smsClient.getCredit();
-      return {
-        success: true,
-        credit: response.data
-      };
-    } catch (error) {
-      logger.error('Error getting SMS credit:', error);
-      return {
-        success: false,
-        error: error.message || 'Failed to get SMS credit'
-      };
-    }
+  } catch (error) {
+    logger.error("Error sending SMS:", error);
+    throw error;
   }
 }
 
-module.exports = new SmsService(); 
+/**
+ * Send bulk SMS to multiple recipients
+ * @param {string[]} recipients - Array of phone numbers
+ * @param {string} message - Message content
+ * @param {number} userId - ID of the user sending the SMS
+ * @returns {Promise<Object[]>} - Results of the SMS sending operations
+ */
+async function sendBulkSMS(recipients, message, userId) {
+  try {
+    const results = await Promise.all(
+      recipients.map((recipient) => sendSMS(recipient, message, userId))
+    );
+    return results;
+  } catch (error) {
+    logger.error("Error sending bulk SMS:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get SMS delivery status
+ * @param {string} messageId - ID of the sent message
+ * @returns {Promise<Object>} - Status of the SMS
+ */
+async function getSMSStatus(messageId) {
+  try {
+    const response = await axios.get(`${SMS_SERVICE_CONFIG.apiUrl}/status`, {
+      params: {
+        apiKey: SMS_SERVICE_CONFIG.apiKey,
+        messageId,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    logger.error("Error getting SMS status:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get remaining SMS credit
+ * @returns {Promise<number>} - Remaining credit
+ */
+async function getCredit() {
+  try {
+    const response = await axios.get(`${SMS_SERVICE_CONFIG.apiUrl}/credit`, {
+      params: {
+        apiKey: SMS_SERVICE_CONFIG.apiKey,
+      },
+    });
+
+    return response.data.credit;
+  } catch (error) {
+    logger.error("Error getting SMS credit:", error);
+    throw error;
+  }
+}
+
+module.exports = {
+  sendSMS,
+  sendBulkSMS,
+  getSMSStatus,
+  getCredit,
+};

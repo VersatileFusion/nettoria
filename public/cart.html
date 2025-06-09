@@ -1,87 +1,99 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
-    <title>سبدخرید</title>
-    <link rel="stylesheet" href="./Assets/Css/cart.css" />
-    <link rel="stylesheet" href="./Assets/Css/common.css" />
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="shortcut icon"
-      href="./Assets/img/icon.ico"
-      type="image/x-icon"
-    />
-  </head>
-  <body>
-    <!-- Start Header -->
-    <header class="header">
-      <i class="bx bx-menu" id="menu-icon"></i>
-      <button id="login">
-        <a href="./login.html">ورود / ثبت نام</a>
-      </button>
-      <a href="./cart.html" id="cart-icon">
-        <i class="bx bx-cart"></i>
-        <span class="cart-count">0</span>
-      </a>
-      <nav class="navbar">
-        <a href="./domain.html">دامنه</a>
-        <a href="./cloud-host.html">هاست</a>
-        <a href="./virtual-server.html">سرور مجازی</a>
-        <a href="./cloud-server.html">سرور ابری</a>
-        <a href="./blogs.html">وبلاگ</a>
-        <a href="./Contact-us.html">ارتباط باما</a>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cart - Nettoria</title>
+  <link rel="stylesheet" href="Assets/css/style.css" />
+  <link rel="stylesheet" href="Assets/css/cart.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <nav>
+        <div class="logo">
+          <img src="Assets/images/logo.png" alt="Nettoria Logo" />
+        </div>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="blogs.html">Blogs</a></li>
+          <li><a href="about-us.html">About Us</a></li>
+          <li><a href="Contact-us.html">Contact</a></li>
+        </ul>
+        <div class="auth-buttons">
+          <a href="login.html" class="btn btn-login">Login</a>
+          <a href="signup.html" class="btn btn-signup">Sign Up</a>
+        </div>
       </nav>
-      <a href="./index.html" class="logo">Netto<span>ria</span></a>
-      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
     </header>
-    <!-- End Header -->
 
-    <!-- Start Cart Section -->
-    <section class="cart-container">
-      <div class="cart-items-section">
-        <h2 class="cart-title">بررسی نهایی و پرداخت</h2>
-        <p class="cart-subtitle">لطفا سفارش خود را بررسی کنید.</p>
-        
-        <!-- Cart items will be dynamically populated here -->
+    <main>
+      <section class="cart-container">
+        <div class="cart-items-section">
+          <h2 class="cart-title">Review and Checkout</h2>
+          <p class="cart-subtitle">Please review your order before proceeding.</p>
+          <!-- Cart items will be dynamically populated here -->
+        </div>
+
+        <div class="cart-summary">
+          <div class="price-row">
+            <span>Subtotal</span>
+            <span>$0.00</span>
+          </div>
+          <div class="price-row">
+            <span>VAT (9%)</span>
+            <span>$0.00</span>
+          </div>
+          <div class="price-row total-price">
+            <span>Total</span>
+            <span>$0.00</span>
+          </div>
+
+          <div class="discount-code">
+            <input type="text" placeholder="Enter discount code" maxlength="8" />
+          </div>
+
+          <div class="cart-buttons">
+            <button class="cart-btn checkout-btn">Proceed to Checkout</button>
+            <button class="cart-btn add-service-btn">Add More Services</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About Nettoria</h3>
+          <p>Your trusted partner in cloud computing and hosting solutions.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="blogs.html">Blogs</a></li>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="Contact-us.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>Email: info@nettoria.com</p>
+          <p>Phone: +1 234 567 890</p>
+        </div>
       </div>
-
-      <div class="cart-summary">
-        <div class="price-row">
-          <span>مجموع</span>
-          <span>1,198,000 ریال</span>
-        </div>
-        <div class="price-row">
-          <span>مالیات بر ارزش افزوده ۹٪</span>
-          <span>107,820 ریال</span>
-        </div>
-        <div class="price-row total-price">
-          <span>قابل پرداخت</span>
-          <span>1,305,820 ریال</span>
-        </div>
-
-        <div class="discount-code">
-          <input
-            maxlength="8"
-            type="text"
-            placeholder="کد تخفیف خود را وارد کنید"
-          />
-        </div>
-
-        <div class="cart-buttons">
-          <button class="cart-btn checkout-btn">پرداخت نهایی</button>
-          <button class="cart-btn add-service-btn">افزودن سرویس جدید</button>
-        </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Nettoria. All rights reserved.</p>
       </div>
-    </section>
-    <!-- End Cart Section -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="./Assets/Js/cart-new.js"></script>
-    <script src="./Assets/Js/cart-page.js"></script>
-  </body>
+    </footer>
+  </div>
+
+  <script src="Assets/js/utils.js"></script>
+  <script src="Assets/js/cart.js"></script>
+</body>
+
 </html>

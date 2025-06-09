@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
-const serviceController = require('../controllers/service.controller');
+const serviceController = require("../controllers/service.controller");
+const { body, validationResult } = require("express-validator");
+const Service = require("../models/service");
+const { Op } = require("sequelize");
 
 console.log("Initializing Service Routes...");
 
@@ -246,6 +249,16 @@ console.log("Initializing Service Routes...");
  *         - price
  */
 
+// Validation middleware
+const validateService = [
+  body("name").trim().notEmpty().withMessage("Service name is required"),
+  body("description").trim().notEmpty().withMessage("Description is required"),
+  body("price")
+    .isFloat({ min: 0 })
+    .withMessage("Price must be a positive number"),
+  body("category").trim().notEmpty().withMessage("Category is required"),
+];
+
 /**
  * @swagger
  * /api/services:
@@ -303,7 +316,7 @@ console.log("Initializing Service Routes...");
  *       401:
  *         description: Not authenticated
  */
-router.get("/", authMiddleware.protect, (req, res) => {
+router.get("/", authMiddleware.protect, async (req, res) => {
   console.log("Fetching services for user ID:", req.user.id);
 
   const page = parseInt(req.query.page) || 1;
@@ -311,93 +324,37 @@ router.get("/", authMiddleware.protect, (req, res) => {
   const status = req.query.status;
   const type = req.query.type;
 
-  // Sample services data
-  const services = [
-    {
-      id: "svc-12345",
-      name: "Web Hosting Plan",
-      type: "vm",
-      plan: "standard",
-      status: "active",
-      resources: {
-        cpu: 2,
-        memoryGB: 4,
-        storageGB: 100,
-        bandwidth: 1000,
-      },
-      price: {
-        amount: 29.99,
-        currency: "USD",
-        billingCycle: "monthly",
-      },
-      createdAt: "2023-01-15T08:30:00Z",
-      expiresAt: "2024-01-15T08:30:00Z",
-    },
-    {
-      id: "svc-67890",
-      name: "Database Service",
-      type: "database",
-      plan: "premium",
-      status: "active",
-      resources: {
-        cpu: 4,
-        memoryGB: 8,
-        storageGB: 200,
-        bandwidth: 2000,
-      },
-      price: {
-        amount: 49.99,
-        currency: "USD",
-        billingCycle: "monthly",
-      },
-      createdAt: "2023-02-20T10:15:00Z",
-      expiresAt: "2024-02-20T10:15:00Z",
-    },
-    {
-      id: "svc-24680",
-      name: "Storage Bucket",
-      type: "storage",
-      plan: "basic",
-      status: "pending",
-      resources: {
-        storageGB: 500,
-        bandwidth: 5000,
-      },
-      price: {
-        amount: 19.99,
-        currency: "USD",
-        billingCycle: "monthly",
-      },
-      createdAt: "2023-05-10T14:45:00Z",
-      expiresAt: "2024-05-10T14:45:00Z",
-    },
-  ];
+  const where = {};
+  if (status) where.status = status;
+  if (type) where.type = type;
 
-  // Apply filters
-  let filteredServices = [...services];
-  if (status) {
-    filteredServices = filteredServices.filter(
-      (service) => service.status === status
-    );
+  try {
+    const services = await Service.findAndCountAll({
+      where,
+      limit,
+      offset: (page - 1) * limit,
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.status(200).json({
+      status: "success",
+      results: services.count,
+      data: {
+        services: services.rows,
+        pagination: {
+          total: services.count,
+          page,
+          pages: Math.ceil(services.count / limit),
+        },
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Error fetching services",
+      code: "INTERNAL_ERROR",
+    });
   }
-  if (type) {
-    filteredServices = filteredServices.filter(
-      (service) => service.type === type
-    );
-  }
-
-  // Apply pagination
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const paginatedServices = filteredServices.slice(startIndex, endIndex);
-
-  res.status(200).json({
-    status: "success",
-    results: paginatedServices.length,
-    data: {
-      services: paginatedServices,
-    },
-  });
 });
 
 /**
@@ -436,71 +393,34 @@ router.get("/", authMiddleware.protect, (req, res) => {
  *       401:
  *         description: Not authenticated
  */
-router.get("/:id", authMiddleware.protect, (req, res) => {
+router.get("/:id", authMiddleware.protect, async (req, res) => {
   console.log(
     `Fetching service with ID: ${req.params.id} for user: ${req.user.id}`
   );
 
   const serviceId = req.params.id;
 
-  // Sample services data
-  const services = {
-    "svc-12345": {
-      id: "svc-12345",
-      name: "Web Hosting Plan",
-      type: "vm",
-      plan: "standard",
-      status: "active",
-      resources: {
-        cpu: 2,
-        memoryGB: 4,
-        storageGB: 100,
-        bandwidth: 1000,
+  try {
+    const service = await Service.findByPk(serviceId);
+    if (!service) {
+      return res.status(404).json({
+        status: "error",
+        message: "Service not found",
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      data: {
+        service,
       },
-      price: {
-        amount: 29.99,
-        currency: "USD",
-        billingCycle: "monthly",
-      },
-      createdAt: "2023-01-15T08:30:00Z",
-      expiresAt: "2024-01-15T08:30:00Z",
-    },
-    "svc-67890": {
-      id: "svc-67890",
-      name: "Database Service",
-      type: "database",
-      plan: "premium",
-      status: "active",
-      resources: {
-        cpu: 4,
-        memoryGB: 8,
-        storageGB: 200,
-        bandwidth: 2000,
-      },
-      price: {
-        amount: 49.99,
-        currency: "USD",
-        billingCycle: "monthly",
-      },
-      createdAt: "2023-02-20T10:15:00Z",
-      expiresAt: "2024-02-20T10:15:00Z",
-    },
-  };
-
-  // Check if service exists
-  if (!services[serviceId]) {
-    return res.status(404).json({
+    });
+  } catch (error) {
+    res.status(500).json({
       status: "error",
-      message: "Service not found",
+      message: "Error fetching service",
+      code: "INTERNAL_ERROR",
     });
   }
-
-  res.status(200).json({
-    status: "success",
-    data: {
-      service: services[serviceId],
-    },
-  });
 });
 
 /**
@@ -566,18 +486,20 @@ router.get("/:id", authMiddleware.protect, (req, res) => {
  *       401:
  *         description: Not authenticated
  */
-router.post("/", authMiddleware.protect, (req, res) => {
+router.post("/", authMiddleware.protect, validateService, async (req, res) => {
   console.log(`Creating new service for user ID: ${req.user.id}`, req.body);
 
-  const { name, type, plan, resources } = req.body;
-
-  // Validate required fields
-  if (!name || !type || !plan) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
     return res.status(400).json({
       status: "error",
-      message: "Missing required fields: name, type, and plan are required",
+      message: "Validation error",
+      code: "INVALID_INPUT",
+      details: errors.array(),
     });
   }
+
+  const { name, type, plan, resources } = req.body;
 
   // Validate service type
   const validTypes = ["vm", "database", "storage", "backup", "cdn"];
@@ -650,12 +572,21 @@ router.post("/", authMiddleware.protect, (req, res) => {
     expiresAt,
   };
 
-  res.status(201).json({
-    status: "success",
-    data: {
-      service: newService,
-    },
-  });
+  try {
+    const service = await Service.create(newService);
+    res.status(201).json({
+      status: "success",
+      data: {
+        service,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Error creating service",
+      code: "INTERNAL_ERROR",
+    });
+  }
 });
 
 /**
@@ -712,7 +643,7 @@ router.post("/", authMiddleware.protect, (req, res) => {
  *       401:
  *         description: Not authenticated
  */
-router.patch("/:id/status", authMiddleware.protect, (req, res) => {
+router.patch("/:id/status", authMiddleware.protect, async (req, res) => {
   console.log(`Updating status for service ID: ${req.params.id}`, req.body);
 
   const serviceId = req.params.id;
@@ -727,52 +658,35 @@ router.patch("/:id/status", authMiddleware.protect, (req, res) => {
     });
   }
 
-  // Sample services data
-  const services = {
-    "svc-12345": {
-      id: "svc-12345",
-      name: "Web Hosting Plan",
-      type: "vm",
-      plan: "standard",
-      status: "active",
-      resources: {
-        cpu: 2,
-        memoryGB: 4,
-        storageGB: 100,
-        bandwidth: 1000,
-      },
-      price: {
-        amount: 29.99,
-        currency: "USD",
-        billingCycle: "monthly",
-      },
-      createdAt: "2023-01-15T08:30:00Z",
-      expiresAt: "2024-01-15T08:30:00Z",
-    },
-  };
+  try {
+    const service = await Service.findByPk(serviceId);
+    if (!service) {
+      return res.status(404).json({
+        status: "error",
+        message: "Service not found",
+      });
+    }
 
-  // Check if service exists
-  if (!services[serviceId]) {
-    return res.status(404).json({
+    // Update service status
+    const updatedService = await service.update({
+      status,
+      updatedAt: new Date().toISOString(),
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Service status updated successfully",
+      data: {
+        service: updatedService,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
       status: "error",
-      message: "Service not found",
+      message: "Error updating service status",
+      code: "INTERNAL_ERROR",
     });
   }
-
-  // Update service status
-  const updatedService = {
-    ...services[serviceId],
-    status,
-    updatedAt: new Date().toISOString(),
-  };
-
-  res.status(200).json({
-    status: "success",
-    message: "Service status updated successfully",
-    data: {
-      service: updatedService,
-    },
-  });
 });
 
 /**
@@ -844,7 +758,7 @@ router.patch("/:id/status", authMiddleware.protect, (req, res) => {
  *       401:
  *         description: Not authenticated
  */
-router.post("/:id/renew", authMiddleware.protect, (req, res) => {
+router.post("/:id/renew", authMiddleware.protect, async (req, res) => {
   console.log(`Renewing service ID: ${req.params.id}`, req.body);
 
   const serviceId = req.params.id;
@@ -859,102 +773,83 @@ router.post("/:id/renew", authMiddleware.protect, (req, res) => {
     });
   }
 
-  // Sample services data
-  const services = {
-    "svc-12345": {
-      id: "svc-12345",
-      name: "Web Hosting Plan",
-      type: "vm",
-      plan: "standard",
-      status: "active",
-      resources: {
-        cpu: 2,
-        memoryGB: 4,
-        storageGB: 100,
-        bandwidth: 1000,
-      },
-      price: {
-        amount: 29.99,
-        currency: "USD",
-        billingCycle: "monthly",
-      },
-      createdAt: "2023-01-15T08:30:00Z",
-      expiresAt: "2024-01-15T08:30:00Z",
-    },
-  };
+  try {
+    const service = await Service.findByPk(serviceId);
+    if (!service) {
+      return res.status(404).json({
+        status: "error",
+        message: "Service not found",
+      });
+    }
 
-  // Check if service exists
-  if (!services[serviceId]) {
-    return res.status(404).json({
+    // Calculate new expiration date
+    let expirationDate = new Date(service.expiresAt);
+    switch (billingCycle) {
+      case "monthly":
+        expirationDate.setMonth(expirationDate.getMonth() + 1);
+        break;
+      case "quarterly":
+        expirationDate.setMonth(expirationDate.getMonth() + 3);
+        break;
+      case "annually":
+        expirationDate.setFullYear(expirationDate.getFullYear() + 1);
+        break;
+    }
+
+    // Calculate invoice amount based on billing cycle
+    let invoiceAmount = service.price.amount;
+    switch (billingCycle) {
+      case "monthly":
+        // Base price
+        break;
+      case "quarterly":
+        invoiceAmount = service.price.amount * 3 * 0.95; // 5% discount
+        break;
+      case "annually":
+        invoiceAmount = service.price.amount * 12 * 0.9; // 10% discount
+        break;
+    }
+
+    // Round to 2 decimal places
+    invoiceAmount = Math.round(invoiceAmount * 100) / 100;
+
+    // Update service
+    const updatedService = await service.update({
+      price: {
+        ...service.price,
+        billingCycle,
+      },
+      expiresAt: expirationDate.toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    // Generate invoice
+    const invoice = {
+      id: `inv-${Math.floor(Math.random() * 100000)}`,
+      serviceId,
+      amount: invoiceAmount,
+      currency: service.price.currency,
+      status: "pending",
+      billingCycle,
+      createdAt: new Date().toISOString(),
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // Due in 7 days
+    };
+
+    res.status(200).json({
+      status: "success",
+      message: "Service renewed successfully",
+      data: {
+        service: updatedService,
+        invoice,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
       status: "error",
-      message: "Service not found",
+      message: "Error renewing service",
+      code: "INTERNAL_ERROR",
     });
   }
-
-  const service = services[serviceId];
-
-  // Calculate new expiration date
-  let expirationDate = new Date(service.expiresAt);
-  switch (billingCycle) {
-    case "monthly":
-      expirationDate.setMonth(expirationDate.getMonth() + 1);
-      break;
-    case "quarterly":
-      expirationDate.setMonth(expirationDate.getMonth() + 3);
-      break;
-    case "annually":
-      expirationDate.setFullYear(expirationDate.getFullYear() + 1);
-      break;
-  }
-
-  // Calculate invoice amount based on billing cycle
-  let invoiceAmount = service.price.amount;
-  switch (billingCycle) {
-    case "monthly":
-      // Base price
-      break;
-    case "quarterly":
-      invoiceAmount = service.price.amount * 3 * 0.95; // 5% discount
-      break;
-    case "annually":
-      invoiceAmount = service.price.amount * 12 * 0.9; // 10% discount
-      break;
-  }
-
-  // Round to 2 decimal places
-  invoiceAmount = Math.round(invoiceAmount * 100) / 100;
-
-  // Update service
-  const updatedService = {
-    ...service,
-    price: {
-      ...service.price,
-      billingCycle,
-    },
-    expiresAt: expirationDate.toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-
-  // Generate invoice
-  const invoice = {
-    id: `inv-${Math.floor(Math.random() * 100000)}`,
-    serviceId,
-    amount: invoiceAmount,
-    currency: service.price.currency,
-    status: "pending",
-    billingCycle,
-    createdAt: new Date().toISOString(),
-    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // Due in 7 days
-  };
-
-  res.status(200).json({
-    status: "success",
-    message: "Service renewed successfully",
-    data: {
-      service: updatedService,
-      invoice,
-    },
-  });
 });
 
 /**
@@ -1014,7 +909,7 @@ router.post("/:id/renew", authMiddleware.protect, (req, res) => {
  *       401:
  *         description: Not authenticated
  */
-router.patch("/:id/upgrade", authMiddleware.protect, (req, res) => {
+router.patch("/:id/upgrade", authMiddleware.protect, async (req, res) => {
   console.log(`Upgrading service ID: ${req.params.id}`, req.body);
 
   const serviceId = req.params.id;
@@ -1029,93 +924,74 @@ router.patch("/:id/upgrade", authMiddleware.protect, (req, res) => {
     });
   }
 
-  // Sample services data
-  const services = {
-    "svc-12345": {
-      id: "svc-12345",
-      name: "Web Hosting Plan",
-      type: "vm",
-      plan: "standard",
-      status: "active",
-      resources: {
-        cpu: 2,
-        memoryGB: 4,
-        storageGB: 100,
-        bandwidth: 1000,
+  try {
+    const service = await Service.findByPk(serviceId);
+    if (!service) {
+      return res.status(404).json({
+        status: "error",
+        message: "Service not found",
+      });
+    }
+
+    // Skip if plan is the same
+    if (service.plan === plan) {
+      return res.status(400).json({
+        status: "error",
+        message: `Service is already on the ${plan} plan`,
+      });
+    }
+
+    // Define resources and prices for each plan
+    const planDetails = {
+      basic: {
+        resources: { cpu: 1, memoryGB: 2, storageGB: 50, bandwidth: 500 },
+        price: 19.99,
       },
+      standard: {
+        resources: { cpu: 2, memoryGB: 4, storageGB: 100, bandwidth: 1000 },
+        price: 29.99,
+      },
+      premium: {
+        resources: { cpu: 4, memoryGB: 8, storageGB: 200, bandwidth: 2000 },
+        price: 49.99,
+      },
+      enterprise: {
+        resources: { cpu: 8, memoryGB: 16, storageGB: 500, bandwidth: 5000 },
+        price: 99.99,
+      },
+    };
+
+    // Calculate price difference
+    const currentPrice = service.price.amount;
+    const newPrice = planDetails[plan].price;
+    const priceDifference = newPrice - currentPrice;
+
+    // Update service
+    const updatedService = await service.update({
+      plan,
+      resources: planDetails[plan].resources,
       price: {
-        amount: 29.99,
-        currency: "USD",
-        billingCycle: "monthly",
+        ...service.price,
+        amount: newPrice,
       },
-      createdAt: "2023-01-15T08:30:00Z",
-      expiresAt: "2024-01-15T08:30:00Z",
-    },
-  };
+      updatedAt: new Date().toISOString(),
+    });
 
-  // Check if service exists
-  if (!services[serviceId]) {
-    return res.status(404).json({
+    res.status(200).json({
+      status: "success",
+      message: "Service plan updated successfully",
+      data: {
+        service: updatedService,
+        priceDifference: Math.round(priceDifference * 100) / 100,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
       status: "error",
-      message: "Service not found",
+      message: "Error upgrading service plan",
+      code: "INTERNAL_ERROR",
     });
   }
-
-  const service = services[serviceId];
-
-  // Skip if plan is the same
-  if (service.plan === plan) {
-    return res.status(400).json({
-      status: "error",
-      message: `Service is already on the ${plan} plan`,
-    });
-  }
-
-  // Define resources and prices for each plan
-  const planDetails = {
-    basic: {
-      resources: { cpu: 1, memoryGB: 2, storageGB: 50, bandwidth: 500 },
-      price: 19.99,
-    },
-    standard: {
-      resources: { cpu: 2, memoryGB: 4, storageGB: 100, bandwidth: 1000 },
-      price: 29.99,
-    },
-    premium: {
-      resources: { cpu: 4, memoryGB: 8, storageGB: 200, bandwidth: 2000 },
-      price: 49.99,
-    },
-    enterprise: {
-      resources: { cpu: 8, memoryGB: 16, storageGB: 500, bandwidth: 5000 },
-      price: 99.99,
-    },
-  };
-
-  // Calculate price difference
-  const currentPrice = service.price.amount;
-  const newPrice = planDetails[plan].price;
-  const priceDifference = newPrice - currentPrice;
-
-  // Update service
-  const updatedService = {
-    ...service,
-    plan,
-    resources: planDetails[plan].resources,
-    price: {
-      ...service.price,
-      amount: newPrice,
-    },
-    updatedAt: new Date().toISOString(),
-  };
-
-  res.status(200).json({
-    status: "success",
-    message: "Service plan updated successfully",
-    data: {
-      service: updatedService,
-      priceDifference: Math.round(priceDifference * 100) / 100,
-    },
-  });
 });
 
 /**
@@ -1157,7 +1033,7 @@ router.patch("/:id/upgrade", authMiddleware.protect, (req, res) => {
  *                   type: string
  *                   example: Failed to retrieve VM plans
  */
-router.get('/plans', serviceController.getVmPlans);
+router.get("/plans", serviceController.getVmPlans);
 
 /**
  * @swagger
@@ -1196,7 +1072,7 @@ router.get('/plans', serviceController.getVmPlans);
  *                   type: string
  *                   example: Failed to retrieve operating systems
  */
-router.get('/operating-systems', serviceController.getOperatingSystems);
+router.get("/operating-systems", serviceController.getOperatingSystems);
 
 /**
  * @swagger
@@ -1293,7 +1169,11 @@ router.get('/operating-systems', serviceController.getOperatingSystems);
  *                   type: string
  *                   example: Failed to configure service
  */
-router.post('/configure', authMiddleware.protect, serviceController.configureService);
+router.post(
+  "/configure",
+  authMiddleware.protect,
+  serviceController.configureService
+);
 
 /**
  * @swagger
@@ -1334,7 +1214,7 @@ router.post('/configure', authMiddleware.protect, serviceController.configureSer
  *                   type: string
  *                   example: Failed to retrieve data centers
  */
-router.get('/data-centers', serviceController.getDataCenters);
+router.get("/data-centers", serviceController.getDataCenters);
 
 // For demonstration only - mock endpoint
 router.get("/demo", (req, res) => {

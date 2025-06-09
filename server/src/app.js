@@ -7,10 +7,33 @@ const swaggerUi = require("swagger-ui-express");
 const dotenv = require("dotenv");
 const fs = require("fs");
 const path = require("path");
+const rateLimit = require("express-rate-limit");
+const swaggerDocument = require("./swagger.json");
+const { errorHandler } = require("./middleware/error-handler");
+
+// Add error handling for uncaught exceptions
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (error) => {
+  console.error("Unhandled Rejection:", error);
+  process.exit(1);
+});
 
 dotenv.config();
 
 console.log("Starting app...");
+console.log("Environment variables:", {
+  NODE_ENV: process.env.NODE_ENV,
+  DB_DIALECT: process.env.DB_DIALECT,
+  DB_HOST: process.env.DB_HOST,
+  DB_PORT: process.env.DB_PORT,
+  DB_NAME: process.env.DB_NAME,
+  DB_USER: process.env.DB_USER,
+  // Don't log the password
+});
 
 // Initialize express app
 const app = express();
@@ -18,10 +41,11 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:8080",
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
     credentials: true,
   })
 );
+
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -100,6 +124,9 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocs, { explorer: true })
 );
+
+// Swagger UI setup
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Database status endpoint
 app.get("/api/status", (req, res) => {
@@ -194,72 +221,51 @@ try {
     const smsRoutes = require("./routes/sms.routes");
     console.log("SMS routes loaded successfully!");
 
+    // Import new routes
+    const cartRoutes = require("./routes/cart.routes");
+    const withdrawalRoutes = require("./routes/withdrawal.routes");
+    const oneTimeLoginRoutes = require("./routes/one-time-login.routes");
+    const successPasswordRoutes = require("./routes/success-password.routes");
+    const securityRoutes = require("./routes/security");
+
     console.log("All routes imported successfully, now mounting...");
 
     // Use routes
     app.use("/api/auth", authRoutes);
     console.log("Auth routes mounted at /api/auth");
-
     app.use("/api/users", userRoutes);
     console.log("User routes mounted at /api/users");
-
     app.use("/api/services", serviceRoutes);
     console.log("Service routes mounted at /api/services");
-
     app.use("/api/orders", orderRoutes);
     console.log("Order routes mounted at /api/orders");
-
     app.use("/api/wallet", walletRoutes);
     console.log("Wallet routes mounted at /api/wallet");
-
     app.use("/api/tickets", ticketRoutes);
     console.log("Ticket routes mounted at /api/tickets");
-
     app.use("/api/vcenter", vCenterRoutes);
     console.log("vCenter routes mounted at /api/vcenter");
-
     app.use("/api/payments", paymentRoutes);
     console.log("Payment routes mounted at /api/payments");
-
     app.use("/api/sms", smsRoutes);
     console.log("SMS routes mounted at /api/sms");
 
+    // Add new routes
+    app.use("/api/cart", cartRoutes);
+    app.use("/api/withdrawals", withdrawalRoutes);
+    app.use("/api/one-time-login", oneTimeLoginRoutes);
+    app.use("/api/success-password", successPasswordRoutes);
+    app.use("/api/security", securityRoutes);
+    console.log("Security routes mounted at /api/security");
+
     console.log("API routes loaded and mounted successfully");
-  } catch (routeError) {
-    console.error("Error loading specific route:", routeError.message);
-    console.error(routeError.stack);
-    throw routeError;
+  } catch (error) {
+    console.error("Error loading routes:", error);
+    throw error;
   }
 } catch (error) {
-  console.warn("Error loading routes:", error.message);
-  console.log("Setting up mock endpoints instead");
-
-  // Mock endpoints for demonstration
-  app.get("/api/auth/demo", (req, res) => {
-    res.json({ message: "Auth API is working (mock mode)" });
-  });
-
-  app.get("/api/services/demo", (req, res) => {
-    res.json({
-      message: "Services API is working (mock mode)",
-      services: [
-        { id: 1, name: "Demo VM", description: "Demo virtual machine service" },
-        { id: 2, name: "Demo Storage", description: "Demo storage service" },
-      ],
-    });
-  });
-
-  app.get("/api/user/demo", (req, res) => {
-    res.json({
-      message: "User API is working (mock mode)",
-      user: {
-        id: 1,
-        name: "Demo User",
-        email: "demo@example.com",
-        role: "user",
-      },
-    });
-  });
+  console.error("Error in route setup:", error);
+  throw error;
 }
 
 // Add diagnostic route
@@ -302,15 +308,47 @@ app.get("/", (req, res) => {
   });
 });
 
+// Rate limiting
+const authLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 5, // 5 requests per minute
+  message: {
+    success: false,
+    error: {
+      message: "Too many requests, please try again later",
+      code: "RATE_LIMIT_EXCEEDED",
+    },
+  },
+});
+
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 60, // 60 requests per minute
+  message: {
+    success: false,
+    error: {
+      message: "Too many requests, please try again later",
+      code: "RATE_LIMIT_EXCEEDED",
+    },
+  },
+});
+
+// Apply rate limiting
+app.use("/api/auth", authLimiter);
+app.use("/api", apiLimiter);
+
 // Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(`Error: ${err.message}`);
-  res.status(err.status || 500).json({
-    message: err.message || "Internal Server Error",
+app.use(errorHandler);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    status: "error",
+    message: "Route not found",
   });
 });
 
-// Set port and start server
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

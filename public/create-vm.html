@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ایجاد سرور مجازی - نتوریا</title>
+    <link rel="stylesheet" href="./Assets/Css/common.css">
+    <link rel="stylesheet" href="./Assets/Css/create-vm.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <script src="./Assets/Js/utils.js"></script>
+    <script src="./Assets/Js/api-client.js"></script>
+    <script src="./Assets/Js/vm-creator.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <i class="bx bx-menu" id="menu-icon" dir="rtl"></i>
+        <button id="login">
+            <a href="./login.html">ورود / ثبت نام</a>
+        </button>
+        <a href="./cart.html" id="cart-icon">
+            <i class="bx bx-cart"></i>
+            <span class="cart-count">0</span>
+        </a>
+        <nav class="navbar">
+            <a href="./domain.html">دامنه</a>
+            <a href="./cloud-host.html">هاست</a>
+            <a href="./virtual-server.html">سرور مجازی</a>
+            <a href="./cloud-server.html">سرور ابری</a>
+            <a href="./blogs.html">وبلاگ</a>
+            <a href="./Contact-us.html">ارتباط باما</a>
+        </nav>
+        <a href="./index.html" class="logo">Netto<span>ria</span></a>
+        <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="create-vm-container">
+        <div class="progress-bar">
+            <div class="step active" data-step="1">
+                <span class="step-number">1</span>
+                <span class="step-title">انتخاب منابع</span>
+            </div>
+            <div class="step" data-step="2">
+                <span class="step-number">2</span>
+                <span class="step-title">انتخاب سیستم عامل</span>
+            </div>
+            <div class="step" data-step="3">
+                <span class="step-number">3</span>
+                <span class="step-title">تنظیمات شبکه</span>
+            </div>
+            <div class="step" data-step="4">
+                <span class="step-number">4</span>
+                <span class="step-title">تایید و ایجاد</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Resource Selection -->
+        <div class="step-content active" id="step-1">
+            <h2>انتخاب منابع سرور</h2>
+            <form id="resource-form">
+                <div class="form-group">
+                    <label for="vm-name">نام سرور</label>
+                    <input type="text" id="vm-name" required minlength="3" maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label for="cpu-count">تعداد CPU</label>
+                    <input type="number" id="cpu-count" min="1" max="32" required>
+                </div>
+                <div class="form-group">
+                    <label for="memory">حافظه (GB)</label>
+                    <input type="number" id="memory" min="1" max="256" required>
+                </div>
+                <div class="form-group">
+                    <label for="disk">فضای ذخیره‌سازی (GB)</label>
+                    <input type="number" id="disk" min="10" max="2000" required>
+                </div>
+                <div class="form-group">
+                    <label for="host-system">هاست</label>
+                    <select id="host-system" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="datastore">فضای ذخیره‌سازی</label>
+                    <select id="datastore" required></select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn next-step">مرحله بعد</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 2: OS Selection -->
+        <div class="step-content" id="step-2">
+            <h2>انتخاب سیستم عامل</h2>
+            <div class="os-templates">
+                <!-- OS templates will be populated here -->
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn prev-step">مرحله قبل</button>
+                <button type="button" class="btn next-step">مرحله بعد</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Network Configuration -->
+        <div class="step-content" id="step-3">
+            <h2>تنظیمات شبکه</h2>
+            <div class="network-config">
+                <div class="network-adapters">
+                    <!-- Network adapters will be populated here -->
+                </div>
+                <button type="button" class="btn add-network">افزودن کارت شبکه</button>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn prev-step">مرحله قبل</button>
+                <button type="button" class="btn next-step">مرحله بعد</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Confirmation -->
+        <div class="step-content" id="step-4">
+            <h2>تایید و ایجاد سرور</h2>
+            <div class="confirmation-details">
+                <!-- Configuration summary will be populated here -->
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn prev-step">مرحله قبل</button>
+                <button type="button" class="btn create-vm">ایجاد سرور</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Initialize VM creation
+            try {
+                const resources = await vmCreator.initialize();
+
+                // Populate host systems
+                const hostSelect = document.getElementById('host-system');
+                resources.hosts.forEach(host => {
+                    const option = document.createElement('option');
+                    option.value = host.id;
+                    option.textContent = host.name;
+                    hostSelect.appendChild(option);
+                });
+
+                // Populate datastores
+                const datastoreSelect = document.getElementById('datastore');
+                resources.datastores.forEach(datastore => {
+                    const option = document.createElement('option');
+                    option.value = datastore.id;
+                    option.textContent = `${datastore.name} (${datastore.freeSpace}GB free)`;
+                    datastoreSelect.appendChild(option);
+                });
+
+                // Load OS templates
+                const templates = await vmCreator.getOSTemplates();
+                const osTemplates = document.querySelector('.os-templates');
+                templates.forEach(template => {
+                    const templateCard = document.createElement('div');
+                    templateCard.className = 'os-template-card';
+                    templateCard.innerHTML = `
+                        <img src="${template.icon}" alt="${template.name}">
+                        <h3>${template.name}</h3>
+                        <p>${template.description}</p>
+                        <button class="btn select-os" data-os-id="${template.id}">انتخاب</button>
+                    `;
+                    osTemplates.appendChild(templateCard);
+                });
+
+                // Add event listeners
+                setupEventListeners();
+            } catch (error) {
+                showToast('خطا در بارگذاری منابع', 'error');
+            }
+        });
+
+        function setupEventListeners() {
+            // Resource form submission
+            document.getElementById('resource-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                updateVMConfig();
+                nextStep();
+            });
+
+            // OS template selection
+            document.querySelector('.os-templates').addEventListener('click', function (e) {
+                if (e.target.classList.contains('select-os')) {
+                    const osId = e.target.dataset.osId;
+                    vmCreator.updateConfig('osType', osId);
+                    nextStep();
+                }
+            });
+
+            // Network adapter addition
+            document.querySelector('.add-network').addEventListener('click', function () {
+                addNetworkAdapter();
+            });
+
+            // VM creation
+            document.querySelector('.create-vm').addEventListener('click', async function () {
+                try {
+                    const result = await vmCreator.createVM();
+                    showToast('سرور با موفقیت ایجاد شد', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'virtual-server.html';
+                    }, 2000);
+                } catch (error) {
+                    showToast(error.message, 'error');
+                }
+            });
+
+            // Navigation buttons
+            document.querySelectorAll('.next-step').forEach(button => {
+                button.addEventListener('click', nextStep);
+            });
+
+            document.querySelectorAll('.prev-step').forEach(button => {
+                button.addEventListener('click', prevStep);
+            });
+        }
+
+        function updateVMConfig() {
+            vmCreator.updateConfig('name', document.getElementById('vm-name').value);
+            vmCreator.updateConfig('cpuCount', parseInt(document.getElementById('cpu-count').value));
+            vmCreator.updateConfig('memoryGB', parseInt(document.getElementById('memory').value));
+            vmCreator.updateConfig('diskGB', parseInt(document.getElementById('disk').value));
+            vmCreator.updateConfig('hostSystem', document.getElementById('host-system').value);
+            vmCreator.updateConfig('datastore', document.getElementById('datastore').value);
+        }
+
+        function nextStep() {
+            const currentStep = document.querySelector('.step-content.active');
+            const nextStep = currentStep.nextElementSibling;
+
+            if (nextStep) {
+                currentStep.classList.remove('active');
+                nextStep.classList.add('active');
+
+                const currentStepNum = parseInt(currentStep.id.split('-')[1]);
+                document.querySelector(`.step[data-step="${currentStepNum}"]`).classList.remove('active');
+                document.querySelector(`.step[data-step="${currentStepNum + 1}"]`).classList.add('active');
+
+                if (currentStepNum === 3) {
+                    updateConfirmationDetails();
+                }
+            }
+        }
+
+        function prevStep() {
+            const currentStep = document.querySelector('.step-content.active');
+            const prevStep = currentStep.previousElementSibling;
+
+            if (prevStep) {
+                currentStep.classList.remove('active');
+                prevStep.classList.add('active');
+
+                const currentStepNum = parseInt(currentStep.id.split('-')[1]);
+                document.querySelector(`.step[data-step="${currentStepNum}"]`).classList.remove('active');
+                document.querySelector(`.step[data-step="${currentStepNum - 1}"]`).classList.add('active');
+            }
+        }
+
+        function addNetworkAdapter() {
+            const networkConfig = vmCreator.getConfig().networkConfig;
+            const adapterId = `adapter-${networkConfig.length + 1}`;
+
+            const adapterElement = document.createElement('div');
+            adapterElement.className = 'network-adapter';
+            adapterElement.innerHTML = `
+                <div class="form-group">
+                    <label for="${adapterId}-type">نوع کارت شبکه</label>
+                    <select id="${adapterId}-type" required>
+                        <option value="vmxnet3">VMXNET3</option>
+                        <option value="e1000">E1000</option>
+                        <option value="e1000e">E1000E</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="${adapterId}-network">شبکه</label>
+                    <select id="${adapterId}-network" required></select>
+                </div>
+                <button type="button" class="btn remove-adapter">حذف</button>
+            `;
+
+            document.querySelector('.network-adapters').appendChild(adapterElement);
+
+            // Populate networks
+            const networkSelect = adapterElement.querySelector(`#${adapterId}-network`);
+            vmCreator.getAvailableNetworks().then(networks => {
+                networks.forEach(network => {
+                    const option = document.createElement('option');
+                    option.value = network.id;
+                    option.textContent = network.name;
+                    networkSelect.appendChild(option);
+                });
+            });
+
+            // Add remove event listener
+            adapterElement.querySelector('.remove-adapter').addEventListener('click', function () {
+                adapterElement.remove();
+                updateNetworkConfig();
+            });
+
+            // Add change event listeners
+            adapterElement.querySelectorAll('select').forEach(select => {
+                select.addEventListener('change', updateNetworkConfig);
+            });
+        }
+
+        function updateNetworkConfig() {
+            const adapters = [];
+            document.querySelectorAll('.network-adapter').forEach(adapter => {
+                adapters.push({
+                    type: adapter.querySelector('select[id$="-type"]').value,
+                    network: adapter.querySelector('select[id$="-network"]').value
+                });
+            });
+            vmCreator.updateConfig('networkConfig', adapters);
+        }
+
+        function updateConfirmationDetails() {
+            const config = vmCreator.getConfig();
+            const detailsContainer = document.querySelector('.confirmation-details');
+
+            detailsContainer.innerHTML = `
+                <div class="detail-item">
+                    <h3>اطلاعات پایه</h3>
+                    <p>نام سرور: ${config.name}</p>
+                    <p>CPU: ${config.cpuCount} هسته</p>
+                    <p>حافظه: ${config.memoryGB} GB</p>
+                    <p>فضای ذخیره‌سازی: ${config.diskGB} GB</p>
+                </div>
+                <div class="detail-item">
+                    <h3>تنظیمات شبکه</h3>
+                    ${config.networkConfig.map(adapter => `
+                        <p>کارت شبکه: ${adapter.type} - ${adapter.network}</p>
+                    `).join('')}
+                </div>
+            `;
+        }
+    </script>
+</body>
+
+</html>

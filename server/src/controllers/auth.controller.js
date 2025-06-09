@@ -4,6 +4,13 @@ const { Sequelize } = require("sequelize");
 const NotificationUtil = require("../utils/notification.util");
 const logger = require("../utils/logger");
 const smsService = require("../services/sms.service");
+const { AppError, createErrorResponse } = require('../utils/errorHandler');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const speakeasy = require('speakeasy');
+const QRCode = require('qrcode');
+const { sendEmail } = require('../utils/email');
+const { generateToken } = require('../utils/token');
 
 console.log("Initializing Auth Controller...");
 
@@ -12,17 +19,15 @@ const authController = {
   // Register new user
   register: async (req, res) => {
     console.log("Processing registration request", req.body);
-
     try {
-      const { firstName, lastName, email, phoneNumber, password, role } =
-        req.body;
+      const { firstName, lastName, email, phoneNumber, password, role } = req.body;
+      console.log("Received registration data:", { firstName, lastName, email, phoneNumber, role });
 
       // Validate required fields
       if (!firstName || !lastName || !email || !phoneNumber || !password) {
         return res.status(400).json({
           status: "error",
-          message:
-            "Please provide all required fields: firstName, lastName, email, phoneNumber, password",
+          message: "Please provide all required fields: firstName, lastName, email, phoneNumber, password",
         });
       }
 
@@ -34,14 +39,15 @@ const authController = {
       });
 
       if (existingUser) {
-        console.log(
-          `Registration failed: User with email ${email} or phone ${phoneNumber} already exists`
-        );
+        console.log(`Registration failed: User with email ${email} or phone ${phoneNumber} already exists`);
         return res.status(400).json({
           status: "error",
           message: "User with this email or phone number already exists",
         });
       }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 12);
 
       // Create new user with pending status
       const newUser = await User.create({
@@ -49,19 +55,15 @@ const authController = {
         lastName,
         email,
         phoneNumber,
-        password,
-        role: role || "user", // Default to 'user' if role not specified
-        status: "pending", // User is pending until phone verification is complete
+        password: hashedPassword,
+        role: role || "user",
+        status: "pending",
       });
 
-      console.log(
-        `User created with ID: ${newUser.id} - pending OTP verification`
-      );
+      console.log(`User created with ID: ${newUser.id} - pending OTP verification`);
 
       // Generate verification code for phone
-      const verificationCode = Math.floor(
-        100000 + Math.random() * 900000
-      ).toString();
+      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
       newUser.phoneVerificationCode = verificationCode;
       newUser.phoneVerificationExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
       await newUser.save();
@@ -81,8 +83,7 @@ const authController = {
         // Continue with registration even if SMS fails, but notify the user
         return res.status(201).json({
           status: "warning",
-          message:
-            "Registration created but SMS verification could not be sent. Please contact support.",
+          message: "Registration created but SMS verification could not be sent. Please contact support.",
           data: {
             userId: newUser.id,
             phoneNumber: newUser.phoneNumber,
@@ -90,11 +91,23 @@ const authController = {
         });
       }
 
+      // Generate verification token
+      const verificationToken = generateToken();
+
+      // Save verification token
+      await newUser.update({ verificationToken });
+
+      // Send verification email
+      await sendEmail({
+        to: email,
+        subject: 'Verify your email',
+        text: `Please verify your email by clicking this link: ${process.env.FRONTEND_URL}/verify-email/${verificationToken}`
+      });
+
       // Return response without generating token yet
       res.status(201).json({
         status: "success",
-        message:
-          "Registration initiated. Please verify your phone number with the OTP sent.",
+        message: "Registration initiated. Please verify your phone number with the OTP sent and your email.",
         data: {
           userId: newUser.id,
           phoneNumber: newUser.phoneNumber,
@@ -352,15 +365,11 @@ const authController = {
   // Login with email/phone and password
   login: async (req, res) => {
     console.log("Processing login request", req.body);
-
     try {
-      // Support both 'identifier' field (from API docs) and direct email/phoneNumber
-      const { identifier, email, phoneNumber, password } = req.body;
+      const { identifier, password } = req.body;
+      console.log("Received login data:", { identifier });
 
-      // Determine which identifier to use (prioritize explicit identifier field)
-      const userIdentifier = identifier || email || phoneNumber;
-
-      if (!userIdentifier || !password) {
+      if (!identifier || !password) {
         console.log("Login failed: Missing identifier or password");
         return res.status(400).json({
           status: "error",
@@ -372,14 +381,14 @@ const authController = {
       const user = await User.findOne({
         where: {
           [Sequelize.Op.or]: [
-            { email: userIdentifier },
-            { phoneNumber: userIdentifier },
+            { email: identifier },
+            { phoneNumber: identifier },
           ],
         },
       });
 
       if (!user || !(await user.comparePassword(password))) {
-        console.log(`Login failed: Invalid credentials for ${userIdentifier}`);
+        console.log(`Login failed: Invalid credentials for ${identifier}`);
         return res.status(401).json({
           status: "error",
           message: "Invalid credentials",
@@ -390,8 +399,7 @@ const authController = {
       if (user.status === "pending") {
         return res.status(403).json({
           status: "error",
-          message:
-            "Your account is pending verification. Please verify your phone number first.",
+          message: "Your account is pending verification. Please verify your phone number first.",
           data: {
             requiresPhoneVerification: true,
             phoneNumber: user.phoneNumber,
@@ -406,46 +414,59 @@ const authController = {
         });
       }
 
-      // Instead of direct login, send OTP for verification
-      // Generate verification code for phone
-      const verificationCode = Math.floor(
-        100000 + Math.random() * 900000
-      ).toString();
-      user.phoneVerificationCode = verificationCode;
-      user.phoneVerificationExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-      await user.save();
+      // Check if email is verified
+      if (!user.isEmailVerified) {
+        throw new AppError(401, 'Please verify your email first');
+      }
 
-      // Log the OTP code in terminal for testing
-      console.log("\n=== OTP CODE FOR TESTING ===");
-      console.log(`Phone Number: ${user.phoneNumber}`);
-      console.log(`OTP Code: ${verificationCode}`);
-      console.log("===========================\n");
-
-      // Send SMS verification
-      try {
-        await smsService.sendVerificationCode(
-          user.phoneNumber,
-          verificationCode
+      // Check if 2FA is enabled
+      if (user.is2FAEnabled) {
+        // Generate temporary token for 2FA
+        const tempToken = jwt.sign(
+          { userId: user.id },
+          process.env.JWT_SECRET,
+          { expiresIn: '5m' }
         );
-        console.log(`Login OTP sent to ${user.phoneNumber}`);
-      } catch (smsError) {
-        console.error("Error sending login OTP SMS:", smsError);
-        return res.status(500).json({
-          status: "error",
-          message:
-            "Password verified but failed to send OTP. Please try again or contact support.",
+
+        res.cookie('temp_token', tempToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 5 * 60 * 1000 // 5 minutes
+        });
+
+        return res.json({
+          success: true,
+          requires2FA: true,
+          message: '2FA verification required'
         });
       }
 
-      // Return response requesting OTP verification
+      // Generate token
+      const token = authUtils.generateToken(user);
+
+      // Set cookie
+      res.cookie('auth_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      });
+
       res.status(200).json({
         status: "success",
-        message:
-          "Password verified. Please verify with the OTP sent to your phone.",
+        message: "Login successful",
         data: {
-          requiresOtp: true,
-          phoneNumber: user.phoneNumber,
-          expiresIn: "10 minutes",
+          token,
+          user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            role: user.role,
+            status: user.status,
+          },
         },
       });
     } catch (error) {
@@ -769,6 +790,185 @@ const authController = {
       });
     }
   },
+
+  // Setup 2FA
+  setup2FA: async (req, res) => {
+    try {
+      const userId = req.user.userId;
+
+      // Generate secret
+      const secret = speakeasy.generateSecret({
+        name: `Nettoria:${req.user.email}`
+      });
+
+      // Save secret to user
+      await User.update(
+        { twoFactorSecret: secret.base32 },
+        { where: { id: userId } }
+      );
+
+      // Generate QR code
+      const qrCode = await QRCode.toDataURL(secret.otpauth_url);
+
+      res.json({
+        success: true,
+        data: {
+          secret: secret.base32,
+          qrCode
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Verify 2FA
+  verify2FA: async (req, res) => {
+    try {
+      const { code } = req.body;
+      const tempToken = req.cookies.temp_token;
+
+      if (!tempToken) {
+        throw new AppError(401, 'Invalid or expired session');
+      }
+
+      // Verify temp token
+      const decoded = jwt.verify(tempToken, process.env.JWT_SECRET);
+      const user = await User.findByPk(decoded.userId);
+
+      if (!user) {
+        throw new AppError(401, 'User not found');
+      }
+
+      // Verify 2FA code
+      const verified = speakeasy.totp.verify({
+        secret: user.twoFactorSecret,
+        encoding: 'base32',
+        token: code
+      });
+
+      if (!verified) {
+        throw new AppError(401, 'Invalid 2FA code');
+      }
+
+      // Generate final JWT token
+      const token = jwt.sign(
+        { userId: user.id },
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+
+      // Clear temp token
+      res.clearCookie('temp_token');
+
+      // Set auth token
+      res.cookie('auth_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      });
+
+      res.json({
+        success: true,
+        message: '2FA verification successful',
+        data: {
+          user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email
+          }
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Request password reset
+  requestPasswordReset: async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      const user = await User.findOne({ where: { email } });
+      if (!user) {
+        // Don't reveal that user doesn't exist
+        return res.json({
+          success: true,
+          message: 'If an account exists with this email, you will receive a password reset link'
+        });
+      }
+
+      // Generate reset token
+      const resetToken = generateToken();
+      const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+
+      // Save reset token
+      await user.update({
+        resetToken,
+        resetTokenExpiry
+      });
+
+      // Send reset email
+      await sendEmail({
+        to: email,
+        subject: 'Password Reset Request',
+        text: `Please reset your password by clicking this link: ${process.env.FRONTEND_URL}/reset-password/${resetToken}`
+      });
+
+      res.json({
+        success: true,
+        message: 'If an account exists with this email, you will receive a password reset link'
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Reset password
+  resetPassword: async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+
+      const user = await User.findOne({
+        where: {
+          resetToken: token,
+          resetTokenExpiry: { [Sequelize.Op.gt]: Date.now() }
+        }
+      });
+
+      if (!user) {
+        throw new AppError(400, 'Invalid or expired reset token');
+      }
+
+      // Hash new password
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+      // Update password and clear reset token
+      await user.update({
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiry: null
+      });
+
+      res.json({
+        success: true,
+        message: 'Password has been reset successfully'
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Logout
+  logout: async (req, res) => {
+    res.clearCookie('auth_token');
+    res.json({
+      success: true,
+      message: 'Logged out successfully'
+    });
+  }
 };
 
 // Export all controller methods

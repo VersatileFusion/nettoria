@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تاریخچه برداشت وجه - نتوریا</title>
+    <link rel="icon" href="./Assets/img/icon.ico" type="image/ico" />
+    <link rel="stylesheet" href="./Assets/Css/wallet.css" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+</head>
+
+<body>
+    <header class="header">
+        <i class="bx bx-menu" id="menu-icon"></i>
+        <button id="login"><a href="./login.html">ورود / ثبت نام</a></button>
+        <nav class="navbar">
+            <a href="./domain.html">دامنه</a>
+            <a href="./cloud-host.html">هاست</a>
+            <a href="./virtual-server.html">سرور مجازی</a>
+            <a href="./cloud-server.html">سرور ابری</a>
+            <a href="./blogs.html">وبلاگ</a>
+            <a href="./Contact-us.html">ارتباط باما</a>
+        </nav>
+        <a href="./index.html" class="logo">Netto<span>ria</span></a>
+        <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+    </header>
+
+    <section class="wallet-container">
+        <div class="wallet-header">
+            <h1>تاریخچه برداشت وجه</h1>
+            <div class="wallet-actions">
+                <button class="add-funds-btn" onclick="window.location.href='./wallet.html'">
+                    بازگشت به کیف پول
+                </button>
+            </div>
+        </div>
+
+        <div id="errorMessage"></div>
+        <div id="successMessage"></div>
+
+        <div class="transactions-section">
+            <div class="transactions-header">
+                <h2>درخواست‌های برداشت وجه</h2>
+                <div class="header-actions">
+                    <div class="filter-actions">
+                        <select id="statusFilter" class="status-filter">
+                            <option value="all">همه وضعیت‌ها</option>
+                            <option value="pending">در انتظار تایید</option>
+                            <option value="processing">در حال پردازش</option>
+                            <option value="completed">تکمیل شده</option>
+                            <option value="cancelled">لغو شده</option>
+                            <option value="rejected">رد شده</option>
+                        </select>
+                    </div>
+                    <div class="export-actions">
+                        <button class="export-btn" data-format="pdf">
+                            <i class="bx bx-file-pdf"></i>
+                            خروجی PDF
+                        </button>
+                        <button class="export-btn" data-format="excel">
+                            <i class="bx bx-file"></i>
+                            خروجی Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="withdrawalsList" class="transactions-list">
+                <!-- Withdrawal requests will be loaded here dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Withdrawal Details Modal -->
+    <div id="withdrawalDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>جزئیات درخواست برداشت وجه</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="withdrawal-details">
+                    <div class="detail-item">
+                        <span class="detail-label">شماره درخواست:</span>
+                        <span id="withdrawalId" class="detail-value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">مبلغ:</span>
+                        <span id="withdrawalAmount" class="detail-value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">بانک:</span>
+                        <span id="withdrawalBank" class="detail-value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">شماره حساب:</span>
+                        <span id="withdrawalAccount" class="detail-value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">وضعیت:</span>
+                        <span id="withdrawalStatus" class="detail-value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">تاریخ درخواست:</span>
+                        <span id="withdrawalDate" class="detail-value"></span>
+                    </div>
+                    <div class="detail-item" id="completionDateContainer" style="display: none">
+                        <span class="detail-label">تاریخ تکمیل:</span>
+                        <span id="withdrawalCompletionDate" class="detail-value"></span>
+                    </div>
+                    <div class="detail-item" id="rejectionReasonContainer" style="display: none">
+                        <span class="detail-label">دلیل رد:</span>
+                        <span id="withdrawalRejectionReason" class="detail-value"></span>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn close-modal">بستن</button>
+                    <button type="button" id="cancelWithdrawalBtn" class="submit-btn" style="display: none">
+                        لغو درخواست
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./Assets/js/utils.js"></script>
+    <script src="./Assets/js/api-client.js"></script>
+    <script src="./Assets/js/withdrawal-history.js"></script>
+</body>
+
+</html>

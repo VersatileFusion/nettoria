@@ -1,132 +1,202 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
-    <title>بلاگ نتوریا</title>
-    <link rel="stylesheet" href="./Assets/Css/blogs.css" />
-    <link rel="stylesheet" href="./Assets/Css/common.css" />
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="shortcut icon"
-      href="./Assets/img/icon.ico"
-      type="image/x-icon"
-    />
-  </head>
-  <body>
-    <!-- Start Header -->
-    <header class="header">
-      <i class="bx bx-menu" id="menu-icon"></i>
-      <button id="login">
-        <a href="./login.html">ورود / ثبت نام</a>
-      </button>
-      <a href="./cart.html" id="cart-icon">
-        <i class="bx bx-cart"></i>
-        <span class="cart-count">0</span>
-      </a>
-      <nav class="navbar">
-        <a href="./domain.html">دامنه</a>
-        <a href="./cloud-host.html">هاست</a>
-        <a href="./virtual-server.html">سرور مجازی</a>
-        <a href="./cloud-server.html">سرور ابری</a>
-        <a href="./blogs.html">وبلاگ</a>
-        <a href="./Contact-us.html">ارتباط باما</a>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
+  <title>Blogs - Nettoria</title>
+  <link rel="stylesheet" href="./Assets/css/style.css" />
+  <link rel="stylesheet" href="./Assets/css/common.css" />
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="shortcut icon" href="./Assets/img/icon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <nav>
+        <div class="logo">
+          <img src="Assets/images/logo.png" alt="Nettoria Logo">
+        </div>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="blogs.html" class="active">Blogs</a></li>
+          <li><a href="about-us.html">About Us</a></li>
+          <li><a href="Contact-us.html">Contact</a></li>
+        </ul>
+        <div class="auth-buttons">
+          <a href="login.html" class="btn btn-login">Login</a>
+          <a href="signup.html" class="btn btn-signup">Sign Up</a>
+        </div>
       </nav>
-      <a href="./index.html" class="logo">Netto<span>ria</span></a>
-      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
     </header>
 
-    <!-- News Section -->
-    <section class="blog-section news-section">
-      <div class="section-header">
-        <h1>اخبار</h1>
-        <a href="#" class="view-all"
-          >مشاهده همه مقالات <i class="bx bx-left-arrow-alt"></i
-        ></a>
+    <main>
+      <section class="blog-header">
+        <h1>Latest Blog Posts</h1>
+        <div class="blog-filters">
+          <select id="categoryFilter">
+            <option value="">All Categories</option>
+            <option value="technology">Technology</option>
+            <option value="cloud">Cloud Computing</option>
+            <option value="security">Security</option>
+            <option value="tutorials">Tutorials</option>
+          </select>
+          <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search blogs...">
+            <button id="searchButton"><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="blog-grid" id="blogGrid">
+        <!-- Blog posts will be dynamically loaded here -->
+      </section>
+
+      <div class="pagination" id="pagination">
+        <!-- Pagination will be dynamically loaded here -->
       </div>
-      <div class="blog-container">
-        <!-- News Card 1 -->
-        <div class="blog-card">
-          <img src="./Assets/img/what-is-api-key.jpg" alt="اخبار فناوری" />
-          <span class="category-tag">اخبار</span>
-          <h3>آخرین تحولات دنیای فناوری</h3>
-          <p>جدیدترین اخبار و تحولات در حوزه فناوری اطلاعات و ارتباطات</p>
-          <a href="./blog-full1.html" class="read-more">ادامه مطلب</a>
-        </div>
+    </main>
 
-        <!-- News Card 2 -->
-        <div class="blog-card">
-          <img src="./Assets/img/what-is-GraphQL.jpg" alt="امنیت سایبری" />
-          <span class="category-tag">امنیت</span>
-          <h3>تازه‌های امنیت سایبری</h3>
-          <p>آخرین اخبار و هشدارهای امنیتی در فضای مجازی</p>
-          <a href="#" class="read-more">ادامه مطلب</a>
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About Nettoria</h3>
+          <p>Your trusted partner in cloud computing and hosting solutions.</p>
         </div>
-
-        <!-- News Card 3 -->
-        <div class="blog-card">
-          <img
-            src="./Assets/img/what-is-linux-dedicated-server.png"
-            alt="فناوری جدید"
-          />
-          <span class="category-tag">تکنولوژی</span>
-          <h3>فناوری‌های نوین</h3>
-          <p>معرفی جدیدترین فناوری‌های روز دنیا در حوزه IT</p>
-          <a href="#" class="read-more">ادامه مطلب</a>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="blogs.html">Blogs</a></li>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="Contact-us.html">Contact</a></li>
+          </ul>
         </div>
-      </div>
-    </section>
-
-    <!-- Tutorial Section -->
-    <section class="blog-section tutorial-section">
-      <div class="section-header">
-        <h1>آموزش</h1>
-        <a href="#" class="view-all"
-          >مشاهده همه آموزش‌ها <i class="bx bx-left-arrow-alt"></i
-        ></a>
-      </div>
-      <div class="blog-container">
-        <!-- Tutorial Card 1 -->
-        <div class="blog-card">
-          <img src="./Assets/img/what-is-Mounting.png" alt="متخصص پسیو شبکه" />
-          <span class="category-tag">شبکه</span>
-          <h3>متخصص پسیو شبکه</h3>
-          <p>آشنایی با مفاهیم پایه شبکه، کابل‌کشی ساخت‌یافته و تجهیزات پسیو</p>
-          <a href="#" class="read-more">ادامه مطلب</a>
-        </div>
-
-        <!-- Tutorial Card 2 -->
-        <div class="blog-card">
-          <img src="./Assets/img/what-is-nginx.jpg" alt="فناوری اطلاعات" />
-          <span class="category-tag">مسیر شغلی</span>
-          <h3>مسیر شغلی در IT</h3>
-          <p>راهنمای جامع برای شروع حرفه در دنیای فناوری اطلاعات</p>
-          <a href="#" class="read-more">ادامه مطلب</a>
-        </div>
-
-        <!-- Tutorial Card 3 -->
-        <div class="blog-card">
-          <img
-            src="./Assets/img/fix-erorr-Request-Timeout-408.jpg"
-            alt="گواهینامه های بین المللی"
-          />
-          <span class="category-tag">گواهینامه</span>
-          <h3>گواهینامه‌های بین‌المللی IT</h3>
-          <p>معرفی معتبرترین گواهینامه‌های تخصصی در حوزه شبکه و امنیت</p>
-          <a href="#" class="read-more">ادامه مطلب</a>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>Email: info@nettoria.com</p>
+          <p>Phone: +1 234 567 890</p>
         </div>
       </div>
-    </section>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Nettoria. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
 
-    <a href="./index.html" class="back-to-home">
-      <i class="bx bx-home"></i>
-    </a>
+  <script>
+    // API Configuration
+    const API_BASE_URL = '/api';
+    let currentPage = 1;
+    const itemsPerPage = 9;
 
-    <script src="./Assets/Js/blogs.js"></script>
-  </body>
+    // DOM Elements
+    const blogGrid = document.getElementById('blogGrid');
+    const pagination = document.getElementById('pagination');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+
+    // Fetch blogs with pagination and filters
+    async function fetchBlogs(page = 1, category = '', search = '') {
+      try {
+        const queryParams = new URLSearchParams({
+          page,
+          limit: itemsPerPage,
+          ...(category && { category }),
+          ...(search && { search })
+        });
+
+        const response = await fetch(`${API_BASE_URL}/blogs?${queryParams}`);
+        const data = await response.json();
+
+        if (data.success) {
+          renderBlogs(data.data.blogs);
+          renderPagination(data.data.pagination);
+        } else {
+          showError('Failed to fetch blogs');
+        }
+      } catch (error) {
+        console.error('Error fetching blogs:', error);
+        showError('Failed to fetch blogs');
+      }
+    }
+
+    // Render blog posts
+    function renderBlogs(blogs) {
+      blogGrid.innerHTML = blogs.map(blog => `
+          <article class="blog-card">
+            <div class="blog-image">
+              <img src="${blog.image || 'Assets/images/blog-placeholder.jpg'}" alt="${blog.title}">
+            </div>
+            <div class="blog-content">
+              <div class="blog-category">${blog.category}</div>
+              <h2 class="blog-title">${blog.title}</h2>
+              <p class="blog-excerpt">${blog.content.substring(0, 150)}...</p>
+              <div class="blog-meta">
+                <span class="blog-date">${new Date(blog.createdAt).toLocaleDateString()}</span>
+                <a href="blog-post.html?id=${blog.id}" class="read-more">Read More</a>
+              </div>
+            </div>
+          </article>
+        `).join('');
+    }
+
+    // Render pagination
+    function renderPagination({ total, page, pages }) {
+      pagination.innerHTML = `
+          <button class="pagination-btn" ${page === 1 ? 'disabled' : ''} onclick="changePage(${page - 1})">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span class="page-info">Page ${page} of ${pages}</span>
+          <button class="pagination-btn" ${page === pages ? 'disabled' : ''} onclick="changePage(${page + 1})">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        `;
+    }
+
+    // Change page
+    function changePage(page) {
+      currentPage = page;
+      fetchBlogs(page, categoryFilter.value, searchInput.value);
+    }
+
+    // Show error message
+    function showError(message) {
+      blogGrid.innerHTML = `
+          <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>${message}</p>
+          </div>
+        `;
+    }
+
+    // Event Listeners
+    categoryFilter.addEventListener('change', () => {
+      currentPage = 1;
+      fetchBlogs(1, categoryFilter.value, searchInput.value);
+    });
+
+    searchButton.addEventListener('click', () => {
+      currentPage = 1;
+      fetchBlogs(1, categoryFilter.value, searchInput.value);
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        currentPage = 1;
+        fetchBlogs(1, categoryFilter.value, searchInput.value);
+      }
+    });
+
+    // Initial load
+    fetchBlogs();
+  </script>
+</body>
+
 </html>

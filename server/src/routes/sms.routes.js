@@ -138,4 +138,41 @@ router.post(
  */
 router.get("/credit", authMiddleware.authenticate, smsController.getCredit);
 
+// Template Management
+router.get(
+  "/templates",
+  authMiddleware.authenticate,
+  smsController.getTemplates
+);
+router.post(
+  "/templates",
+  authMiddleware.authenticate,
+  smsController.createTemplate
+);
+router.put(
+  "/templates/:id",
+  authMiddleware.authenticate,
+  smsController.updateTemplate
+);
+router.delete(
+  "/templates/:id",
+  authMiddleware.authenticate,
+  smsController.deleteTemplate
+);
+
+// SMS Sending
+router.post("/send", authMiddleware.authenticate, smsController.sendSMS);
+router.post(
+  "/bulk-send",
+  authMiddleware.authenticate,
+  smsController.sendBulkSMS
+);
+
+// SMS History
+router.get(
+  "/history",
+  authMiddleware.authenticate,
+  smsController.getSMSHistory
+);
+
 module.exports = router;

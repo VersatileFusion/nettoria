@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
+const userController = require('../controllers/user.controller');
 
 console.log("Initializing User Routes...");
 
@@ -55,48 +56,22 @@ console.log("Initializing User Routes...");
  * @swagger
  * /api/users/profile:
  *   get:
- *     summary: Get authenticated user's profile
+ *     summary: Get user profile
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: User profile information
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 data:
- *                   type: object
- *                   properties:
- *                     user:
- *                       $ref: '#/components/schemas/User'
+ *         description: User profile retrieved successfully
  *       401:
- *         description: Not authenticated
+ *         description: Unauthorized
  */
-router.get("/profile", authMiddleware.protect, (req, res) => {
-  console.log("Fetching user profile for user ID:", req.user.id);
-
-  // Remove password field from user object
-  const userWithoutPassword = { ...req.user };
-  delete userWithoutPassword.password;
-
-  res.status(200).json({
-    status: "success",
-    data: {
-      user: userWithoutPassword,
-    },
-  });
-});
+router.get('/profile', authMiddleware.protect, userController.getProfile);
 
 /**
  * @swagger
  * /api/users/profile:
- *   patch:
+ *   put:
  *     summary: Update user profile
  *     tags: [Users]
  *     security:
@@ -108,61 +83,32 @@ router.get("/profile", authMiddleware.protect, (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               firstName:
  *                 type: string
- *                 example: Updated Name
+ *               lastName:
+ *                 type: string
  *               email:
  *                 type: string
- *                 format: email
- *                 example: updated@example.com
+ *               phone:
+ *                 type: string
+ *               company:
+ *                 type: string
+ *               address:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Profile updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 data:
- *                   type: object
- *                   properties:
- *                     user:
- *                       $ref: '#/components/schemas/User'
- *       400:
- *         description: Bad request
  *       401:
- *         description: Not authenticated
+ *         description: Unauthorized
+ *       400:
+ *         description: Invalid input
  */
-router.patch("/profile", authMiddleware.protect, (req, res) => {
-  console.log("Updating profile for user ID:", req.user.id);
-
-  // In a real application, you would update the user in the database
-  // For this demo, we'll just return a success with modified data
-  const updatedUser = {
-    ...req.user,
-    ...req.body,
-    updatedAt: new Date().toISOString(),
-  };
-
-  // Don't return the password
-  delete updatedUser.password;
-
-  res.status(200).json({
-    status: "success",
-    message: "Profile updated successfully",
-    data: {
-      user: updatedUser,
-    },
-  });
-});
+router.put('/profile', authMiddleware.protect, userController.updateProfile);
 
 /**
  * @swagger
- * /api/users/change-password:
- *   post:
+ * /api/users/password:
+ *   put:
  *     summary: Change user password
  *     tags: [Users]
  *     security:
@@ -173,58 +119,176 @@ router.patch("/profile", authMiddleware.protect, (req, res) => {
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - currentPassword
- *               - newPassword
  *             properties:
  *               currentPassword:
  *                 type: string
- *                 format: password
- *                 example: "current-password"
  *               newPassword:
  *                 type: string
- *                 format: password
- *                 example: "new-secure-password"
  *     responses:
  *       200:
  *         description: Password changed successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 message:
- *                   type: string
- *                   example: Password changed successfully
- *       400:
- *         description: Bad request or incorrect current password
  *       401:
- *         description: Not authenticated
+ *         description: Unauthorized
+ *       400:
+ *         description: Invalid input
  */
-router.post("/change-password", authMiddleware.protect, (req, res) => {
-  console.log("Changing password for user ID:", req.user.id);
+router.put('/password', authMiddleware.protect, userController.changePassword);
 
-  const { currentPassword, newPassword } = req.body;
+/**
+ * @swagger
+ * /api/users/security:
+ *   get:
+ *     summary: Get user security settings
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Security settings retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/security', authMiddleware.protect, userController.getSecuritySettings);
 
-  // Validate input
-  if (!currentPassword || !newPassword) {
-    return res.status(400).json({
-      status: "error",
-      message: "Current password and new password are required",
-    });
-  }
+/**
+ * @swagger
+ * /api/users/security:
+ *   put:
+ *     summary: Update user security settings
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               twoFactorEnabled:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Security settings updated successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.put('/security', authMiddleware.protect, userController.updateSecuritySettings);
 
-  // In a real application, you would verify the current password and update the new one
-  // For this demo, we'll just return a success
+/**
+ * @swagger
+ * /api/users/two-factor:
+ *   put:
+ *     summary: Toggle two-factor authentication
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               enabled:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Two-factor authentication status updated
+ *       401:
+ *         description: Unauthorized
+ */
+router.put('/two-factor', authMiddleware.protect, userController.toggleTwoFactor);
 
-  res.status(200).json({
-    status: "success",
-    message: "Password changed successfully",
-  });
-});
+/**
+ * @swagger
+ * /api/users/verify-2fa:
+ *   post:
+ *     summary: Verify two-factor authentication setup
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               code:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Two-factor authentication verified
+ *       401:
+ *         description: Unauthorized
+ *       400:
+ *         description: Invalid code
+ */
+router.post('/verify-2fa', authMiddleware.protect, userController.verifyTwoFactor);
+
+/**
+ * @swagger
+ * /api/users/notifications:
+ *   get:
+ *     summary: Get user notification settings
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Notification settings retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/notifications', authMiddleware.protect, userController.getNotificationSettings);
+
+/**
+ * @swagger
+ * /api/users/notifications:
+ *   put:
+ *     summary: Update user notification settings
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               notify_email:
+ *                 type: boolean
+ *               notify_sms:
+ *                 type: boolean
+ *               notify_service:
+ *                 type: boolean
+ *               notify_payment:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Notification settings updated successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.put('/notifications', authMiddleware.protect, userController.updateNotificationSettings);
+
+/**
+ * @swagger
+ * /api/users/login-history:
+ *   get:
+ *     summary: Get user login history
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Login history retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/login-history', authMiddleware.protect, userController.getLoginHistory);
 
 /**
  * @swagger

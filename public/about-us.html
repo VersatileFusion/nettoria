@@ -1,78 +1,75 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
-    <title>نتوریا - درباره ما</title>
-    <link rel="stylesheet" href="./Assets/Css/about-us.css" />
-    <link rel="stylesheet" href="./Assets/Css/common.css" />
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="shortcut icon"
-      href="./Assets/img/icon.ico"
-      type="image/x-icon"
-    />
-  </head>
-  <body>
-    <!-- Start Header -->
-    <header class="header">
-      <i class="bx bx-menu" id="menu-icon"></i>
-      <button id="login">
-        <a href="./login.html">ورود / ثبت نام</a>
-      </button>
-      <a href="./cart.html" id="cart-icon">
-        <i class="bx bx-cart"></i>
-        <span class="cart-count">0</span>
-      </a>
-      <nav class="navbar">
-        <a href="./domain.html">دامنه</a>
-        <a href="./cloud-host.html">هاست</a>
-        <a href="./virtual-server.html">سرور مجازی</a>
-        <a href="./cloud-server.html">سرور ابری</a>
-        <a href="./blogs.html">وبلاگ</a>
-        <a href="./Contact-us.html">ارتباط باما</a>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us - Nettoria</title>
+  <link rel="stylesheet" href="Assets/css/style.css" />
+  <link rel="stylesheet" href="Assets/css/about-us.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <nav>
+        <div class="logo">
+          <img src="Assets/images/logo.png" alt="Nettoria Logo" />
+        </div>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="blogs.html">Blogs</a></li>
+          <li><a href="about-us.html" class="active">About Us</a></li>
+          <li><a href="Contact-us.html">Contact</a></li>
+        </ul>
+        <div class="auth-buttons">
+          <a href="login.html" class="btn btn-login">Login</a>
+          <a href="signup.html" class="btn btn-signup">Sign Up</a>
+        </div>
       </nav>
-      <a href="./index.html" class="logo">Netto<span>ria</span></a>
-      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
     </header>
-    <!-- End Header -->
 
-    <!-- Start About Section -->
-    <section class="about">
-      <div class="about-content">
-        <a href="javascript:history.back()" class="back-button">
-          <i class="bx bx-arrow-back"></i> بازگشت
-        </a>
-        <h2>درباره نتوریا</h2>
-        <p>
-          به نتوریا خوش آمدید! ✨ ما در دی‌ماه 1403 با هدف کسب تجربه و ارائه
-          خدمات ابری به روشی آسان پا به عرصه گذاشتیم تا تجربه‌ای متفاوت از خدمات
-          میزبانی وب را برای شما به ارمغان بیاوریم. 🚀 نتوریا با تیمی کوچک اما
-          متخصص و پرانرژی متشکل از 4 تا 6 نفر 👨‍💼، به ارائه خدماتی مانند: ثبت
-          دامنه 🌐، هاست وب‌سایت 💻 و VPS‌های ایران و اروپا 🌍 می‌پردازد و در
-          حال حاضر با پشتیبانی 24/7 💝 تلاش می‌کنیم تا نیازهای شما را در هر لحظه
-          پاسخ دهیم.
-        </p>
-        <p>
-          ما بیشتر برای استارت‌آپ‌ها 🚀، افراد تازه‌کار ✨ و اشخاص غیرسازمانی
-          👨‍👩‍ طراحی شده‌ایم و افتخار می‌کنیم که با قیمت‌های رقابتی 💫 و
-          مشاوره اختصاصی 🔹، راه‌حلی مطمئن برای شروع یا رشد کسب‌وکار شما باشیم.
-        </p>
-        <p>
-          چشم‌انداز ما ارائه خدماتی دلچسب و رضایت‌بخش است ⭐؛ خدماتی که نه‌تنها
-          نیازهای شما را برآورده کند، بلکه تجربه‌ای به‌یادماندنی از همکاری با ما
-          را برایتان رقم بزند. 💡 ما به ارزش‌های خود یعنی نوآوری ⚡ و رضایت
-          مشتریان پایبندیم و همواره در تلاشیم که خدماتمان را بهبود دهیم. به
-          نتوریا اعتماد کنید و با ما در مسیر موفقیت همراه شوید! ❤️
-        </p>
+    <main>
+      <section class="about-section" id="aboutContent">
+        <!-- Content will be dynamically loaded here -->
+        <div class="loading">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading content...</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About Nettoria</h3>
+          <p>Your trusted partner in cloud computing and hosting solutions.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="blogs.html">Blogs</a></li>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="Contact-us.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>Email: info@nettoria.com</p>
+          <p>Phone: +1 234 567 890</p>
+        </div>
       </div>
-    </section>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Nettoria. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
 
-    <script src="./Assets/Js/about-us.js"></script>
-  </body>
+  <script src="Assets/js/utils.js"></script>
+  <script src="Assets/js/about-us.js"></script>
+</body>
+
 </html>

@@ -1,178 +1,414 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
-    <title>نتوریا - هاست سی پنل</title>
-    <link rel="stylesheet" href="./Assets/Css/cloud-host.css" />
-    <link rel="stylesheet" href="./Assets/Css/common.css" />
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="shortcut icon"
-      href="./Assets/img/icon.ico"
-      type="image/x-icon"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="./Assets/Js/utils.js"></script>
-    <script src="./Assets/Js/cart.js"></script>
-    <script src="./Assets/Js/cloud-host.js" defer></script>
-  </head>
-  <body>
-    <!-- Start Header -->
-    <header class="header">
-      <i class="bx bx-menu" id="menu-icon"></i>
-      <button id="login">
-        <a href="./login.html">ورود / ثبت نام</a>
-      </button>
-      <a href="./cart.html" id="cart-icon">
-        <i class="bx bx-cart"></i>
-        <span class="cart-count">0</span>
-      </a>
-      <nav class="navbar">
-        <a href="./domain.html">دامنه</a>
-        <a href="./cloud-host.html">هاست</a>
-        <a href="./virtual-server.html">سرور مجازی</a>
-        <a href="./cloud-server.html">سرور ابری</a>
-        <a href="./blogs.html">وبلاگ</a>
-        <a href="./Contact-us.html">ارتباط باما</a>
-      </nav>
-      <a href="./index.html" class="logo">Netto<span>ria</span></a>
-      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
-    </header>
-    <!-- End Header -->
-    <div class="toast"></div>
-    <!-- After the header section -->
-    <section class="server-section">
-      <h2 class="server-title">هاست وبسایت</h2>
-      <p class="server-description">
-        سرعت، پایداری و امنیت در یک پکیج! به دنبال یک هاست با کیفیت بالا برای
-        وب‌سایت خود هستید؟ هاست‌های ما با سرعت بارگذاری فوق‌العاده و پایداری
-        تضمین‌شده یکی از بهترین گزینه برای کسب‌وکارهای آنلاین، فروشگاه‌ها و
-        وب‌سایت‌های شخصی شما هستند. ✨ ویژگی‌ها: - منابع قدرتمند و تضمین‌شده -
-        سازگاری با انواع سیستم‌های مدیریت محتوا (WordPress، Joomla و ...) و
-        پلن‌های متنوع 🚀 همین امروز هاست وب‌سایت خود را انتخاب کنید و تجربه‌ای
-        بی‌نظیر داشته باشید!
-      </p>
+<html lang="en">
 
-      <div class="server-cards">
-        <div class="server-card">
-          <div class="icon"><i class="bx bx-file"></i></div>
-          <h3>هاست پایه</h3>
-          <p>اقتصادی و مطمئن</p>
-          <p>مناسب برای شروع</p>
-          <p>لوکیشن : ایران</p>
-          <p>به همراه پشتیبانی 24/7</p>
-          <div class="price">79,000 تومان</div>
-          <button class="more-info">اطلاعات بیشتر</button>
-          <div class="details">
-            <i class="bx bx-x close-details"></i>
-            <h4>مشخصات فنی</h4>
-            <ul>
-              <li><i class="bx bx-check"></i>2vCore(s) پردازنده</li>
-              <li><i class="bx bx-check"></i>رم 3 گیگابایت</li>
-              <li><i class="bx bx-check"></i>15TB ترافیک</li>
-              <li><i class="bx bx-check"></i>40 گیگابایت فضا</li>
-              <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
-              <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
-              <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
-              <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
-            </ul>
-            <button class="order-btn">ثبت سفارش</button>
-          </div>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
+  <title>Cloud Hosting - Nettoria</title>
+  <link rel="stylesheet" href="./Assets/Css/cloud-host.css" />
+  <link rel="stylesheet" href="./Assets/Css/common.css" />
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="shortcut icon" href="./Assets/img/icon.ico" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="./Assets/Js/utils.js"></script>
+  <script src="./Assets/Js/cart.js"></script>
+  <script src="./Assets/Js/cloud-host.js" defer></script>
+</head>
 
-        <div class="server-card">
-          <div class="icon"><i class="bx bx-file"></i></div>
-          <h3>هاست استارت آپ</h3>
-          <p>مناسب و حرفه ای</p>
-          <p>مناسب برای کسب و کارهای کوچک</p>
-          <p>امکان انتخاب لوکیشن</p>
-          <p>به همراه پشتیبانی 24/7</p>
-          <div class="price">139,000 تومان</div>
-          <button class="more-info">اطلاعات بیشتر</button>
-          <div class="details">
-            <i class="bx bx-x close-details"></i>
-            <h4>مشخصات فنی</h4>
-            <ul>
-              <li><i class="bx bx-check"></i>4vCore(s) پردازنده</li>
-              <li><i class="bx bx-check"></i>رم 6 گیگابایت</li>
-              <li><i class="bx bx-check"></i>20TB ترافیک</li>
-              <li><i class="bx bx-check"></i>60 گیگابایت فضا</li>
-              <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
-              <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
-              <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
-              <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
-            </ul>
-            <button class="order-btn">ثبت سفارش</button>
-          </div>
-        </div>
+<body>
+  <!-- Start Header -->
+  <header class="header">
+    <i class="bx bx-menu" id="menu-icon"></i>
+    <button id="login">
+      <a href="./login.html">ورود / ثبت نام</a>
+    </button>
+    <a href="./cart.html" id="cart-icon">
+      <i class="bx bx-cart"></i>
+      <span class="cart-count">0</span>
+    </a>
+    <nav class="navbar">
+      <a href="./domain.html">دامنه</a>
+      <a href="./cloud-host.html">هاست</a>
+      <a href="./virtual-server.html">سرور مجازی</a>
+      <a href="./cloud-server.html">سرور ابری</a>
+      <a href="./blogs.html">وبلاگ</a>
+      <a href="./Contact-us.html">ارتباط باما</a>
+    </nav>
+    <a href="./index.html" class="logo">Netto<span>ria</span></a>
+    <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+  </header>
+  <!-- End Header -->
+  <div class="toast"></div>
+  <!-- After the header section -->
+  <section class="server-section">
+    <h2 class="server-title">هاست وبسایت</h2>
+    <p class="server-description">
+      سرعت، پایداری و امنیت در یک پکیج! به دنبال یک هاست با کیفیت بالا برای
+      وب‌سایت خود هستید؟ هاست‌های ما با سرعت بارگذاری فوق‌العاده و پایداری
+      تضمین‌شده یکی از بهترین گزینه برای کسب‌وکارهای آنلاین، فروشگاه‌ها و
+      وب‌سایت‌های شخصی شما هستند. ✨ ویژگی‌ها: - منابع قدرتمند و تضمین‌شده -
+      سازگاری با انواع سیستم‌های مدیریت محتوا (WordPress، Joomla و ...) و
+      پلن‌های متنوع 🚀 همین امروز هاست وب‌سایت خود را انتخاب کنید و تجربه‌ای
+      بی‌نظیر داشته باشید!
+    </p>
 
-        <div class="server-card">
-          <div class="icon"><i class="bx bx-file"></i></div>
-          <h3>هاست پربازدید</h3>
-          <p>قدرتمند و سریع</p>
-          <p>مناسب برای وبسایت هایی با بازدید بالا</p>
-          <p>امکان انتخاب لوکیشن</p>
-          <p>به همراه پشتیبانی 24/7</p>
-          <div class="price">234,000 تومان</div>
-          <button class="more-info">اطلاعات بیشتر</button>
-          <div class="details">
-            <i class="bx bx-x close-details"></i>
-            <h4>مشخصات فنی</h4>
-            <ul>
-              <li><i class="bx bx-check"></i>6vCore(s) پردازنده</li>
-              <li><i class="bx bx-check"></i>رم 8 گیگابایت</li>
-              <li><i class="bx bx-check"></i>25TB ترافیک</li>
-              <li><i class="bx bx-check"></i>80 گیگابایت فضا</li>
-              <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
-              <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
-              <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
-              <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
-            </ul>
-            <button class="order-btn">ثبت سفارش</button>
-          </div>
-        </div>
-
-        <div class="server-card">
-          <div class="icon"><i class="bx bx-file"></i></div>
-          <h3>هاست حرفه ای</h3>
-          <p>بی حد و مرز و توانمند</p>
-          <p>مناسب برای سنگین ترین وبسایت ها</p>
-          <p>امکان انتخاب لوکیشن</p>
-          <p>به همراه پشتیبانی 24/7</p>
-          <div class="price">412,000 تومان</div>
-          <button class="more-info">اطلاعات بیشتر</button>
-          <div class="details">
-            <i class="bx bx-x close-details"></i>
-            <h4>مشخصات فنی</h4>
-            <ul>
-              <li><i class="bx bx-check"></i>8vCore(s) پردازنده</li>
-              <li><i class="bx bx-check"></i>رم 16 گیگابایت</li>
-              <li><i class="bx bx-check"></i>30TB ترافیک</li>
-              <li><i class="bx bx-check"></i>120 گیگابایت فضا</li>
-              <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
-              <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
-              <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
-              <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
-            </ul>
-            <button class="order-btn">ثبت سفارش</button>
-          </div>
+    <div class="server-cards">
+      <div class="server-card">
+        <div class="icon"><i class="bx bx-file"></i></div>
+        <h3>هاست پایه</h3>
+        <p>اقتصادی و مطمئن</p>
+        <p>مناسب برای شروع</p>
+        <p>لوکیشن : ایران</p>
+        <p>به همراه پشتیبانی 24/7</p>
+        <div class="price">79,000 تومان</div>
+        <button class="more-info">اطلاعات بیشتر</button>
+        <div class="details">
+          <i class="bx bx-x close-details"></i>
+          <h4>مشخصات فنی</h4>
+          <ul>
+            <li><i class="bx bx-check"></i>2vCore(s) پردازنده</li>
+            <li><i class="bx bx-check"></i>رم 3 گیگابایت</li>
+            <li><i class="bx bx-check"></i>15TB ترافیک</li>
+            <li><i class="bx bx-check"></i>40 گیگابایت فضا</li>
+            <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
+            <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
+            <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
+            <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
+          </ul>
+          <button class="order-btn">ثبت سفارش</button>
         </div>
       </div>
-    </section>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  </body>
+
+      <div class="server-card">
+        <div class="icon"><i class="bx bx-file"></i></div>
+        <h3>هاست استارت آپ</h3>
+        <p>مناسب و حرفه ای</p>
+        <p>مناسب برای کسب و کارهای کوچک</p>
+        <p>امکان انتخاب لوکیشن</p>
+        <p>به همراه پشتیبانی 24/7</p>
+        <div class="price">139,000 تومان</div>
+        <button class="more-info">اطلاعات بیشتر</button>
+        <div class="details">
+          <i class="bx bx-x close-details"></i>
+          <h4>مشخصات فنی</h4>
+          <ul>
+            <li><i class="bx bx-check"></i>4vCore(s) پردازنده</li>
+            <li><i class="bx bx-check"></i>رم 6 گیگابایت</li>
+            <li><i class="bx bx-check"></i>20TB ترافیک</li>
+            <li><i class="bx bx-check"></i>60 گیگابایت فضا</li>
+            <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
+            <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
+            <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
+            <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
+          </ul>
+          <button class="order-btn">ثبت سفارش</button>
+        </div>
+      </div>
+
+      <div class="server-card">
+        <div class="icon"><i class="bx bx-file"></i></div>
+        <h3>هاست پربازدید</h3>
+        <p>قدرتمند و سریع</p>
+        <p>مناسب برای وبسایت هایی با بازدید بالا</p>
+        <p>امکان انتخاب لوکیشن</p>
+        <p>به همراه پشتیبانی 24/7</p>
+        <div class="price">234,000 تومان</div>
+        <button class="more-info">اطلاعات بیشتر</button>
+        <div class="details">
+          <i class="bx bx-x close-details"></i>
+          <h4>مشخصات فنی</h4>
+          <ul>
+            <li><i class="bx bx-check"></i>6vCore(s) پردازنده</li>
+            <li><i class="bx bx-check"></i>رم 8 گیگابایت</li>
+            <li><i class="bx bx-check"></i>25TB ترافیک</li>
+            <li><i class="bx bx-check"></i>80 گیگابایت فضا</li>
+            <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
+            <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
+            <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
+            <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
+          </ul>
+          <button class="order-btn">ثبت سفارش</button>
+        </div>
+      </div>
+
+      <div class="server-card">
+        <div class="icon"><i class="bx bx-file"></i></div>
+        <h3>هاست حرفه ای</h3>
+        <p>بی حد و مرز و توانمند</p>
+        <p>مناسب برای سنگین ترین وبسایت ها</p>
+        <p>امکان انتخاب لوکیشن</p>
+        <p>به همراه پشتیبانی 24/7</p>
+        <div class="price">412,000 تومان</div>
+        <button class="more-info">اطلاعات بیشتر</button>
+        <div class="details">
+          <i class="bx bx-x close-details"></i>
+          <h4>مشخصات فنی</h4>
+          <ul>
+            <li><i class="bx bx-check"></i>8vCore(s) پردازنده</li>
+            <li><i class="bx bx-check"></i>رم 16 گیگابایت</li>
+            <li><i class="bx bx-check"></i>30TB ترافیک</li>
+            <li><i class="bx bx-check"></i>120 گیگابایت فضا</li>
+            <li><i class="bx bx-check"></i>پورت اتصال 1 گیگابایت</li>
+            <li><i class="bx bx-check"></i>NVMe هارد دیسک</li>
+            <li><i class="bx bx-check"></i>Hetzner دیتاسنتر</li>
+            <li><i class="bx bx-check"></i>IP ارائه اختصاصی</li>
+          </ul>
+          <button class="order-btn">ثبت سفارش</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    const API_BASE_URL = '/api';
+    let currentCloudHosts = [];
+
+    // DOM Elements
+    const cloudList = document.getElementById('cloudList');
+    const createCloudHostBtn = document.getElementById('createCloudHost');
+    const searchCloudHost = document.getElementById('searchCloudHost');
+    const cloudHostModal = document.getElementById('cloudHostModal');
+    const cloudHostForm = document.getElementById('cloudHostForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const closeModal = document.querySelector('.close');
+    const backupEnabled = document.getElementById('backupEnabled');
+    const backupFrequencyGroup = document.querySelector('.backup-frequency');
+
+    // Event Listeners
+    createCloudHostBtn.addEventListener('click', () => openModal());
+    closeModal.addEventListener('click', () => closeModal());
+    cloudHostForm.addEventListener('submit', handleCloudHostSubmit);
+    searchCloudHost.addEventListener('input', handleSearch);
+    backupEnabled.addEventListener('change', toggleBackupFrequency);
+
+    // Functions
+    async function fetchCloudHosts() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/cloud-host`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          currentCloudHosts = data.data;
+          renderCloudHosts(currentCloudHosts);
+        } else {
+          showError('Failed to fetch cloud hosts');
+        }
+      } catch (error) {
+        showError('Error connecting to server');
+      }
+    }
+
+    function renderCloudHosts(hosts) {
+      cloudList.innerHTML = '';
+
+      if (hosts.length === 0) {
+        cloudList.innerHTML = '<p class="no-data">No cloud hosts found</p>';
+        return;
+      }
+
+      hosts.forEach(host => {
+        const hostCard = document.createElement('div');
+        hostCard.className = 'cloud-card';
+        hostCard.innerHTML = `
+            <div class="cloud-info">
+              <h3>${host.name}</h3>
+              <p><strong>Plan:</strong> ${host.plan}</p>
+              <p><strong>CPU:</strong> ${host.cpu} cores</p>
+              <p><strong>RAM:</strong> ${host.ram} GB</p>
+              <p><strong>Storage:</strong> ${host.storage} GB</p>
+              <p><strong>Bandwidth:</strong> ${host.bandwidth} Mbps</p>
+              <p><strong>OS:</strong> ${host.operatingSystem}</p>
+              <p><strong>Status:</strong> <span class="status ${host.status}">${host.status}</span></p>
+            </div>
+            <div class="cloud-actions">
+              <button onclick="viewStats('${host.id}')" class="btn-secondary">View Stats</button>
+              <button onclick="editCloudHost('${host.id}')" class="btn-secondary">Edit</button>
+              <button onclick="deleteCloudHost('${host.id}')" class="btn-danger">Delete</button>
+            </div>
+          `;
+        cloudList.appendChild(hostCard);
+      });
+    }
+
+    function openModal(host = null) {
+      modalTitle.textContent = host ? 'Edit Cloud Host' : 'Create New Cloud Host';
+      if (host) {
+        document.getElementById('cloudHostId').value = host.id;
+        document.getElementById('hostName').value = host.name;
+        document.getElementById('hostPlan').value = host.plan;
+        document.getElementById('hostCPU').value = host.cpu;
+        document.getElementById('hostRAM').value = host.ram;
+        document.getElementById('hostStorage').value = host.storage;
+        document.getElementById('hostBandwidth').value = host.bandwidth;
+        document.getElementById('hostPrice').value = host.price;
+        document.getElementById('hostOS').value = host.operatingSystem;
+        document.getElementById('backupEnabled').checked = host.backupEnabled;
+        document.getElementById('backupFrequency').value = host.backupFrequency || 'daily';
+        toggleBackupFrequency();
+      } else {
+        cloudHostForm.reset();
+        document.getElementById('cloudHostId').value = '';
+        backupFrequencyGroup.style.display = 'none';
+      }
+      cloudHostModal.style.display = 'block';
+    }
+
+    function closeModal() {
+      cloudHostModal.style.display = 'none';
+      cloudHostForm.reset();
+    }
+
+    function toggleBackupFrequency() {
+      backupFrequencyGroup.style.display = backupEnabled.checked ? 'block' : 'none';
+    }
+
+    async function handleCloudHostSubmit(e) {
+      e.preventDefault();
+      const hostId = document.getElementById('cloudHostId').value;
+      const hostData = {
+        name: document.getElementById('hostName').value,
+        plan: document.getElementById('hostPlan').value,
+        cpu: parseInt(document.getElementById('hostCPU').value),
+        ram: parseInt(document.getElementById('hostRAM').value),
+        storage: parseInt(document.getElementById('hostStorage').value),
+        bandwidth: parseInt(document.getElementById('hostBandwidth').value),
+        price: parseFloat(document.getElementById('hostPrice').value),
+        operatingSystem: document.getElementById('hostOS').value,
+        backupEnabled: document.getElementById('backupEnabled').checked,
+        backupFrequency: document.getElementById('backupEnabled').checked ?
+          document.getElementById('backupFrequency').value : null
+      };
+
+      try {
+        const url = hostId ?
+          `${API_BASE_URL}/cloud-host/${hostId}` :
+          `${API_BASE_URL}/cloud-host`;
+
+        const response = await fetch(url, {
+          method: hostId ? 'PUT' : 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify(hostData)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          closeModal();
+          fetchCloudHosts();
+          showSuccess(hostId ? 'Cloud host updated successfully' : 'Cloud host created successfully');
+        } else {
+          showError(data.error.message);
+        }
+      } catch (error) {
+        showError('Error saving cloud host');
+      }
+    }
+
+    async function deleteCloudHost(id) {
+      if (!confirm('Are you sure you want to delete this cloud host?')) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/cloud-host/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          fetchCloudHosts();
+          showSuccess('Cloud host deleted successfully');
+        } else {
+          showError(data.error.message);
+        }
+      } catch (error) {
+        showError('Error deleting cloud host');
+      }
+    }
+
+    async function viewStats(id) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/cloud-host/${id}/stats`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          const stats = data.data;
+          alert(`
+              CPU Usage: ${stats.cpuUsage}%
+              RAM Usage: ${stats.ramUsage}%
+              Storage Usage: ${stats.storageUsage}%
+              Bandwidth Used: ${formatBytes(stats.bandwidthUsage)}
+              Uptime: ${formatUptime(stats.uptime)}
+              Last Restart: ${new Date(stats.lastRestart).toLocaleString()}
+            `);
+        } else {
+          showError(data.error.message);
+        }
+      } catch (error) {
+        showError('Error fetching cloud host statistics');
+      }
+    }
+
+    function editCloudHost(id) {
+      const host = currentCloudHosts.find(h => h.id === id);
+      if (host) {
+        openModal(host);
+      }
+    }
+
+    function handleSearch(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const filteredHosts = currentCloudHosts.filter(host =>
+        host.name.toLowerCase().includes(searchTerm) ||
+        host.plan.toLowerCase().includes(searchTerm)
+      );
+      renderCloudHosts(filteredHosts);
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function formatUptime(seconds) {
+      const days = Math.floor(seconds / 86400);
+      const hours = Math.floor((seconds % 86400) / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      return `${days}d ${hours}h ${minutes}m`;
+    }
+
+    function showSuccess(message) {
+      alert(message); // Replace with a better UI notification
+    }
+
+    function showError(message) {
+      alert(message); // Replace with a better UI notification
+    }
+
+    // Initial load
+    fetchCloudHosts();
+  </script>
+</body>
+
 </html>

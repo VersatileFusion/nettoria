@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "description": "Test suite for VMware vCenter API connectivity through VPN",
   "main": "run-api-test.js",
+  "type": "module",
   "scripts": {
     "start": "node run-api-test.js",
     "test-vpn": "node test-vpn-connection.js",
     "test-basic": "node test-internal-ip.js",
     "test-rest": "node test-vcenter-rest-auto.js",
     "test-soap": "node test-vcenter-auto.js",
-    "test-all": "node run-api-test.js"
+    "test-all": "node run-api-test.js",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "keywords": [
     "vmware",
@@ -26,10 +29,22 @@
     "bcrypt": "^6.0.0",
     "child_process": "^1.0.2",
     "dotenv": "^16.5.0",
-    "node-vsphere-soap": "^0.0.2-5",
-    "pg": "^8.16.0"
+    "node-vsphere-soap": "^0.0.2-5"
   },
   "engines": {
     "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "@playwright/test": "^1.52.0",
+    "assert": "^2.1.0",
+    "babel-jest": "^30.0.0-beta.3",
+    "express": "^5.1.0",
+    "http-server": "^14.1.1",
+    "jest": "^29.7.0",
+    "mysql2": "^3.14.1",
+    "node-fetch": "^2.7.0",
+    "pg": "^8.16.0"
   }
 }

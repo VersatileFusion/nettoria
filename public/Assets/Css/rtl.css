@@ -1,0 +1,141 @@
+/* RTL Specific Styles */
+body {
+  direction: rtl;
+  text-align: right;
+  font-family: "Vazirmatn", sans-serif;
+}
+
+/* Cart Icon RTL Adjustments */
+#cart-icon {
+  margin-right: 0;
+  margin-left: 1rem;
+}
+
+.cart-count {
+  right: auto;
+  left: -8px;
+}
+
+/* Navigation RTL */
+.nav-links {
+  flex-direction: row-reverse;
+}
+
+/* Dropdown Menus */
+.dropdown-menu {
+  right: auto;
+  left: 0;
+}
+
+/* Form Elements */
+input,
+textarea,
+select {
+  text-align: right;
+}
+
+/* Icons in Buttons */
+.btn i {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+/* Tables */
+.table th,
+.table td {
+  text-align: right;
+}
+
+/* Breadcrumbs */
+.breadcrumb .separator {
+  margin: 0 0.5rem;
+}
+
+/* Lists */
+ul,
+ol {
+  padding-right: 1.5rem;
+  padding-left: 0;
+}
+
+/* Sidebar */
+.sidebar-link i {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+/* Footer */
+.footer-section ul {
+  padding-right: 0;
+}
+
+/* Alerts */
+.alert {
+  text-align: right;
+}
+
+/* Form Groups */
+.form-group label {
+  text-align: right;
+}
+
+/* Modal */
+.modal-header .close {
+  margin: -1rem auto -1rem -1rem;
+}
+
+/* Tooltips */
+.tooltip {
+  text-align: right;
+}
+
+/* Pagination */
+.pagination {
+  flex-direction: row-reverse;
+}
+
+/* Checkboxes and Radio Buttons */
+input[type="checkbox"],
+input[type="radio"] {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+/* Select Dropdowns */
+select {
+  background-position: left 0.5rem center;
+  padding-right: 0.5rem;
+  padding-left: 2rem;
+}
+
+/* Input Groups */
+.input-group > .form-control {
+  border-radius: 0 4px 4px 0;
+}
+
+.input-group > .input-group-prepend > .btn {
+  border-radius: 4px 0 0 4px;
+}
+
+/* Badges */
+.badge {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+/* Cards */
+.card-header {
+  text-align: right;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .nav-links {
+    flex-direction: column;
+  }
+
+  .dropdown-menu {
+    left: auto;
+    right: 0;
+  }
+}

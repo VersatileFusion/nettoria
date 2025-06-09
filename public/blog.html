@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog - Nettoria</title>
+    <link rel="stylesheet" href="Assets/css/style.css" />
+    <link rel="stylesheet" href="Assets/css/blog.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <img src="Assets/images/logo.png" alt="Nettoria Logo" />
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="blog.html" class="active">Blog</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <a href="login.html" class="btn btn-login">Login</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="blog-container">
+            <!-- Blog Header -->
+            <div class="blog-header">
+                <h1>Nettoria Blog</h1>
+                <p>
+                    Stay updated with the latest news, tips, and insights about our
+                    services
+                </p>
+            </div>
+
+            <!-- Blog Search -->
+            <div class="blog-search">
+                <input type="text" id="blogSearch" placeholder="Search articles..." />
+            </div>
+
+            <!-- Blog Filters -->
+            <div class="blog-filters">
+                <div class="filter-group">
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <!-- Categories will be loaded dynamically -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select id="tagFilter">
+                        <option value="">All Tags</option>
+                        <!-- Tags will be loaded dynamically -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Blog Categories -->
+            <div class="blog-categories">
+                <div class="categories-list" id="categoriesList">
+                    <!-- Categories will be loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- Blog Tags -->
+            <div class="blog-tags">
+                <div class="tags-list" id="tagsList">
+                    <!-- Tags will be loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- Blog Grid -->
+            <div class="blog-grid" id="blogGrid">
+                <!-- Blog posts will be loaded dynamically -->
+            </div>
+
+            <!-- Blog Pagination -->
+            <div class="blog-pagination" id="blogPagination">
+                <!-- Pagination will be loaded dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Nettoria</h3>
+                <p>Your trusted partner in network solutions and services.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: info@nettoria.com</p>
+                <p>Phone: +1 234 567 890</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Nettoria. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner" style="display: none">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="Assets/js/utils.js"></script>
+    <script src="Assets/js/blog.js"></script>
+</body>
+
+</html>

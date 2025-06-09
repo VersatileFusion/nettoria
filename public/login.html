@@ -1,67 +1,177 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی">
-    <title>ورود</title>
-    <link rel="stylesheet" href="./Assets/Css/login.css" />
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link
-      rel="shortcut icon"
-      href="./Assets/img/icon.ico"
-      type="image/x-icon"
-    />
-  </head>
-  <body>
 
-    <header class="header">
-      <i class="bx bx-menu" id="menu-icon"></i>
-      <button id="login"><a href="./login.html">ورود / ثبت نام</a></button>
-      <nav class="navbar">
-        <a href="./domain.html">دامنه</a>
-        <a href="./cloud-host.html">هاست</a>
-        <a href="./virtual-server.html">سرور مجازی</a>
-          <a href="./cloud-server.html">سرور ابری</a>
-          <a href="./blogs.html">وبلاگ</a>
-        <a href="./Contact-us.html">ارتباط باما</a>
-      </nav>
-      <a href="./index.html" class="logo">Netto<span>ria</span></a>
-      <a href="./login.html" id="login-icon"><i class='bx bx-user'></i></a>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی">
+  <title>ورود - نتوریا</title>
+  <link rel="stylesheet" href="./Assets/Css/login.css" />
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="shortcut icon" href="./Assets/img/icon.ico" type="image/x-icon" />
+</head>
 
-    <section class="login-page">
+<body>
+  <header class="header">
+    <i class="bx bx-menu" id="menu-icon"></i>
+    <button id="login"><a href="./login.html">ورود / ثبت نام</a></button>
+    <nav class="navbar">
+      <a href="./domain.html">دامنه</a>
+      <a href="./cloud-host.html">هاست</a>
+      <a href="./virtual-server.html">سرور مجازی</a>
+      <a href="./cloud-server.html">سرور ابری</a>
+      <a href="./blogs.html">وبلاگ</a>
+      <a href="./Contact-us.html">ارتباط باما</a>
+    </nav>
+    <a href="./index.html" class="logo">Netto<span>ria</span></a>
+    <a href="./login.html" id="login-icon"><i class='bx bx-user'></i></a>
+  </header>
+
+  <section class="login-page">
     <div class="form">
       <h1>خوش آمدید!</h1>
-      <div class="index-box">
-        <input type="text" placeholder="ایمیل یا شماره تلفن خود را وارد کنید." required />
-        <i class="bx bx-user"></i>
-      </div>
-      <div class="index-box">
-        <input type="password" id="password" placeholder="رمزعبور خود را وارد کنید." required />
-        <span id="toggle">
-          <i class="fa-regular fa-eye"></i>
-        </span>
-      </div>
-      <div class="remember-forgot">
-        <label for=""><input type="checkbox" class="ui-checkbox">مرا بخاطر بسپار</label>
-        <a href="./forgot-password1.html">فراموشی رمز عبور</a>
-      </div>
-      <div class="login-buttons">
-        <button type="submit" class="btn">ورود</button>
-        <button class="one-time-login"><a href="./one-time-login.html">ورود یک بار مصرف</a></button>
-      </div>
 
-      <div class="regester-link">
-        <p>حساب کاربری ندارید؟<a href="./signup.html">ثبت نام</a></p>
-      </div>
-      </div>
+      <!-- Login Form -->
+      <form id="loginForm" class="login-form">
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        <div class="index-box">
+          <input type="text" id="email" name="email" placeholder="ایمیل یا شماره تلفن خود را وارد کنید." required />
+          <i class="bx bx-user"></i>
+        </div>
+        <div class="index-box">
+          <input type="password" id="password" name="password" placeholder="رمزعبور خود را وارد کنید." required />
+          <span id="toggle">
+            <i class="fa-regular fa-eye"></i>
+          </span>
+        </div>
+        <div class="remember-forgot">
+          <label for="remember"><input type="checkbox" id="remember" name="remember" class="ui-checkbox">مرا بخاطر
+            بسپار</label>
+          <a href="./forgot-password1.html">فراموشی رمز عبور</a>
+        </div>
+        <div class="login-buttons">
+          <button type="submit" class="btn">ورود</button>
+          <button type="button" class="one-time-login"><a href="./one-time-login.html">ورود یک بار مصرف</a></button>
+        </div>
+        <div class="regester-link">
+          <p>حساب کاربری ندارید؟<a href="./signup.html">ثبت نام</a></p>
+        </div>
+      </form>
+
+      <!-- 2FA Verification Form -->
+      <form id="2faForm" class="2fa-form" style="display: none;">
+        <h2>احراز هویت دو مرحله‌ای</h2>
+        <p>کد ۶ رقمی نمایش داده شده در برنامه احراز هویت را وارد کنید.</p>
+        <div id="2faErrorMessage" class="error-message" style="display: none;"></div>
+        <div class="verification-input">
+          <input type="text" id="2faCode" maxlength="6" placeholder="کد تایید را وارد کنید" required />
+        </div>
+        <div class="login-buttons">
+          <button type="submit" class="btn">تایید</button>
+          <button type="button" id="cancel2FA" class="btn btn-secondary">انصراف</button>
+        </div>
+      </form>
     </div>
   </section>
-  <script src="./Assets/Js/login.js"></script>
-  </body>
+
+  <!-- Add our JavaScript files -->
+  <script type="module">
+    import AuthService from './Assets/js/services/auth.service.js';
+    import ErrorHandler from './Assets/js/utils/errorHandler.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const loginForm = document.getElementById('loginForm');
+      const twoFAForm = document.getElementById('2faForm');
+      const errorMessage = document.getElementById('errorMessage');
+      const twoFAErrorMessage = document.getElementById('2faErrorMessage');
+      const cancel2FA = document.getElementById('cancel2FA');
+      const togglePassword = document.getElementById('toggle');
+      const passwordInput = document.getElementById('password');
+
+      // Check if user is already logged in
+      if (AuthService.isAuthenticated()) {
+        window.location.href = '/panel.html';
+      }
+
+      // Toggle password visibility
+      togglePassword.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        togglePassword.querySelector('i').classList.toggle('fa-eye');
+        togglePassword.querySelector('i').classList.toggle('fa-eye-slash');
+      });
+
+      // Handle login form submission
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!ErrorHandler.validateForm(loginForm)) {
+          return;
+        }
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const remember = document.getElementById('remember').checked;
+
+        try {
+          const response = await AuthService.login(email, password);
+
+          if (response.requires2FA) {
+            // Show 2FA form
+            loginForm.style.display = 'none';
+            twoFAForm.style.display = 'block';
+          } else {
+            // Store remember me preference
+            if (remember) {
+              localStorage.setItem('rememberMe', 'true');
+            } else {
+              localStorage.removeItem('rememberMe');
+            }
+
+            // Redirect to dashboard
+            window.location.href = '/panel.html';
+          }
+        } catch (error) {
+          ErrorHandler.displayError(errorMessage, error.message);
+        }
+      });
+
+      // Handle 2FA form submission
+      twoFAForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!ErrorHandler.validateForm(twoFAForm)) {
+          return;
+        }
+
+        const code = document.getElementById('2faCode').value;
+
+        try {
+          await AuthService.verify2FA(code);
+          window.location.href = '/panel.html';
+        } catch (error) {
+          ErrorHandler.displayError(twoFAErrorMessage, error.message);
+        }
+      });
+
+      // Handle 2FA cancellation
+      cancel2FA.addEventListener('click', () => {
+        twoFAForm.style.display = 'none';
+        loginForm.style.display = 'block';
+        AuthService.logout();
+      });
+
+      // Load saved email if remember me was checked
+      if (localStorage.getItem('rememberMe') === 'true') {
+        const savedEmail = localStorage.getItem('savedEmail');
+        if (savedEmail) {
+          document.getElementById('email').value = savedEmail;
+          document.getElementById('remember').checked = true;
+        }
+      }
+    });
+  </script>
+</body>
+
 </html>

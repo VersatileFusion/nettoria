@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
+const vCenterService = require("../services/vCenter.service");
 
 console.log("Initializing VCenter Routes...");
 
@@ -516,10 +517,8 @@ router.get("/vms/:id/console", authMiddleware.protect, (req, res) => {
  * @swagger
  * /api/vcenter/tasks:
  *   get:
- *     summary: Get list of recent vCenter tasks
- *     tags: [VCenter]
- *     security:
- *       - bearerAuth: []
+ *     tags: [vCenter]
+ *     summary: Get recent vCenter tasks
  *     parameters:
  *       - in: query
  *         name: limit
@@ -527,115 +526,607 @@ router.get("/vms/:id/console", authMiddleware.protect, (req, res) => {
  *           type: integer
  *           default: 10
  *         description: Maximum number of tasks to return
+ *       - in: query
+ *         name: vmId
+ *         schema:
+ *           type: string
+ *         description: Filter tasks by VM ID
  *     responses:
  *       200:
  *         description: List of recent tasks
  *         content:
  *           application/json:
  *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   operation:
+ *                     type: string
+ *                   target:
+ *                     type: string
+ *                   status:
+ *                     type: string
+ *                     enum: [running, completed, failed]
+ *                   startTime:
+ *                     type: string
+ *                     format: date-time
+ *                   endTime:
+ *                     type: string
+ *                     format: date-time
+ *                   userId:
+ *                     type: string
+ */
+router.get('/tasks', async (req, res) => {
+    try {
+        const { limit = 10, vmId } = req.query;
+        const tasks = await vCenterService.getRecentTasks(limit, vmId);
+        res.json(tasks);
+    } catch (error) {
+        console.error('Error fetching tasks:', error);
+        res.status(500).json({ error: 'خطا در دریافت لیست وظایف' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/vcenter/vms/{vmId}/metrics:
+ *   get:
+ *     tags: [vCenter]
+ *     summary: Get VM metrics
+ *     parameters:
+ *       - in: path
+ *         name: vmId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: VM ID
+ *       - in: query
+ *         name: duration
+ *         schema:
+ *           type: string
+ *           enum: [1h, 6h, 24h, 7d]
+ *           default: 1h
+ *         description: Time duration for metrics
+ *     responses:
+ *       200:
+ *         description: VM metrics
+ *         content:
+ *           application/json:
+ *             schema:
  *               type: object
  *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 data:
+ *                 cpu:
  *                   type: object
  *                   properties:
- *                     tasks:
+ *                     usage:
+ *                       type: number
+ *                     history:
  *                       type: array
  *                       items:
  *                         type: object
  *                         properties:
- *                           id:
- *                             type: string
- *                             example: task-1234
- *                           operation:
- *                             type: string
- *                             example: PowerOnVM_Task
- *                           target:
- *                             type: object
- *                             properties:
- *                               id:
- *                                 type: string
- *                                 example: vm-1234
- *                               name:
- *                                 type: string
- *                                 example: customer-vm-01
- *                               type:
- *                                 type: string
- *                                 example: VirtualMachine
- *                           status:
- *                             type: string
- *                             enum: [running, success, error]
- *                             example: success
- *                           startTime:
+ *                           timestamp:
  *                             type: string
  *                             format: date-time
- *                             example: 2023-01-01T12:00:00Z
- *                           endTime:
+ *                           value:
+ *                             type: number
+ *                 memory:
+ *                   type: object
+ *                   properties:
+ *                     used:
+ *                       type: number
+ *                     total:
+ *                       type: number
+ *                     history:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           timestamp:
  *                             type: string
  *                             format: date-time
- *                             example: 2023-01-01T12:01:00Z
- *                           userId:
- *                             type: integer
- *                             example: 1
- *       401:
- *         description: Not authenticated
+ *                           value:
+ *                             type: number
+ *                 disk:
+ *                   type: object
+ *                   properties:
+ *                     read:
+ *                       type: number
+ *                     write:
+ *                       type: number
+ *                     history:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           timestamp:
+ *                             type: string
+ *                             format: date-time
+ *                           read:
+ *                             type: number
+ *                           write:
+ *                             type: number
+ *                 network:
+ *                   type: object
+ *                   properties:
+ *                     rx:
+ *                       type: number
+ *                     tx:
+ *                       type: number
+ *                     history:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           timestamp:
+ *                             type: string
+ *                             format: date-time
+ *                           rx:
+ *                             type: number
+ *                           tx:
+ *                             type: number
  */
-router.get("/tasks", authMiddleware.protect, (req, res) => {
-    console.log("Fetching vCenter tasks");
+router.get('/vms/:vmId/metrics', async (req, res) => {
+    try {
+        const { vmId } = req.params;
+        const { duration = '1h' } = req.query;
+        const metrics = await vCenterService.getVMMetrics(vmId, duration);
+        res.json(metrics);
+    } catch (error) {
+        console.error('Error fetching VM metrics:', error);
+        res.status(500).json({ error: 'خطا در دریافت اطلاعات عملکرد سرور' });
+    }
+});
 
-    const limit = parseInt(req.query.limit) || 10;
+/**
+ * @swagger
+ * /api/vcenter/quotas:
+ *   get:
+ *     tags: [vCenter]
+ *     summary: Get VM resource quotas and limits
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Resource quotas and limits
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 cpu:
+ *                   type: object
+ *                   properties:
+ *                     limit:
+ *                       type: integer
+ *                     used:
+ *                       type: integer
+ *                 memory:
+ *                   type: object
+ *                   properties:
+ *                     limit:
+ *                       type: integer
+ *                     used:
+ *                       type: integer
+ *                 storage:
+ *                   type: object
+ *                   properties:
+ *                     limit:
+ *                       type: integer
+ *                     used:
+ *                       type: integer
+ *                 network:
+ *                   type: object
+ *                   properties:
+ *                     bandwidth:
+ *                       type: integer
+ *                     used:
+ *                       type: integer
+ */
+router.get('/quotas', authMiddleware.protect, async (req, res) => {
+    try {
+        const quotas = await vCenterService.getResourceQuotas(req.user.id);
+        res.json(quotas);
+    } catch (error) {
+        console.error('Error fetching resource quotas:', error);
+        res.status(500).json({ error: 'خطا در دریافت سهمیه‌های منابع' });
+    }
+});
 
-    // For demo purposes, just return sample tasks
-    const tasks = [
-        {
-            id: "task-1001",
-            operation: "PowerOnVM_Task",
-            target: {
-                id: "vm-1234",
-                name: "customer-vm-01",
-                type: "VirtualMachine",
-            },
-            status: "success",
-            startTime: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-            endTime: new Date(Date.now() - 59 * 60 * 1000).toISOString(),
-            userId: req.user.id,
-        },
-        {
-            id: "task-1002",
-            operation: "CreateSnapshot_Task",
-            target: {
-                id: "vm-1234",
-                name: "customer-vm-01",
-                type: "VirtualMachine",
-            },
-            status: "success",
-            startTime: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-            endTime: new Date(Date.now() - 1.9 * 60 * 60 * 1000).toISOString(),
-            userId: req.user.id,
-        },
-        {
-            id: "task-1003",
-            operation: "PowerOffVM_Task",
-            target: {
-                id: "vm-5678",
-                name: "customer-vm-02",
-                type: "VirtualMachine",
-            },
-            status: "success",
-            startTime: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-            endTime: new Date(Date.now() - 4.9 * 60 * 60 * 1000).toISOString(),
-            userId: req.user.id,
-        },
-    ];
+/**
+ * @swagger
+ * /api/vcenter/vms/{vmId}/backup:
+ *   post:
+ *     tags: [vCenter]
+ *     summary: Create VM backup
+ *     parameters:
+ *       - in: path
+ *         name: vmId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               retention:
+ *                 type: integer
+ *                 description: Number of days to retain the backup
+ *     responses:
+ *       200:
+ *         description: Backup creation initiated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 taskId:
+ *                   type: string
+ *                 backupId:
+ *                   type: string
+ */
+router.post('/vms/:vmId/backup', authMiddleware.protect, async (req, res) => {
+    try {
+        const { vmId } = req.params;
+        const backupData = req.body;
+        const result = await vCenterService.createVMBackup(vmId, backupData);
+        res.json(result);
+    } catch (error) {
+        console.error('Error creating VM backup:', error);
+        res.status(500).json({ error: 'خطا در ایجاد پشتیبان' });
+    }
+});
 
-    res.status(200).json({
-        status: "success",
-        data: {
-            tasks: tasks.slice(0, limit),
-        },
-    });
+/**
+ * @swagger
+ * /api/vcenter/vms/{vmId}/scale:
+ *   post:
+ *     tags: [vCenter]
+ *     summary: Scale VM resources
+ *     parameters:
+ *       - in: path
+ *         name: vmId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               cpuCount:
+ *                 type: integer
+ *               memoryGB:
+ *                 type: integer
+ *               diskGB:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Resource scaling initiated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 taskId:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.post('/vms/:vmId/scale', authMiddleware.protect, async (req, res) => {
+    try {
+        const { vmId } = req.params;
+        const scaleData = req.body;
+        const result = await vCenterService.scaleVMResources(vmId, scaleData);
+        res.json(result);
+    } catch (error) {
+        console.error('Error scaling VM resources:', error);
+        res.status(500).json({ error: 'خطا در تغییر منابع سرور' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/vcenter/alerts:
+ *   get:
+ *     tags: [vCenter]
+ *     summary: Get monitoring alerts
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [active, resolved]
+ *         description: Filter alerts by status
+ *       - in: query
+ *         name: severity
+ *         schema:
+ *           type: string
+ *           enum: [critical, warning, info]
+ *         description: Filter alerts by severity
+ *     responses:
+ *       200:
+ *         description: List of monitoring alerts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   vmId:
+ *                     type: string
+ *                   type:
+ *                     type: string
+ *                   severity:
+ *                     type: string
+ *                   message:
+ *                     type: string
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                   resolvedAt:
+ *                     type: string
+ *                     format: date-time
+ */
+router.get('/alerts', authMiddleware.protect, async (req, res) => {
+    try {
+        const { status, severity } = req.query;
+        const alerts = await vCenterService.getMonitoringAlerts(req.user.id, { status, severity });
+        res.json(alerts);
+    } catch (error) {
+        console.error('Error fetching monitoring alerts:', error);
+        res.status(500).json({ error: 'خطا در دریافت هشدارها' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/vcenter/alerts/{alertId}/resolve:
+ *   post:
+ *     tags: [vCenter]
+ *     summary: Resolve a monitoring alert
+ *     parameters:
+ *       - in: path
+ *         name: alertId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Alert resolved successfully
+ */
+router.post('/alerts/:alertId/resolve', authMiddleware.protect, async (req, res) => {
+    try {
+        const { alertId } = req.params;
+        await vCenterService.resolveAlert(alertId);
+        res.json({ message: 'هشدار با موفقیت برطرف شد' });
+    } catch (error) {
+        console.error('Error resolving alert:', error);
+        res.status(500).json({ error: 'خطا در برطرف کردن هشدار' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/vcenter/vms/{vmId}/analytics:
+ *   get:
+ *     summary: Get VM performance analytics
+ *     parameters:
+ *       - in: path
+ *         name: vmId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: period
+ *         schema:
+ *           type: string
+ *           enum: [day, week, month]
+ *           default: day
+ *     responses:
+ *       200:
+ *         description: VM performance analytics data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 cpu:
+ *                   type: object
+ *                   properties:
+ *                     utilization:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           timestamp:
+ *                             type: string
+ *                             format: date-time
+ *                           value:
+ *                             type: number
+ *                 memory:
+ *                   type: object
+ *                   properties:
+ *                     utilization:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           timestamp:
+ *                             type: string
+ *                             format: date-time
+ *                           value:
+ *                             type: number
+ */
+router.get('/vms/:vmId/analytics', authMiddleware.protect, async (req, res) => {
+    try {
+        const { vmId } = req.params;
+        const { period = 'day' } = req.query;
+        
+        const analytics = await vCenterService.getVMAnalytics(vmId, period);
+        res.json(analytics);
+    } catch (error) {
+        console.error('Error fetching VM analytics:', error);
+        res.status(500).json({ error: 'خطا در دریافت تحلیل‌های عملکرد' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/vcenter/vms/{vmId}/forecast:
+ *   get:
+ *     summary: Get VM resource usage forecast
+ *     parameters:
+ *       - in: path
+ *         name: vmId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: horizon
+ *         schema:
+ *           type: string
+ *           enum: [24h, 7d, 30d]
+ *           default: 24h
+ *     responses:
+ *       200:
+ *         description: VM resource usage forecast
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 cpu:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       timestamp:
+ *                         type: string
+ *                         format: date-time
+ *                       predicted:
+ *                         type: number
+ *                       confidence:
+ *                         type: number
+ *                 memory:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       timestamp:
+ *                         type: string
+ *                         format: date-time
+ *                       predicted:
+ *                         type: number
+ *                       confidence:
+ *                         type: number
+ */
+router.get('/vms/:vmId/forecast', authMiddleware.protect, async (req, res) => {
+    try {
+        const { vmId } = req.params;
+        const { horizon = '24h' } = req.query;
+        
+        const forecast = await vCenterService.getVMForecast(vmId, horizon);
+        res.json(forecast);
+    } catch (error) {
+        console.error('Error fetching VM forecast:', error);
+        res.status(500).json({ error: 'خطا در دریافت پیش‌بینی مصرف منابع' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/vcenter/vms/{vmId}/optimize:
+ *   post:
+ *     summary: Optimize VM resource allocation
+ *     parameters:
+ *       - in: path
+ *         name: vmId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: VM optimization task started
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 taskId:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.post('/vms/:vmId/optimize', authMiddleware.protect, async (req, res) => {
+    try {
+        const { vmId } = req.params;
+        const taskId = await vCenterService.optimizeVM(vmId);
+        res.json({ taskId, message: 'بهینه‌سازی منابع سرور آغاز شد' });
+    } catch (error) {
+        console.error('Error optimizing VM:', error);
+        res.status(500).json({ error: 'خطا در بهینه‌سازی منابع سرور' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/vcenter/vms/{vmId}/recommendations:
+ *   get:
+ *     summary: Get VM resource optimization recommendations
+ *     parameters:
+ *       - in: path
+ *         name: vmId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: VM resource optimization recommendations
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 recommendations:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       type:
+ *                         type: string
+ *                         enum: [cpu, memory, storage, network]
+ *                       current:
+ *                         type: number
+ *                       recommended:
+ *                         type: number
+ *                       reason:
+ *                         type: string
+ */
+router.get('/vms/:vmId/recommendations', authMiddleware.protect, async (req, res) => {
+    try {
+        const { vmId } = req.params;
+        const recommendations = await vCenterService.getVMRecommendations(vmId);
+        res.json({ recommendations });
+    } catch (error) {
+        console.error('Error fetching VM recommendations:', error);
+        res.status(500).json({ error: 'خطا در دریافت توصیه‌های بهینه‌سازی' });
+    }
 });
 
 // For demonstration only - mock endpoint

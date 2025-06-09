@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wallet & Payments - Nettoria</title>
+    <link rel="icon" href="./Assets/img/icon.ico" type="image/ico" />
+    <link rel="stylesheet" href="./Assets/Css/wallet.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <header class="header">
+      <i class="bx bx-menu" id="menu-icon"></i>
+      <button id="login"><a href="./login.html">ورود / ثبت نام</a></button>
+      <nav class="navbar">
+        <a href="./domain.html">دامنه</a>
+        <a href="./cloud-host.html">هاست</a>
+        <a href="./virtual-server.html">سرور مجازی</a>
+        <a href="./cloud-server.html">سرور ابری</a>
+        <a href="./blogs.html">وبلاگ</a>
+        <a href="./Contact-us.html">ارتباط باما</a>
+      </nav>
+      <a href="./index.html" class="logo">Netto<span>ria</span></a>
+      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+    </header>
+
+    <section class="wallet-container">
+      <div class="wallet-header">
+        <h1>کیف پول</h1>
+        <div class="wallet-actions">
+          <button class="add-funds-btn">افزایش اعتبار</button>
+          <button class="withdraw-btn">برداشت وجه</button>
+        </div>
+      </div>
+
+      <div id="errorMessage"></div>
+      <div id="successMessage"></div>
+
+      <div class="wallet-content">
+        <div class="balance-card">
+          <div class="balance-header">
+            <h2>موجودی فعلی</h2>
+            <i class="bx bx-wallet"></i>
+          </div>
+          <div class="balance-amount">
+            <span id="currentBalance">0</span>
+            <span class="currency">تومان</span>
+          </div>
+        </div>
+
+        <div class="transactions-section">
+          <div class="transactions-header">
+            <h2>تراکنش‌های اخیر</h2>
+            <div class="export-actions">
+              <button class="export-btn" data-format="pdf">
+                <i class="bx bx-file-pdf"></i>
+                خروجی PDF
+              </button>
+              <button class="export-btn" data-format="excel">
+                <i class="bx bx-file"></i>
+                خروجی Excel
+              </button>
+            </div>
+          </div>
+          <div id="transactionsList" class="transactions-list">
+            <!-- Transactions will be loaded here dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Add Funds Modal -->
+    <div id="addFundsModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>افزایش اعتبار</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="addFundsForm">
+            <div class="form-group">
+              <label for="amount">مبلغ (تومان)</label>
+              <input
+                type="number"
+                id="amount"
+                name="amount"
+                min="10000"
+                step="10000"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="paymentMethod">روش پرداخت</label>
+              <select id="paymentMethod" name="paymentMethodId" required>
+                <option value="">انتخاب کنید</option>
+                <option value="pm-credit-card">کارت اعتباری</option>
+                <option value="pm-bank-transfer">انتقال بانکی</option>
+                <option value="pm-online">پرداخت آنلاین</option>
+              </select>
+            </div>
+            <div
+              id="bankTransferOptions"
+              class="form-group"
+              style="display: none"
+            >
+              <label for="bankTransferDetails">اطلاعات انتقال بانکی</label>
+              <textarea
+                id="bankTransferDetails"
+                name="bankTransferDetails"
+                placeholder="شماره پیگیری و اطلاعات انتقال را وارد کنید"
+                rows="3"
+              ></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="cancel-btn">انصراف</button>
+              <button type="submit" class="submit-btn">پرداخت</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Withdraw Funds Modal -->
+    <div id="withdrawModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>برداشت وجه</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="withdrawForm">
+            <div class="form-group">
+              <label for="withdrawAmount">مبلغ (تومان)</label>
+              <input
+                type="number"
+                id="withdrawAmount"
+                name="amount"
+                min="10000"
+                step="10000"
+                required
+              />
+              <small class="form-text">حداقل مبلغ برداشت: ۱۰,۰۰۰ تومان</small>
+            </div>
+            <div class="form-group">
+              <label for="withdrawalMethod">روش برداشت</label>
+              <select id="withdrawalMethod" name="withdrawalMethodId" required>
+                <option value="">انتخاب کنید</option>
+                <option value="wm-bank-account">حساب بانکی</option>
+                <option value="wm-card">کارت بانکی</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="bankAccount">شماره حساب بانکی</label>
+              <input
+                type="text"
+                id="bankAccount"
+                name="bankAccount"
+                pattern="[0-9]{16,20}"
+                required
+              />
+              <small class="form-text"
+                >شماره حساب بانکی را بدون خط تیره وارد کنید</small
+              >
+            </div>
+            <div class="form-group">
+              <label for="bankName">نام بانک</label>
+              <select id="bankName" name="bankName" required>
+                <option value="">انتخاب کنید</option>
+                <option value="mellat">بانک ملت</option>
+                <option value="melli">بانک ملی</option>
+                <option value="saderat">بانک صادرات</option>
+                <option value="parsian">بانک پارسیان</option>
+                <option value="pasargad">بانک پاسارگاد</option>
+                <option value="saman">بانک سامان</option>
+                <option value="tejarat">بانک تجارت</option>
+                <option value="refah">بانک رفاه</option>
+                <option value="ansar">بانک انصار</option>
+                <option value="karafarin">بانک کارآفرین</option>
+                <option value="sina">بانک سینا</option>
+                <option value="postbank">پست بانک</option>
+                <option value="tosee">بانک توسعه صادرات</option>
+                <option value="tosee-taavon">بانک توسعه تعاون</option>
+                <option value="ghavamin">بانک قوامین</option>
+                <option value="hekmat">بانک حکمت ایرانیان</option>
+                <option value="kosar">بانک کوثر</option>
+                <option value="maskan">بانک مسکن</option>
+                <option value="shahr">بانک شهر</option>
+                <option value="day">بانک دی</option>
+                <option value="ayandeh">بانک آینده</option>
+                <option value="resalat">بانک رسالت</option>
+                <option value="tourism">بانک گردشگری</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="cancel-btn">انصراف</button>
+              <button type="submit" class="submit-btn">درخواست برداشت</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date Range Modal -->
+    <div id="dateRangeModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>انتخاب بازه زمانی</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="preset-ranges">
+            <button class="preset-btn" data-range="week">هفته گذشته</button>
+            <button class="preset-btn" data-range="month">ماه گذشته</button>
+            <button class="preset-btn" data-range="year">سال گذشته</button>
+            <button class="preset-btn" data-range="all">همه زمان</button>
+          </div>
+          <form id="dateRangeForm">
+            <div class="form-group">
+              <label for="startDate">از تاریخ</label>
+              <input type="date" id="startDate" name="startDate" required />
+            </div>
+            <div class="form-group">
+              <label for="endDate">تا تاریخ</label>
+              <input type="date" id="endDate" name="endDate" required />
+            </div>
+            <div class="form-actions">
+              <button type="button" class="cancel-btn">انصراف</button>
+              <button type="submit" class="submit-btn">تایید</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="./Assets/js/utils.js"></script>
+    <script src="./Assets/js/api-client.js"></script>
+    <script src="./Assets/js/wallet.js"></script>
+  </body>
+</html>

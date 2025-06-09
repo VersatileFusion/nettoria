@@ -1,175 +1,336 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
-    <title>فیلترشکن</title>
-    <link rel="stylesheet" href="./Assets/Css/vpn-panel.css" />
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="shortcut icon"
-      href="./Assets/img/icon.ico"
-      type="image/x-icon"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="./Assets/Js/utils.js"></script>
-    <script src="./Assets/Js/cart.js"></script>
-    <script src="./Assets/Js/vpn-panel.js" defer></script>
-  </head>
-  <body>
-    <!-- Start Header -->
-    <header class="header">
-      <i class="bx bx-menu" id="menu-icon" dir="rtl"></i>
-      <button id="login">
-        <a href="./login.html">ورود / ثبت نام</a>
-      </button>
-      <nav class="navbar">
-        <a href="./domain.html">دامنه</a>
-        <a href="./cloud-host.html">هاست</a>
-        <a href="./virtual-server.html">سرور مجازی</a>
-        <a href="./cloud-server.html">سرور ابری</a>
-        <a href="./blogs.html">وبلاگ</a>
-        <a href="./Contact-us.html">ارتباط باما</a>
-      </nav>
-      <a href="./index.html" class="logo">Netto<span>ria</span></a>
-      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
-    </header>
-    <!-- End Header -->
-    <div class="toast"></div>
-    <!-- Start VPN Panel Section -->
-    <section class="vpn-panel">
-      <div class="vpn-cards">
-        <div class="vpn-card">
-          <h2>PPP Panel</h2>
-          <div class="features">
-            <div class="feature"><i class="bx bx-check"></i>تانل شده</div>
-            <div class="feature">
-              <i class="bx bx-check"></i>قابلیت تفکیک ترافیک داخل و خارج
-            </div>
-            <div class="feature">
-              <i class="bx bx-check"></i>به همراه کانفیگ های (OVPN, PPTP, L2TP)
-            </div>
-            <div class="feature">
-              <i class="bx bx-check"></i>امکان تایین سرعت هر یوزر
-            </div>
-            <div class="feature">
-              <i class="bx bx-check"></i>امکان تایین تعداد کلاینت هر یوزر
-            </div>
-            <div class="feature">پشتیبانی تا آخرین روز اشتراک</div>
-          </div>
-          <div class="price">398,000 تومان</div>
-          <div class="card-buttons">
-            <button class="more-info">اطلاعات بیشتر</button>
-            <button class="cart-btn">افزودن به سبد خرید</button>
-          </div>
+<html lang="en">
 
-          <!-- Additional details section -->
-          <div class="details-content">
-            <button class="close-details"><i class="bx bx-x"></i></button>
-            <h3>جزئیات بیشتر</h3>
-            <div class="detailed-info">
-              <p>پورت: 1GB</p>
-              <p>پشتیبانی: 24/7</p>
-              <p>ترافیک: به ازای هر مقدار مصرف</p>
-              <p>لوکیشن‌های قابل سقارش: آلمان/فرانسه/هلند/امارات</p>
-              <p>آموزش استفاده از پنل</p>
-              <p>پشتیبانی از طریق وبسایت و تلگرام</p>
-            </div>
-          </div>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
+  <title>VPN Panel - Nettoria</title>
+  <link rel="stylesheet" href="./Assets/css/style.css" />
+  <link rel="stylesheet" href="./Assets/css/vpn-panel.css" />
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="shortcut icon" href="./Assets/img/icon.ico" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="./Assets/Js/utils.js"></script>
+  <script src="./Assets/Js/cart.js"></script>
+  <script src="./Assets/Js/vpn-panel.js" defer></script>
+</head>
 
-        <div class="vpn-card">
-          <h2>X-Ray Panel</h2>
-          <div class="features">
-            <div class="feature"><i class="bx bx-x"></i>تانل شده</div>
-            <div class="feature">
-              <i class="bx bx-x"></i>قابلیت تفکیک ترافیک داخل و خارج
-            </div>
-            <div class="feature">
-              <i class="bx bx-check"></i>به همراه کانفیگ های (V2Ray)
-            </div>
-            <div class="feature">
-              <i class="bx bx-x"></i>امکان تایین سرعت هر یوزر
-            </div>
-            <div class="feature">
-              <i class="bx bx-check"></i>امکان تایین تعداد کلاینت هر یوزر
-            </div>
-            <div class="feature">پشتیبانی تا آخرین روز اشتراک</div>
-          </div>
-          <div class="price">272,000 تومان</div>
-          <div class="card-buttons">
-            <button class="more-info">اطلاعات بیشتر</button>
-            <button class="cart-btn">افزودن به سبد خرید</button>
-          </div>
+<body>
+  <header>
+    <nav>
+      <div class="logo">
+        <a href="index.html">Nettoria</a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="blogs.html">Blogs</a></li>
+        <li><a href="about-us.html">About Us</a></li>
+        <li><a href="Contact-us.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
 
-          <!-- Additional details section -->
-          <div class="details-content">
-            <button class="close-details"><i class="bx bx-x"></i></button>
-            <h3>جزئیات بیشتر</h3>
-            <div class="detailed-info">
-              <p>پورت: 1GB</p>
-              <p>پشتیبانی: 24/7</p>
-              <p>ترافیک: به ازای هر مقدار مصرف</p>
-              <p>لوکیشن‌های قابل سقارش: آلمان/فرانسه/هلند</p>
-              <p>آموزش استفاده از پنل</p>
-              <p>پشتیبانی از طریق وبسایت و تلگرام</p>
-            </div>
-          </div>
-        </div>
+  <main>
+    <section class="vpn-dashboard">
+      <h1>VPN Dashboard</h1>
 
-        <div class="vpn-card">
-          <h2>Delux X-Ray Panel</h2>
-          <div class="features">
-            <div class="feature"><i class="bx bx-check"></i>تانل شده</div>
-            <div class="feature">
-              <i class="bx bx-check"></i>قابلیت تفکیک ترافیک داخل و خارج
-            </div>
-            <div class="feature">
-              <i class="bx bx-check"></i>به همراه کانفیگ های (V2Ray)
-            </div>
-            <div class="feature">
-              <i class="bx bx-x"></i>امکان تایین سرعت هر یوزر
-            </div>
-            <div class="feature">
-              <i class="bx bx-check"></i>امکان تایین تعداد کلاینت هر یوزر
-            </div>
-            <div class="feature">پشتیبانی تا آخرین روز اشتراک</div>
-          </div>
-          <div class="price">331,000 تومان</div>
-          <div class="card-buttons">
-            <button class="more-info">اطلاعات بیشتر</button>
-            <button class="cart-btn">افزودن به سبد خرید</button>
-          </div>
-
-          <!-- Additional details section -->
-          <div class="details-content">
-            <button class="close-details"><i class="bx bx-x"></i></button>
-            <h3>جزئیات بیشتر</h3>
-            <div class="detailed-info">
-              <p>پورت: 1GB</p>
-              <p>پشتیبانی: 24/7</p>
-              <p>ترافیک: به ازای هر مقدار مصرف</p>
-              <p>لوکیشن‌های قابل سقارش: آلمان/فرانسه/هلند</p>
-              <p>آموزش استفاده از پنل</p>
-              <p>پشتیبانی از طریق وبسایت و تلگرام</p>
-            </div>
-          </div>
+      <div class="vpn-controls">
+        <button id="createVPN" class="btn-primary">Create New VPN</button>
+        <div class="search-box">
+          <input type="text" id="searchVPN" placeholder="Search VPNs...">
         </div>
       </div>
+
+      <div class="vpn-list" id="vpnList">
+        <!-- VPNs will be loaded here dynamically -->
+        <div class="loading-spinner"></div>
+      </div>
     </section>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  </body>
+
+    <!-- Create/Edit VPN Modal -->
+    <div id="vpnModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle">Create New VPN</h2>
+        <form id="vpnForm">
+          <input type="hidden" id="vpnId">
+          <div class="form-group">
+            <label for="vpnName">VPN Name</label>
+            <input type="text" id="vpnName" required>
+          </div>
+          <div class="form-group">
+            <label for="vpnLocation">Location</label>
+            <input type="text" id="vpnLocation" required>
+          </div>
+          <div class="form-group">
+            <label for="vpnProtocol">Protocol</label>
+            <select id="vpnProtocol" required>
+              <option value="OpenVPN">OpenVPN</option>
+              <option value="WireGuard">WireGuard</option>
+              <option value="L2TP">L2TP</option>
+              <option value="PPTP">PPTP</option>
+              <option value="SSTP">SSTP</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="vpnBandwidth">Bandwidth (Mbps)</label>
+            <input type="number" id="vpnBandwidth" min="1" required>
+          </div>
+          <div class="form-group">
+            <label for="vpnPrice">Price</label>
+            <input type="number" id="vpnPrice" min="0" step="0.01" required>
+          </div>
+          <button type="submit" class="btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About Nettoria</h3>
+        <p>Your trusted partner in networking solutions.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="blogs.html">Blogs</a></li>
+          <li><a href="Contact-us.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Contact Us</h3>
+        <p>Email: info@nettoria.com</p>
+        <p>Phone: +1 234 567 890</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 Nettoria. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const API_BASE_URL = '/api';
+    let currentVPNs = [];
+
+    // DOM Elements
+    const vpnList = document.getElementById('vpnList');
+    const createVPNBtn = document.getElementById('createVPN');
+    const searchVPN = document.getElementById('searchVPN');
+    const vpnModal = document.getElementById('vpnModal');
+    const vpnForm = document.getElementById('vpnForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const closeModal = document.querySelector('.close');
+
+    // Event Listeners
+    createVPNBtn.addEventListener('click', () => openModal());
+    closeModal.addEventListener('click', () => closeModal());
+    vpnForm.addEventListener('submit', handleVPNSubmit);
+    searchVPN.addEventListener('input', handleSearch);
+
+    // Functions
+    async function fetchVPNs() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/vpn`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          currentVPNs = data.data;
+          renderVPNs(currentVPNs);
+        } else {
+          showError('Failed to fetch VPNs');
+        }
+      } catch (error) {
+        showError('Error connecting to server');
+      }
+    }
+
+    function renderVPNs(vpns) {
+      vpnList.innerHTML = '';
+
+      if (vpns.length === 0) {
+        vpnList.innerHTML = '<p class="no-data">No VPNs found</p>';
+        return;
+      }
+
+      vpns.forEach(vpn => {
+        const vpnCard = document.createElement('div');
+        vpnCard.className = 'vpn-card';
+        vpnCard.innerHTML = `
+            <div class="vpn-info">
+              <h3>${vpn.name}</h3>
+              <p><strong>Location:</strong> ${vpn.location}</p>
+              <p><strong>Protocol:</strong> ${vpn.protocol}</p>
+              <p><strong>Bandwidth:</strong> ${vpn.bandwidth} Mbps</p>
+              <p><strong>Status:</strong> <span class="status ${vpn.status}">${vpn.status}</span></p>
+            </div>
+            <div class="vpn-actions">
+              <button onclick="viewStats('${vpn.id}')" class="btn-secondary">View Stats</button>
+              <button onclick="editVPN('${vpn.id}')" class="btn-secondary">Edit</button>
+              <button onclick="deleteVPN('${vpn.id}')" class="btn-danger">Delete</button>
+            </div>
+          `;
+        vpnList.appendChild(vpnCard);
+      });
+    }
+
+    function openModal(vpn = null) {
+      modalTitle.textContent = vpn ? 'Edit VPN' : 'Create New VPN';
+      if (vpn) {
+        document.getElementById('vpnId').value = vpn.id;
+        document.getElementById('vpnName').value = vpn.name;
+        document.getElementById('vpnLocation').value = vpn.location;
+        document.getElementById('vpnProtocol').value = vpn.protocol;
+        document.getElementById('vpnBandwidth').value = vpn.bandwidth;
+        document.getElementById('vpnPrice').value = vpn.price;
+      } else {
+        vpnForm.reset();
+        document.getElementById('vpnId').value = '';
+      }
+      vpnModal.style.display = 'block';
+    }
+
+    function closeModal() {
+      vpnModal.style.display = 'none';
+      vpnForm.reset();
+    }
+
+    async function handleVPNSubmit(e) {
+      e.preventDefault();
+      const vpnId = document.getElementById('vpnId').value;
+      const vpnData = {
+        name: document.getElementById('vpnName').value,
+        location: document.getElementById('vpnLocation').value,
+        protocol: document.getElementById('vpnProtocol').value,
+        bandwidth: parseInt(document.getElementById('vpnBandwidth').value),
+        price: parseFloat(document.getElementById('vpnPrice').value)
+      };
+
+      try {
+        const url = vpnId ?
+          `${API_BASE_URL}/vpn/${vpnId}` :
+          `${API_BASE_URL}/vpn`;
+
+        const response = await fetch(url, {
+          method: vpnId ? 'PUT' : 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify(vpnData)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          closeModal();
+          fetchVPNs();
+          showSuccess(vpnId ? 'VPN updated successfully' : 'VPN created successfully');
+        } else {
+          showError(data.error.message);
+        }
+      } catch (error) {
+        showError('Error saving VPN');
+      }
+    }
+
+    async function deleteVPN(id) {
+      if (!confirm('Are you sure you want to delete this VPN?')) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/vpn/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          fetchVPNs();
+          showSuccess('VPN deleted successfully');
+        } else {
+          showError(data.error.message);
+        }
+      } catch (error) {
+        showError('Error deleting VPN');
+      }
+    }
+
+    async function viewStats(id) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/vpn/${id}/stats`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          const stats = data.data;
+          alert(`
+              Bandwidth Used: ${formatBytes(stats.bandwidthUsed)}
+              Last Connected: ${new Date(stats.lastConnected).toLocaleString()}
+              Total Connections: ${stats.totalConnections}
+              Average Speed: ${stats.averageSpeed} Mbps
+            `);
+        } else {
+          showError(data.error.message);
+        }
+      } catch (error) {
+        showError('Error fetching VPN statistics');
+      }
+    }
+
+    function editVPN(id) {
+      const vpn = currentVPNs.find(v => v.id === id);
+      if (vpn) {
+        openModal(vpn);
+      }
+    }
+
+    function handleSearch(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const filteredVPNs = currentVPNs.filter(vpn =>
+        vpn.name.toLowerCase().includes(searchTerm) ||
+        vpn.location.toLowerCase().includes(searchTerm)
+      );
+      renderVPNs(filteredVPNs);
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function showSuccess(message) {
+      alert(message); // Replace with a better UI notification
+    }
+
+    function showError(message) {
+      alert(message); // Replace with a better UI notification
+    }
+
+    // Initial load
+    fetchVPNs();
+  </script>
+</body>
+
 </html>

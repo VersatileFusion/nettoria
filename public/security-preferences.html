@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تنظیمات امنیتی - نتوریا</title>
+    <link rel="stylesheet" href="./Assets/Css/login.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="shortcut icon" href="./Assets/img/icon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./Assets/Css/security-preferences.css">
+</head>
+
+<body>
+    <header class="header">
+        <i class="bx bx-menu" id="menu-icon"></i>
+        <button id="login"><a href="./login.html">ورود / ثبت نام</a></button>
+        <nav class="navbar">
+            <a href="./domain.html">دامنه</a>
+            <a href="./cloud-host.html">هاست</a>
+            <a href="./virtual-server.html">سرور مجازی</a>
+            <a href="./cloud-server.html">سرور ابری</a>
+            <a href="./blogs.html">وبلاگ</a>
+            <a href="./Contact-us.html">ارتباط باما</a>
+        </nav>
+        <a href="./index.html" class="logo">Netto<span>ria</span></a>
+        <a href="./login.html" id="login-icon"><i class='bx bx-user'></i></a>
+    </header>
+
+    <section class="security-preferences">
+        <div class="preferences-container">
+            <h1>تنظیمات امنیتی</h1>
+
+            <!-- Two-Factor Authentication -->
+            <div class="preference-section">
+                <div class="section-header">
+                    <h2>احراز هویت دو مرحله‌ای</h2>
+                    <div class="status-badge" id="2fa-status">غیرفعال</div>
+                </div>
+                <p>با فعال‌سازی احراز هویت دو مرحله‌ای، امنیت حساب کاربری شما افزایش می‌یابد.</p>
+                <button id="setup-2fa" class="btn">فعال‌سازی احراز هویت دو مرحله‌ای</button>
+                <button id="disable-2fa" class="btn btn-danger" style="display: none;">غیرفعال‌سازی</button>
+            </div>
+
+            <!-- Login Notifications -->
+            <div class="preference-section">
+                <div class="section-header">
+                    <h2>اعلان‌های ورود</h2>
+                    <label class="switch">
+                        <input type="checkbox" id="login-notifications">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <p>در صورت ورود به حساب کاربری از دستگاه یا مکان جدید، اعلانی دریافت خواهید کرد.</p>
+            </div>
+
+            <!-- Password Change Notifications -->
+            <div class="preference-section">
+                <div class="section-header">
+                    <h2>اعلان‌های تغییر رمز عبور</h2>
+                    <label class="switch">
+                        <input type="checkbox" id="password-change-notifications">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <p>در صورت تغییر رمز عبور، اعلانی دریافت خواهید کرد.</p>
+            </div>
+
+            <!-- Active Sessions -->
+            <div class="preference-section">
+                <div class="section-header">
+                    <h2>نشست‌های فعال</h2>
+                    <button id="refresh-sessions" class="btn-secondary">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div id="sessions-list" class="sessions-list">
+                    <!-- Sessions will be loaded here -->
+                </div>
+                <button id="terminate-all-sessions" class="btn btn-danger">خاتمه همه نشست‌ها</button>
+            </div>
+
+            <!-- Security Log -->
+            <div class="preference-section">
+                <div class="section-header">
+                    <h2>گزارش امنیتی</h2>
+                    <button id="refresh-log" class="btn-secondary">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div id="security-log" class="security-log">
+                    <!-- Security log entries will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2FA Disable Modal -->
+    <div id="disable-2fa-modal" class="modal">
+        <div class="modal-content">
+            <h2>غیرفعال‌سازی احراز هویت دو مرحله‌ای</h2>
+            <p>برای غیرفعال‌سازی احراز هویت دو مرحله‌ای، کد تایید را وارد کنید.</p>
+            <div class="verification-input">
+                <input type="text" id="disable-2fa-code" maxlength="6" placeholder="کد تایید را وارد کنید">
+            </div>
+            <div id="disable-2fa-error" class="error-message"></div>
+            <div class="modal-buttons">
+                <button id="confirm-disable-2fa" class="btn btn-danger">تایید و غیرفعال‌سازی</button>
+                <button id="cancel-disable-2fa" class="btn btn-secondary">انصراف</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./Assets/js/utils.js"></script>
+    <script src="./Assets/js/api-client.js"></script>
+    <script src="./Assets/js/security-preferences.js"></script>
+</body>
+
+</html>

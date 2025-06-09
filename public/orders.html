@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مدیریت سفارش‌ها - نتوریا</title>
+    <link rel="icon" href="./Assets/img/icon.ico" type="image/ico" />
+    <link rel="stylesheet" href="./Assets/Css/orders.css" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+</head>
+
+<body>
+    <header class="header">
+        <i class="bx bx-menu" id="menu-icon"></i>
+        <button id="login"><a href="./login.html">ورود / ثبت نام</a></button>
+        <nav class="navbar">
+            <a href="./domain.html">دامنه</a>
+            <a href="./cloud-host.html">هاست</a>
+            <a href="./virtual-server.html">سرور مجازی</a>
+            <a href="./cloud-server.html">سرور ابری</a>
+            <a href="./blogs.html">وبلاگ</a>
+            <a href="./Contact-us.html">ارتباط باما</a>
+        </nav>
+        <a href="./index.html" class="logo">Netto<span>ria</span></a>
+        <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+    </header>
+
+    <section class="orders-container">
+        <div class="orders-header">
+            <h1>مدیریت سفارش‌ها</h1>
+            <div class="orders-actions">
+                <button class="new-order-btn">سفارش جدید</button>
+                <div class="orders-filter">
+                    <select id="orderStatus">
+                        <option value="all">همه سفارش‌ها</option>
+                        <option value="pending">در انتظار پرداخت</option>
+                        <option value="processing">در حال پردازش</option>
+                        <option value="completed">تکمیل شده</option>
+                        <option value="cancelled">لغو شده</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="errorMessage"></div>
+        <div id="successMessage"></div>
+
+        <div id="ordersList" class="orders-list">
+            <!-- Orders will be loaded here dynamically -->
+        </div>
+    </section>
+
+    <!-- New Order Modal -->
+    <div id="newOrderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>سفارش جدید</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newOrderForm">
+                    <div class="form-group">
+                        <label for="orderType">نوع سرویس</label>
+                        <select id="orderType" name="type" required>
+                            <option value="VIRTUAL">سرور مجازی</option>
+                            <option value="CLOUD">سرور ابری</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="orderPlan">پلن سرویس</label>
+                        <select id="orderPlan" name="plan" required>
+                            <option value="basic">پایه</option>
+                            <option value="standard">استاندارد</option>
+                            <option value="premium">پیشرفته</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="orderDuration">مدت زمان (ماه)</label>
+                        <select id="orderDuration" name="duration" required>
+                            <option value="1">1 ماه</option>
+                            <option value="3">3 ماه</option>
+                            <option value="6">6 ماه</option>
+                            <option value="12">12 ماه</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">انصراف</button>
+                        <button type="submit" class="submit-btn">ثبت سفارش</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="./Assets/js/utils.js"></script>
+    <script src="./Assets/js/api-client.js"></script>
+    <script src="./Assets/js/orders.js"></script>
+</body>
+
+</html>

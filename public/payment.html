@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>پرداخت | نتوریا</title>
+  <link rel="stylesheet" href="/Assets/css/style.css" />
+  <link rel="stylesheet" href="/Assets/css/common.css" />
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <a href="/" class="logo">نتوریا</a>
+    <i class='bx bx-menu' id="menu-icon"></i>
+    <nav class="navbar">
+      <a href="/">خانه</a>
+      <a href="/services.html">خدمات</a>
+      <a href="/blog.html">وبلاگ</a>
+      <a href="/about.html">درباره ما</a>
+      <a href="/contact.html">تماس با ما</a>
+    </nav>
+    <div class="header-icons">
+      <i class='bx bx-cart' id="cart-icon"></i>
+      <a href="/login.html" class="btn">ورود / ثبت نام</a>
+    </div>
+  </header>
+
+  <!-- Payment Section -->
+  <section class="payment-section">
+    <div class="container">
+      <h2 class="heading">پرداخت</h2>
+      <div class="payment-container">
+        <div class="payment-methods">
+          <h3>روش‌های پرداخت</h3>
+          <div class="methods-grid"></div>
+        </div>
+        <div class="payment-form">
+          <form id="payment-form">
+            <div class="form-group">
+              <label for="amount">مبلغ (تومان)</label>
+              <input type="number" id="amount" name="amount" required min="1000">
+            </div>
+            <div class="form-group">
+              <label for="payment-method">روش پرداخت</label>
+              <select id="payment-method" name="payment-method" required>
+                <option value="">انتخاب کنید</option>
+              </select>
+            </div>
+            <div id="method-details" class="method-details">
+              <!-- Dynamic payment method details will be inserted here -->
+            </div>
+            <button type="submit" class="btn">پرداخت</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>درباره نتوریا</h3>
+        <p>نتوریا ارائه دهنده خدمات هاستینگ و سرور با بالاترین کیفیت و پشتیبانی 24/7</p>
+      </div>
+      <div class="footer-section">
+        <h3>دسترسی سریع</h3>
+        <ul>
+          <title>پرداخت - نتوریا</title>
+          <link rel="stylesheet" href="./Assets/Css/common.css" />
+          <link rel="stylesheet" href="./Assets/Css/payment.css" />
+          <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+          <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+          <link rel="shortcut icon" href="./Assets/img/icon.ico" type="image/x-icon" />
+          </head>
+
+          <body>
+            <!-- Header -->
+            <header class="header">
+              <i class="bx bx-menu" id="menu-icon"></i>
+              <button id="login">
+                <a href="./login.html">ورود / ثبت نام</a>
+              </button>
+              <a href="./cart.html" id="cart-icon">
+                <i class="bx bx-cart"></i>
+                <span class="cart-count">0</span>
+              </a>
+              <nav class="navbar">
+                <a href="./domain.html">دامنه</a>
+                <a href="./cloud-host.html">هاست</a>
+                <a href="./virtual-server.html">سرور مجازی</a>
+                <a href="./cloud-server.html">سرور ابری</a>
+                <a href="./blogs.html">وبلاگ</a>
+                <a href="./Contact-us.html">ارتباط باما</a>
+              </nav>
+              <a href="./index.html" class="logo">Netto<span>ria</span></a>
+              <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+            </header>
+
+            <!-- Payment Section -->
+            <main class="payment-container">
+              <div class="payment-wrapper">
+                <!-- Order Summary -->
+                <section class="order-summary">
+                  <h2>خلاصه سفارش</h2>
+                  <div class="summary-content">
+                    <div class="summary-item">
+                      <span>محصول:</span>
+                      <span id="product-name">Loading...</span>
+                    </div>
+                    <div class="summary-item">
+                      <span>قیمت:</span>
+                      <span id="product-price">Loading...</span>
+                    </div>
+                    <div class="summary-item">
+                      <span>مالیات:</span>
+                      <span id="tax-amount">Loading...</span>
+                    </div>
+                    <div class="summary-item total">
+                      <span>مبلغ کل:</span>
+                      <span id="total-amount">Loading...</span>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Payment Methods -->
+                <section class="payment-methods">
+                  <h2>روش پرداخت</h2>
+                  <div class="methods-container">
+                    <div class="payment-method" data-method="online">
+                      <input type="radio" name="payment-method" id="online" value="online" />
+                      <label for="online">
+                        <i class="bx bx-credit-card"></i>
+                        پرداخت آنلاین
+                      </label>
+                    </div>
+                    <div class="payment-method" data-method="wallet">
+                      <input type="radio" name="payment-method" id="wallet" value="wallet" />
+                      <label for="wallet">
+                        <i class="bx bx-wallet"></i>
+                        پرداخت از کیف پول
+                      </label>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Payment Form -->
+                <section class="payment-form">
+                  <form id="payment-form">
+                    <div class="form-group">
+                      <label for="card-number">شماره کارت</label>
+                      <input type="text" id="card-number" placeholder="شماره کارت را وارد کنید" maxlength="16" />
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label for="expiry">تاریخ انقضا</label>
+                        <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" />
+                      </div>
+                      <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" placeholder="CVV" maxlength="4" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="card-holder">نام صاحب کارت</label>
+                      <input type="text" id="card-holder" placeholder="نام صاحب کارت را وارد کنید" />
+                    </div>
+                    <button type="submit" class="pay-button">
+                      پرداخت
+                      <i class="bx bx-lock-alt"></i>
+                    </button>
+                  </form>
+                </section>
+              </div>
+            </main>
+
+            <!-- Back to Home -->
+            <a href="./index.html" class="back-to-home">
+              <i class="bx bx-home"></i>
+            </a>
+
+            <script src="./Assets/Js/payment.js"></script>
+          </body>
+
+</html>

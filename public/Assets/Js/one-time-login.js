@@ -32,40 +32,81 @@ document.addEventListener("click", (e) => {
   }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-  const form = document.querySelector('.form');
-  const phoneInput = document.querySelector('#phone');
-  
-  // Handle phone input
-  phoneInput.addEventListener('input', function(e) {
-    // Remove any non-numeric characters and limit to 10 digits
-    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
-  });
-  
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector(".form");
+  const phoneInput = document.getElementById("phone");
+  const errorMessage = document.querySelector(".error-message");
+  const submitButton = document.querySelector(".btn");
+
+  // Validate phone number format
+  function validatePhone(phone) {
+    const phoneRegex = /^[0-9]{10}$/;
+    return phoneRegex.test(phone);
+  }
+
   // Handle form submission
-  form.addEventListener('submit', function(e) {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    
-    const phoneNumber = phoneInput.value;
-    
+
+    const phone = phoneInput.value;
+
     // Validate phone number
-    if (!/^[0-9]{10}$/.test(phoneNumber)) {
-      return; // Don't submit if invalid
+    if (!validatePhone(phone)) {
+      errorMessage.style.display = "block";
+      return;
     }
-    
-    // Save phone number in localStorage for verification page
-    localStorage.setItem('otp_phone', phoneNumber);
-    
-    // Generate and save OTP
-    const otp = generateOTP();
-    localStorage.setItem('otp_code', otp);
-    
-    // Redirect to verification page
-    window.location.href = './otp-verification.html';
+
+    errorMessage.style.display = "none";
+    submitButton.disabled = true;
+    submitButton.innerHTML =
+      '<i class="bx bx-loader-alt bx-spin"></i> در حال ارسال...';
+
+    try {
+      // Generate one-time login link
+      const response = await apiClient.post("/one-time-login/generate", {
+        phone: phone,
+      });
+
+      if (response.success) {
+        // Store the token in localStorage for verification
+        localStorage.setItem("oneTimeLoginToken", response.data.token);
+
+        // Redirect to OTP verification page
+        window.location.href = "./otp-verification.html";
+      } else {
+        showError(response.message || "خطا در ارسال کد تایید");
+      }
+    } catch (error) {
+      showError("خطا در ارتباط با سرور");
+      console.error("Error generating one-time login:", error);
+    } finally {
+      submitButton.disabled = false;
+      submitButton.innerHTML =
+        '<a href="./otp-verification.html">دریافت کد تایید</a>';
+    }
+  });
+
+  // Real-time phone number validation
+  phoneInput.addEventListener("input", () => {
+    const phone = phoneInput.value;
+    if (validatePhone(phone)) {
+      errorMessage.style.display = "none";
+    } else {
+      errorMessage.style.display = "block";
+    }
+  });
+
+  // Format phone number as user types
+  phoneInput.addEventListener("input", (e) => {
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length > 10) {
+      value = value.slice(0, 10);
+    }
+    e.target.value = value;
   });
 });
 
 // Function to generate a random 6-digit OTP
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
-} 
+}

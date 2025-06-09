@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VPN Service - Nettoria</title>
+    <link rel="stylesheet" href="Assets/css/style.css" />
+    <link rel="stylesheet" href="Assets/css/vpn.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <nav class="nav-container">
+        <div class="logo">
+          <a href="index.html">
+            <img src="Assets/images/logo.png" alt="Nettoria Logo" />
+          </a>
+        </div>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="about-us.html">About Us</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="login.html" class="btn btn-primary">Login</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="vpn-container">
+      <!-- Connection Status -->
+      <section class="connection-status">
+        <div class="status-header">
+          <h2>VPN Connection Status</h2>
+          <div id="connectionStatus" class="status-indicator disconnected">
+            <i class="fas fa-times-circle"></i>
+            Disconnected
+          </div>
+        </div>
+        <button id="connectVPN" class="btn btn-primary">Connect</button>
+        <div id="connectionDetails" class="connection-details">
+          <div class="no-server-selected">
+            <i class="fas fa-server"></i>
+            <p>Select a server to view connection details</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Protocol Selection -->
+      <section class="protocol-selector">
+        <h3>Select Protocol</h3>
+        <div class="protocol-options">
+          <div class="protocol-option" data-protocol="openvpn">
+            <h4>OpenVPN</h4>
+            <p>Most secure and reliable protocol</p>
+          </div>
+          <div class="protocol-option" data-protocol="wireguard">
+            <h4>WireGuard</h4>
+            <p>Fast and modern protocol</p>
+          </div>
+          <div class="protocol-option" data-protocol="ikev2">
+            <h4>IKEv2</h4>
+            <p>Great for mobile devices</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Server List -->
+      <section class="server-list">
+        <h3>Available Servers</h3>
+        <div id="serverList">
+          <!-- Server cards will be dynamically populated -->
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>About Nettoria</h4>
+          <p>Your trusted partner for secure and reliable VPN services.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Contact Us</h4>
+          <p>Email: support@nettoria.com</p>
+          <p>Phone: +1 (555) 123-4567</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Nettoria. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="Assets/js/utils.js"></script>
+    <script src="Assets/js/vpn.js"></script>
+  </body>
+</html>

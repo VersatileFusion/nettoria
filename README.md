@@ -57,6 +57,7 @@ node run-api-test.js
 ```
 
 This will display a menu with options to:
+
 1. Check VPN connection
 2. Connect to VPN
 3. Run Basic API test
@@ -94,4 +95,4 @@ If you encounter connectivity issues:
 
 ## License
 
-MIT 
+MIT

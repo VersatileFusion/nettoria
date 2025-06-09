@@ -716,12 +716,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Function to show custom alert
   function showCustomAlert(message) {
-      // Clear any existing alerts
-      customAlertContainer.innerHTML = '';
+    // Clear any existing alerts
+    customAlertContainer.innerHTML = "";
 
-      const alert = document.createElement('div');
-      alert.className = 'custom-alert';
-      alert.innerHTML = `
+    const alert = document.createElement("div");
+    alert.className = "custom-alert";
+    alert.innerHTML = `
           <div class="custom-alert-header">
               <p class="alert-title">127.0.0.1:5501 says</p>
           </div>
@@ -733,21 +733,21 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
       `;
 
-      customAlertContainer.appendChild(alert);
-      customAlertContainer.style.display = 'flex';
+    customAlertContainer.appendChild(alert);
+    customAlertContainer.style.display = "flex";
 
-      // Add click event to OK button
-      const okButton = alert.querySelector('.alert-button');
-      okButton.addEventListener('click', function() {
-          customAlertContainer.style.display = 'none';
-      });
+    // Add click event to OK button
+    const okButton = alert.querySelector(".alert-button");
+    okButton.addEventListener("click", function () {
+      customAlertContainer.style.display = "none";
+    });
 
-      // Close when clicking outside (optional)
-      customAlertContainer.addEventListener('click', function(e) {
-          if (e.target === customAlertContainer) {
-              customAlertContainer.style.display = 'none';
-          }
-      });
+    // Close when clicking outside (optional)
+    customAlertContainer.addEventListener("click", function (e) {
+      if (e.target === customAlertContainer) {
+        customAlertContainer.style.display = "none";
+      }
+    });
   }
 
   // New Ticket Elements
@@ -1151,5 +1151,429 @@ document.addEventListener("DOMContentLoaded", function () {
   // Select the first chat by default
   if (chatItems.length > 0) {
     chatItems[0].click();
+  }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Check if user is authenticated
+  if (!utils.isAuthenticated()) {
+    utils.redirectTo("/login.html");
+    return;
+  }
+
+  const ticketForm = document.getElementById("ticketForm");
+  const ticketsList = document.getElementById("ticketsList");
+  const errorMessage = document.getElementById("errorMessage");
+  const successMessage = document.getElementById("successMessage");
+
+  // Load tickets
+  async function loadTickets() {
+    try {
+      utils.showLoading("errorMessage");
+      const response = await apiClient.getTickets();
+
+      if (response.success) {
+        displayTickets(response.data);
+      } else {
+        utils.showError(
+          "errorMessage",
+          response.message || "خطا در دریافت تیکت‌ها"
+        );
+      }
+    } catch (error) {
+      utils.showError("errorMessage", "خطا در دریافت تیکت‌ها");
+      console.error("Load tickets error:", error);
+    }
+  }
+
+  // Display tickets in the list
+  function displayTickets(tickets) {
+    if (!ticketsList) return;
+
+    ticketsList.innerHTML = tickets
+      .map(
+        (ticket) => `
+            <div class="ticket-item ${ticket.status.toLowerCase()}">
+                <div class="ticket-header">
+                    <h3>${ticket.title}</h3>
+                    <span class="ticket-status">${ticket.status}</span>
+                </div>
+                <div class="ticket-content">
+                    <p>${ticket.description}</p>
+                </div>
+                <div class="ticket-footer">
+                    <span class="ticket-date">${new Date(
+                      ticket.createdAt
+                    ).toLocaleDateString("fa-IR")}</span>
+                    <button onclick="viewTicket('${
+                      ticket.id
+                    }')" class="view-ticket-btn">مشاهده</button>
+                </div>
+            </div>
+        `
+      )
+      .join("");
+  }
+
+  // Handle new ticket submission
+  if (ticketForm) {
+    ticketForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = utils.getFormData("ticketForm");
+
+      if (!formData.title || !formData.description) {
+        utils.showError("errorMessage", "لطفا عنوان و توضیحات را وارد کنید");
+        return;
+      }
+
+      try {
+        utils.showLoading("errorMessage");
+        const response = await apiClient.createTicket(formData);
+
+        if (response.success) {
+          utils.showSuccess("successMessage", "تیکت با موفقیت ایجاد شد");
+          ticketForm.reset();
+          loadTickets(); // Reload tickets list
+        } else {
+          utils.showError(
+            "errorMessage",
+            response.message || "خطا در ایجاد تیکت"
+          );
+        }
+      } catch (error) {
+        utils.showError("errorMessage", "خطا در ایجاد تیکت");
+        console.error("Create ticket error:", error);
+      }
+    });
+  }
+
+  // View ticket details
+  window.viewTicket = async function (ticketId) {
+    try {
+      const response = await apiClient.getTicketDetails(ticketId);
+      if (response.success) {
+        // Implement ticket details view logic here
+        console.log("Ticket details:", response.data);
+      }
+    } catch (error) {
+      console.error("View ticket error:", error);
+    }
+  };
+
+  // Load tickets on page load
+  loadTickets();
+});
+
+// Ticket system functionality
+class TicketSystem {
+  constructor() {
+    this.tickets = [];
+    this.currentPage = 1;
+    this.itemsPerPage = 10;
+    this.totalPages = 1;
+    this.container = document.querySelector(".tickets-container");
+    this.ticketsList = document.querySelector(".tickets-list");
+    this.paginationContainer = document.querySelector(".pagination");
+  }
+
+  async init() {
+    try {
+      Utils.showLoading(this.container);
+      await this.loadTickets();
+    } catch (error) {
+      Utils.handleApiError(error);
+    } finally {
+      Utils.hideLoading(this.container);
+    }
+  }
+
+  async loadTickets(page = 1) {
+    try {
+      Utils.showLoading(this.ticketsList);
+      const response = await apiService.getTickets(page, this.itemsPerPage);
+      this.tickets = response.tickets;
+      this.totalPages = response.pagination.pages;
+      this.currentPage = page;
+      this.renderTickets();
+      this.renderPagination();
+    } catch (error) {
+      Utils.handleApiError(error);
+    } finally {
+      Utils.hideLoading(this.ticketsList);
+    }
+  }
+
+  renderTickets() {
+    if (!this.ticketsList) return;
+
+    // Clear container
+    this.ticketsList.innerHTML = "";
+
+    if (this.tickets.length === 0) {
+      this.ticketsList.innerHTML = `
+                <div class="empty-tickets">
+                    <i class="bx bx-message-square-detail"></i>
+                    <p>هیچ تیکتی یافت نشد</p>
+                    <button class="btn btn-primary" onclick="ticketSystem.showNewTicketForm()">
+                        ایجاد تیکت جدید
+                    </button>
+                </div>
+            `;
+      return;
+    }
+
+    // Create table
+    const table = document.createElement("table");
+    table.className = "table";
+    table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>شماره تیکت</th>
+                    <th>موضوع</th>
+                    <th>وضعیت</th>
+                    <th>آخرین بروزرسانی</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        `;
+
+    // Add tickets
+    const tbody = table.querySelector("tbody");
+    this.tickets.forEach((ticket) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+                <td>#${ticket.id}</td>
+                <td>${ticket.subject}</td>
+                <td>
+                    <span class="status-badge ${ticket.status}">
+                        ${this.getStatusText(ticket.status)}
+                    </span>
+                </td>
+                <td>${Utils.formatDate(ticket.lastUpdate)}</td>
+                <td>
+                    <button class="btn btn-primary view-ticket" data-id="${
+                      ticket.id
+                    }">
+                        مشاهده
+                    </button>
+                </td>
+            `;
+      tbody.appendChild(tr);
+    });
+
+    this.ticketsList.appendChild(table);
+    this.addTicketEventListeners();
+  }
+
+  renderPagination() {
+    if (!this.paginationContainer) return;
+
+    // Clear container
+    this.paginationContainer.innerHTML = "";
+
+    // Create pagination
+    const pagination = Utils.createPagination(
+      this.currentPage,
+      this.totalPages,
+      (page) => this.loadTickets(page)
+    );
+
+    this.paginationContainer.appendChild(pagination);
+  }
+
+  getStatusText(status) {
+    const statuses = {
+      open: "باز",
+      pending: "در انتظار پاسخ",
+      closed: "بسته",
+      resolved: "حل شده",
+    };
+    return statuses[status] || status;
+  }
+
+  addTicketEventListeners() {
+    // View ticket buttons
+    this.ticketsList.querySelectorAll(".view-ticket").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const ticketId = e.target.dataset.id;
+        this.viewTicket(ticketId);
+      });
+    });
+  }
+
+  async viewTicket(ticketId) {
+    try {
+      Utils.showLoading(this.container);
+      const response = await apiService.getTicketDetails(ticketId);
+      this.showTicketDetails(response);
+    } catch (error) {
+      Utils.handleApiError(error);
+    } finally {
+      Utils.hideLoading(this.container);
+    }
+  }
+
+  showTicketDetails(ticket) {
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>تیکت #${ticket.id} - ${ticket.subject}</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="ticket-info">
+                        <p><strong>وضعیت:</strong> ${this.getStatusText(
+                          ticket.status
+                        )}</p>
+                        <p><strong>تاریخ ایجاد:</strong> ${Utils.formatDate(
+                          ticket.createdAt
+                        )}</p>
+                        <p><strong>آخرین بروزرسانی:</strong> ${Utils.formatDate(
+                          ticket.lastUpdate
+                        )}</p>
+                    </div>
+                    <div class="ticket-messages">
+                        ${ticket.messages
+                          .map(
+                            (message) => `
+                            <div class="message ${
+                              message.isAdmin ? "admin" : "user"
+                            }">
+                                <div class="message-header">
+                                    <span class="sender">${
+                                      message.sender
+                                    }</span>
+                                    <span class="date">${Utils.formatDate(
+                                      message.date
+                                    )}</span>
+                                </div>
+                                <div class="message-content">
+                                    ${message.content}
+                                </div>
+                            </div>
+                        `
+                          )
+                          .join("")}
+                    </div>
+                    ${
+                      ticket.status !== "closed"
+                        ? `
+                        <form id="replyForm" class="reply-form">
+                            <textarea name="message" placeholder="پیام خود را وارد کنید..." required></textarea>
+                            <button type="submit" class="btn btn-primary">ارسال پاسخ</button>
+                        </form>
+                    `
+                        : ""
+                    }
+                </div>
+            </div>
+        `;
+
+    document.body.appendChild(modal);
+
+    // Close modal
+    modal.querySelector(".close-modal").addEventListener("click", () => {
+      modal.remove();
+    });
+
+    // Handle reply form
+    const replyForm = modal.querySelector("#replyForm");
+    if (replyForm) {
+      Utils.handleFormSubmit(replyForm, async (form) => {
+        const formData = new FormData(form);
+        const message = formData.get("message");
+
+        try {
+          await apiService.replyToTicket(ticket.id, message);
+          Utils.showNotification("پاسخ شما با موفقیت ارسال شد", "success");
+          this.viewTicket(ticket.id); // Refresh ticket view
+        } catch (error) {
+          Utils.handleApiError(error);
+        }
+      });
+    }
+  }
+
+  showNewTicketForm() {
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>ایجاد تیکت جدید</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="newTicketForm">
+                        <div class="form-group">
+                            <label for="subject">موضوع</label>
+                            <input type="text" id="subject" name="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="priority">اولویت</label>
+                            <select id="priority" name="priority" required>
+                                <option value="low">کم</option>
+                                <option value="medium">متوسط</option>
+                                <option value="high">زیاد</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">پیام</label>
+                            <textarea id="message" name="message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">ارسال تیکت</button>
+                    </form>
+                </div>
+            </div>
+        `;
+
+    document.body.appendChild(modal);
+
+    // Close modal
+    modal.querySelector(".close-modal").addEventListener("click", () => {
+      modal.remove();
+    });
+
+    // Handle form submission
+    const form = modal.querySelector("#newTicketForm");
+    Utils.handleFormSubmit(form, async (form) => {
+      const formData = new FormData(form);
+      const data = {
+        subject: formData.get("subject"),
+        priority: formData.get("priority"),
+        message: formData.get("message"),
+      };
+
+      try {
+        await apiService.createTicket(
+          data.subject,
+          data.message,
+          data.priority
+        );
+        Utils.showNotification("تیکت با موفقیت ایجاد شد", "success");
+        modal.remove();
+        this.loadTickets(); // Refresh tickets list
+      } catch (error) {
+        Utils.handleApiError(error);
+      }
+    });
+  }
+}
+
+// Initialize ticket system when DOM is loaded
+document.addEventListener("DOMContentLoaded", () => {
+  window.ticketSystem = new TicketSystem();
+  ticketSystem.init();
+
+  // New ticket button
+  const newTicketButton = document.querySelector(".new-ticket-button");
+  if (newTicketButton) {
+    newTicketButton.addEventListener("click", () => {
+      ticketSystem.showNewTicketForm();
+    });
   }
 });

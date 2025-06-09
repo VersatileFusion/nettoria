@@ -1,117 +1,162 @@
-const { DataTypes } = require('sequelize');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const sequelize = require('../config/database');
 
-console.log('Initializing User model...');
-
-const User = sequelize.define('User', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  firstName: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  lastName: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true
+const userSchema = new mongoose.Schema({
+    firstName: {
+        type: String,
+        required: [true, 'نام الزامی است'],
+        trim: true
+    },
+    lastName: {
+        type: String,
+        required: [true, 'نام خانوادگی الزامی است'],
+        trim: true
+    },
+    email: {
+        type: String,
+        required: [true, 'ایمیل الزامی است'],
+        unique: true,
+        lowercase: true,
+        trim: true,
+        match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'لطفا یک ایمیل معتبر وارد کنید']
+    },
+    phone: {
+        type: String,
+        required: [true, 'شماره موبایل الزامی است'],
+        unique: true,
+        trim: true,
+        match: [/^09[0-9]{9}$/, 'لطفا یک شماره موبایل معتبر وارد کنید']
+    },
+    password: {
+        type: String,
+        required: [true, 'رمز عبور الزامی است'],
+        minlength: [8, 'رمز عبور باید حداقل ۸ کاراکتر باشد'],
+        select: false
+    },
+    company: {
+        type: String,
+        trim: true
+    },
+    address: {
+        type: String,
+        trim: true
+    },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
+    },
+    status: {
+        type: String,
+        enum: ['active', 'inactive', 'suspended'],
+        default: 'active'
+    },
+    twoFactorEnabled: {
+        type: Boolean,
+        default: false
+    },
+    twoFactorSecret: {
+        type: String,
+        select: false
+    },
+    notificationSettings: {
+        notify_email: {
+            type: Boolean,
+            default: true
+        },
+        notify_sms: {
+            type: Boolean,
+            default: true
+        },
+        notify_service: {
+            type: Boolean,
+            default: true
+        },
+        notify_payment: {
+            type: Boolean,
+            default: true
+        }
+    },
+    loginHistory: [{
+        date: {
+            type: Date,
+            default: Date.now
+        },
+        ip: String,
+        device: String,
+        status: {
+            type: String,
+            enum: ['success', 'failed'],
+            default: 'success'
+        }
+    }],
+    lastLogin: {
+        type: Date
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
     }
-  },
-  phoneNumber: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  nationalId: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  isPhoneVerified: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  },
-  isEmailVerified: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  },
-  phoneVerificationCode: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  phoneVerificationExpires: {
-    type: DataTypes.DATE,
-    allowNull: true
-  },
-  emailVerificationToken: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  passwordResetToken: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  passwordResetExpires: {
-    type: DataTypes.DATE,
-    allowNull: true
-  },
-  role: {
-    type: DataTypes.ENUM('user', 'admin'),
-    defaultValue: 'user'
-  },
-  status: {
-    type: DataTypes.ENUM('pending', 'active', 'suspended', 'blocked'),
-    defaultValue: 'pending',
-    comment: 'User status (pending until verification is complete)'
-  },
-  verificationCode: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  verificationCodeExpires: {
-    type: DataTypes.DATE,
-    allowNull: true
-  }
 }, {
-  timestamps: true,
-  hooks: {
-    beforeSave: async (user) => {
-      if (user.changed('password')) {
-        console.log(`Hashing password for user ${user.email}`);
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(user.password, salt);
-      }
-    }
-  }
+    timestamps: true
 });
 
-// Compare password method
-User.prototype.comparePassword = async function(candidatePassword) {
-  console.log(`Comparing password for user ${this.email}`);
-  return await bcrypt.compare(candidatePassword, this.password);
+// Hash password before saving
+userSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) {
+        return next();
+    }
+
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Add login history
+userSchema.methods.addLoginHistory = async function(ip, device, status) {
+    this.loginHistory.unshift({
+        ip,
+        device,
+        status
+    });
+
+    // Keep only last 10 login attempts
+    if (this.loginHistory.length > 10) {
+        this.loginHistory = this.loginHistory.slice(0, 10);
+    }
+
+    if (status === 'success') {
+        this.lastLogin = new Date();
+    }
+
+    await this.save();
 };
 
-// Generate random 6-digit verification code
-User.prototype.generateVerificationCode = function() {
-  console.log(`Generating verification code for user ${this.email}`);
-  const code = Math.floor(100000 + Math.random() * 900000).toString();
-  this.phoneVerificationCode = code;
-  this.phoneVerificationExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-  return code;
+// Compare password
+userSchema.methods.comparePassword = async function(candidatePassword) {
+    try {
+        return await bcrypt.compare(candidatePassword, this.password);
+    } catch (error) {
+        throw error;
+    }
 };
 
-console.log('User model initialized successfully');
+// Get public profile
+userSchema.methods.getPublicProfile = function() {
+    const userObject = this.toObject();
+    delete userObject.password;
+    delete userObject.twoFactorSecret;
+    return userObject;
+};
+
+const User = mongoose.model('User', userSchema);
 
 module.exports = User; 

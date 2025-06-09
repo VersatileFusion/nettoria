@@ -1,205 +1,187 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
-    <title>انتخاب سرویس</title>
-    <link rel="stylesheet" href="./Assets/Css/select-service.css" />
-    <link rel="stylesheet" href="./Assets/Css/common.css" />
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="shortcut icon"
-      href="./Assets/img/icon.ico"
-      type="image/x-icon"
-    />
-    <script src="./Assets/Js/cart-new.js" type="text/javascript"></script>
-    <script
-      src="./Assets/Js/select-service.js"
-      type="text/javascript"
-      defer
-    ></script>
-  </head>
-  <body>
-    <!-- Start Header -->
-    <header class="header">
-      <i class="bx bx-menu" id="menu-icon"></i>
-      <button id="login">
-        <a href="./login.html">ورود / ثبت نام</a>
-      </button>
-      <a href="./cart.html" id="cart-icon">
-        <i class="bx bx-cart"></i>
-        <span class="cart-count">0</span>
-      </a>
-      <nav class="navbar">
-        <a href="./domain.html">دامنه</a>
-        <a href="./cloud-host.html">هاست</a>
-        <a href="./virtual-server.html">سرور مجازی</a>
-        <a href="./cloud-server.html">سرور ابری</a>
-        <a href="./blogs.html">وبلاگ</a>
-        <a href="./Contact-us.html">ارتباط باما</a>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Select Service - Nettoria</title>
+  <link rel="stylesheet" href="Assets/css/style.css" />
+  <link rel="stylesheet" href="Assets/css/select-service.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <nav>
+        <div class="logo">
+          <img src="Assets/images/logo.png" alt="Nettoria Logo" />
+        </div>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="blogs.html">Blogs</a></li>
+          <li><a href="about-us.html">About Us</a></li>
+          <li><a href="Contact-us.html">Contact</a></li>
+        </ul>
+        <div class="auth-buttons">
+          <a href="login.html" class="btn btn-login">Login</a>
+          <a href="signup.html" class="btn btn-signup">Sign Up</a>
+        </div>
       </nav>
-      <a href="./index.html" class="logo">Netto<span>ria</span></a>
-      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
     </header>
-    <!-- End Header -->
 
-    <div class="service-container">
-      <h2>سفارش سرور مجازی ایران</h2>
-      <form class="service-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label>نام سرور: <span class="required">*</span></label>
-            <input
-              type="text"
-              id="service-name"
-              class="form-control"
-              placeholder="نام سرور را وارد کنید"
-              required
-            />
-            <div class="error-message" id="service-name-error">
-              لطفا نام سرور را وارد کنید
+    <main>
+      <div class="service-container">
+        <h2>Order Virtual Server</h2>
+        <form class="service-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Server Name: <span class="required">*</span></label>
+              <input type="text" id="service-name" class="form-control" placeholder="Enter server name" required />
+              <div class="error-message" id="service-name-error">Please enter a server name</div>
+            </div>
+            <div class="form-group">
+              <label>Selected Plan:</label>
+              <div id="service-plan" class="form-control selected-plan"></div>
             </div>
           </div>
-          <div class="form-group">
-            <label>پلن انتخابی:</label>
-            <div id="service-plan" class="form-control selected-plan"></div>
-          </div>
-        </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>دیتاسنتر:</label>
-            <div
-              id="datacenter-display"
-              class="form-control selected-plan"
-            ></div>
-          </div>
-          <div class="form-group">
-            <label>سیستم عامل: <span class="required">*</span></label>
-            <select class="form-control" id="os-select" required>
-              <option value="">انتخاب کنید</option>
-              <option value="ubuntu">Ubuntu</option>
-              <option value="centos">CentOS</option>
-              <option value="debian">Debian</option>
-            </select>
-            <div class="error-message" id="os-error">
-              لطفا سیستم عامل را انتخاب کنید
+          <div class="form-row">
+            <div class="form-group">
+              <label>Datacenter:</label>
+              <div id="datacenter-display" class="form-control selected-plan"></div>
+            </div>
+            <div class="form-group">
+              <label>Operating System: <span class="required">*</span></label>
+              <select class="form-control" id="os-select" required>
+                <option value="">Select OS</option>
+              </select>
+              <div class="error-message" id="os-error">Please select an operating system</div>
             </div>
           </div>
-        </div>
 
-        <div class="resources-grid">
-          <div class="duration-btn" data-duration="1">1 ماهه</div>
-          <div class="duration-btn" data-duration="3">
-            3 ماهه
-            <div class="discount-text">5% تخفیف</div>
-          </div>
-          <div class="duration-btn" data-duration="6">
-            6 ماهه
-            <div class="discount-text">10% تخفیف</div>
-          </div>
-          <div class="duration-btn" data-duration="12">
-            12 ماهه
-            <div class="discount-text">20% تخفیف</div>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label
-              >هسته پردازنده اضافه:
-              <span class="optional">(اختیاری)</span></label
-            >
-            <select class="form-control price-selector" data-type="cooler">
-              <option value="0">انتخاب کنید</option>
-              <option value="30000">1 عدد - 30,000 تومان</option>
-              <option value="55000">2 عدد - 55,000 تومان</option>
-              <option value="75000">3 عدد - 75,000 تومان</option>
-              <option value="90000">4 عدد - 90,000 تومان</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>رم اضافه: <span class="optional">(اختیاری)</span></label>
-            <select class="form-control price-selector" data-type="ram">
-              <option value="0">انتخاب کنید</option>
-              <option value="80000">2 گیگابایت - 80,000 تومان</option>
-              <option value="150000">4 گیگابایت - 150,000 تومان</option>
-              <option value="280000">8 گیگابایت - 280,000 تومان</option>
-              <option value="520000">16 گیگابایت - 520,000 تومان</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>هارد اضافه: <span class="optional">(اختیاری)</span></label>
-            <select class="form-control price-selector" data-type="hdd">
-              <option value="0">انتخاب کنید</option>
-              <option value="40000">50 گیگابایت - 40,000 تومان</option>
-              <option value="75000">100 گیگابایت - 75,000 تومان</option>
-              <option value="180000">250 گیگابایت - 180,000 تومان</option>
-              <option value="350000">500 گیگابایت - 350,000 تومان</option>
-              <option value="650000">1 ترابایت - 650,000 تومان</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label
-              >تعداد آی پی اضافه: <span class="optional">(اختیاری)</span></label
-            >
-            <div class="ip-input-container">
-              <button type="button" class="ip-btn minus-btn">-</button>
-              <input
-                type="number"
-                id="ip-count"
-                class="form-control price-selector"
-                data-type="ip"
-                data-price="50000"
-                min="1"
-                max="9"
-                maxlength="1"
-                value="1"
-                oninput="if(this.value.length > 1) this.value = this.value.slice(0,1); if(this.value > 9) this.value = 9; if(this.value < 1) this.value = 1;"
-              />
-              <button type="button" class="ip-btn plus-btn">+</button>
+          <div class="resources-grid">
+            <div class="duration-btn" data-duration="1">1 Month</div>
+            <div class="duration-btn" data-duration="3">
+              3 Months
+              <div class="discount-text">5% Off</div>
+            </div>
+            <div class="duration-btn" data-duration="6">
+              6 Months
+              <div class="discount-text">10% Off</div>
+            </div>
+            <div class="duration-btn" data-duration="12">
+              12 Months
+              <div class="discount-text">20% Off</div>
             </div>
           </div>
-        </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>ترافیک اضافه: <span class="optional">(اختیاری)</span></label>
-            <select class="form-control price-selector" data-type="traffic">
-              <option value="0">انتخاب کنید</option>
-              <option value="50000">100 گیگابایت - 50,000 تومان</option>
-              <option value="120000">250 گیگابایت - 120,000 تومان</option>
-              <option value="220000">500 گیگابایت - 220,000 تومان</option>
-              <option value="400000">1 ترابایت - 400,000 تومان</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="total-section">
-          <div class="order-summary">
-            <div id="order-details" class="summary-details">
-              لطفا موارد مورد نظر خود را انتخاب کنید
+          <div class="form-row">
+            <div class="form-group">
+              <label>Additional CPU Cores: <span class="optional">(Optional)</span></label>
+              <select class="form-control price-selector" data-type="cpu">
+                <option value="0">Select</option>
+                <option value="30000">1 Core - $30</option>
+                <option value="55000">2 Cores - $55</option>
+                <option value="75000">3 Cores - $75</option>
+                <option value="90000">4 Cores - $90</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Additional RAM: <span class="optional">(Optional)</span></label>
+              <select class="form-control price-selector" data-type="ram">
+                <option value="0">Select</option>
+                <option value="80000">2 GB - $80</option>
+                <option value="150000">4 GB - $150</option>
+                <option value="280000">8 GB - $280</option>
+                <option value="520000">16 GB - $520</option>
+              </select>
             </div>
           </div>
-          <div class="cart-section">
-            <button class="cart-btn">
-              <i class="bx bx-cart-alt"></i>
-              افزودن به سبد خرید
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
 
-    <script src="./Assets/Js/utils.js"></script>
-  </body>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Additional Storage: <span class="optional">(Optional)</span></label>
+              <select class="form-control price-selector" data-type="storage">
+                <option value="0">Select</option>
+                <option value="40000">50 GB - $40</option>
+                <option value="75000">100 GB - $75</option>
+                <option value="180000">250 GB - $180</option>
+                <option value="350000">500 GB - $350</option>
+                <option value="650000">1 TB - $650</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Additional IPs: <span class="optional">(Optional)</span></label>
+              <div class="ip-input-container">
+                <button type="button" class="ip-btn minus-btn">-</button>
+                <input type="number" id="ip-count" class="form-control price-selector" data-type="ip" data-price="50000"
+                  min="1" max="9" maxlength="1" value="1" />
+                <button type="button" class="ip-btn plus-btn">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Additional Traffic: <span class="optional">(Optional)</span></label>
+              <select class="form-control price-selector" data-type="traffic">
+                <option value="0">Select</option>
+                <option value="50000">100 GB - $50</option>
+                <option value="120000">250 GB - $120</option>
+                <option value="220000">500 GB - $220</option>
+                <option value="400000">1 TB - $400</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="total-section">
+            <div class="order-summary">
+              <div id="order-details" class="summary-details">
+                Please select your options
+              </div>
+            </div>
+            <div class="cart-section">
+              <button class="cart-btn">
+                <i class="fas fa-cart-plus"></i>
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About Nettoria</h3>
+          <p>Your trusted partner in cloud computing and hosting solutions.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="blogs.html">Blogs</a></li>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="Contact-us.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>Email: info@nettoria.com</p>
+          <p>Phone: +1 234 567 890</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Nettoria. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="Assets/js/utils.js"></script>
+  <script src="Assets/js/select-service.js"></script>
+</body>
+
 </html>

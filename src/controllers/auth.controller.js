@@ -5,7 +5,7 @@ login: async (req, res) => {
   try {
     // Support both 'identifier' field (from API docs) and direct email/phoneNumber
     const { identifier, email, phoneNumber, password } = req.body;
-    
+
     // Determine which identifier to use (prioritize explicit identifier field)
     const userIdentifier = identifier || email || phoneNumber;
 
@@ -66,4 +66,4 @@ login: async (req, res) => {
       error: error.message,
     });
   }
-}, 
+};

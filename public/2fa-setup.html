@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تنظیم احراز هویت دو مرحله‌ای - نتوریا</title>
+    <link rel="stylesheet" href="./Assets/Css/login.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="shortcut icon" href="./Assets/img/icon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <header class="header">
+        <i class="bx bx-menu" id="menu-icon"></i>
+        <button id="login"><a href="./login.html">ورود / ثبت نام</a></button>
+        <nav class="navbar">
+            <a href="./domain.html">دامنه</a>
+            <a href="./cloud-host.html">هاست</a>
+            <a href="./virtual-server.html">سرور مجازی</a>
+            <a href="./cloud-server.html">سرور ابری</a>
+            <a href="./blogs.html">وبلاگ</a>
+            <a href="./Contact-us.html">ارتباط باما</a>
+        </nav>
+        <a href="./index.html" class="logo">Netto<span>ria</span></a>
+        <a href="./login.html" id="login-icon"><i class='bx bx-user'></i></a>
+    </header>
+
+    <section class="two-factor-setup">
+        <div class="setup-container">
+            <h1>تنظیم احراز هویت دو مرحله‌ای</h1>
+
+            <div id="setup-steps">
+                <!-- Step 1: Generate Secret -->
+                <div id="step1" class="step active">
+                    <h2>مرحله ۱: ایجاد کلید امنیتی</h2>
+                    <p>برای فعال‌سازی احراز هویت دو مرحله‌ای، ابتدا باید یک کلید امنیتی ایجاد کنید.</p>
+                    <button id="generate-secret" class="btn">ایجاد کلید امنیتی</button>
+                </div>
+
+                <!-- Step 2: Scan QR Code -->
+                <div id="step2" class="step">
+                    <h2>مرحله ۲: اسکن کد QR</h2>
+                    <p>کد QR زیر را با برنامه Google Authenticator یا هر برنامه مشابه اسکن کنید.</p>
+                    <div id="qrcode-container">
+                        <img id="qrcode" src="" alt="QR Code">
+                    </div>
+                    <div class="secret-key">
+                        <p>کلید امنیتی:</p>
+                        <code id="secret-key"></code>
+                        <button id="copy-secret" class="btn-secondary">کپی</button>
+                    </div>
+                    <button id="next-to-verify" class="btn">ادامه</button>
+                </div>
+
+                <!-- Step 3: Verify Setup -->
+                <div id="step3" class="step">
+                    <h2>مرحله ۳: تایید تنظیمات</h2>
+                    <p>کد ۶ رقمی نمایش داده شده در برنامه احراز هویت را وارد کنید.</p>
+                    <div class="verification-input">
+                        <input type="text" id="verification-code" maxlength="6" placeholder="کد تایید را وارد کنید">
+                    </div>
+                    <div id="verification-error" class="error-message"></div>
+                    <button id="verify-setup" class="btn">تایید و فعال‌سازی</button>
+                </div>
+
+                <!-- Step 4: Success -->
+                <div id="step4" class="step">
+                    <h2>تنظیمات با موفقیت انجام شد!</h2>
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p>احراز هویت دو مرحله‌ای با موفقیت فعال شد.</p>
+                    <a href="./user-account.html" class="btn">بازگشت به پنل کاربری</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="./Assets/js/utils.js"></script>
+    <script src="./Assets/js/api-client.js"></script>
+    <script src="./Assets/js/2fa-setup.js"></script>
+</body>
+
+</html>

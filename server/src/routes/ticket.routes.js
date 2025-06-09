@@ -1,10 +1,10 @@
-const express = require('express');
-const ticketController = require('../controllers/ticket.controller');
-const authMiddleware = require('../middleware/auth.middleware');
+const express = require("express");
+const ticketController = require("../controllers/ticket.controller");
+const authMiddleware = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
-console.log('Initializing Ticket Routes...');
+console.log("Initializing Ticket Routes...");
 
 /**
  * @swagger
@@ -36,7 +36,7 @@ console.log('Initializing Ticket Routes...');
  *       401:
  *         description: Unauthorized
  */
-router.get('/', authMiddleware.authenticate, ticketController.getAllTickets);
+router.get("/", authMiddleware.authenticate, ticketController.getAllTickets);
 
 /**
  * @swagger
@@ -61,7 +61,7 @@ router.get('/', authMiddleware.authenticate, ticketController.getAllTickets);
  *       401:
  *         description: Unauthorized
  */
-router.get('/:id', authMiddleware.authenticate, ticketController.getTicketById);
+router.get("/:id", authMiddleware.authenticate, ticketController.getTicketById);
 
 /**
  * @swagger
@@ -101,7 +101,7 @@ router.get('/:id', authMiddleware.authenticate, ticketController.getTicketById);
  *       401:
  *         description: Unauthorized
  */
-router.post('/', authMiddleware.authenticate, ticketController.createTicket);
+router.post("/", authMiddleware.authenticate, ticketController.createTicket);
 
 /**
  * @swagger
@@ -145,7 +145,11 @@ router.post('/', authMiddleware.authenticate, ticketController.createTicket);
  *       401:
  *         description: Unauthorized
  */
-router.patch('/:id', authMiddleware.authenticate, ticketController.updateTicket);
+router.patch(
+  "/:id",
+  authMiddleware.authenticate,
+  ticketController.updateTicket
+);
 
 /**
  * @swagger
@@ -170,7 +174,11 @@ router.patch('/:id', authMiddleware.authenticate, ticketController.updateTicket)
  *       401:
  *         description: Unauthorized
  */
-router.delete('/:id', authMiddleware.authenticate, ticketController.deleteTicket);
+router.delete(
+  "/:id",
+  authMiddleware.authenticate,
+  ticketController.deleteTicket
+);
 
 /**
  * @swagger
@@ -210,7 +218,11 @@ router.delete('/:id', authMiddleware.authenticate, ticketController.deleteTicket
  *       401:
  *         description: Unauthorized
  */
-router.post('/:id/comments', authMiddleware.authenticate, ticketController.addComment);
+router.post(
+  "/:id/comments",
+  authMiddleware.authenticate,
+  ticketController.addComment
+);
 
 /**
  * @swagger
@@ -235,6 +247,10 @@ router.post('/:id/comments', authMiddleware.authenticate, ticketController.addCo
  *       401:
  *         description: Unauthorized
  */
-router.get('/:id/comments', authMiddleware.authenticate, ticketController.getComments);
+router.get(
+  "/:id/comments",
+  authMiddleware.authenticate,
+  ticketController.getComments
+);
 
-module.exports = router; 
+module.exports = router;

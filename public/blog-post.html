@@ -1,82 +1,105 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>معرفی ۵ تا از بهترین نرم افزار های شبیه ساز شبکه های کامپیوتری</title>
-    <link rel="stylesheet" href="./Assets/Css/blog-post.css" />
-    <link rel="stylesheet" href="./Assets/Css/common.css" />
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-  </head>
-  <body>
-    <!-- Start Header -->
-    <header class="header">
-      <i class="bx bx-menu" id="menu-icon"></i>
-      <button id="login">
-        <a href="./login.html">ورود / ثبت نام</a>
-      </button>
-      <a href="./cart.html" id="cart-icon">
-        <i class="bx bx-cart"></i>
-        <span class="cart-count">0</span>
-      </a>
-      <nav class="navbar">
-        <a href="./domain.html">دامنه</a>
-        <a href="./cloud-host.html">هاست</a>
-        <a href="./virtual-server.html">سرور مجازی</a>
-        <a href="./cloud-server.html">سرور ابری</a>
-        <a href="./blogs.html">وبلاگ</a>
-        <a href="./Contact-us.html">ارتباط باما</a>
-      </nav>
-      <a href="./index.html" class="logo">Netto<span>ria</span></a>
-      <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
-    </header>
-    <!-- End Header -->
+<html lang="en">
 
-    <main class="blog-post">
-      <div class="post-container">
-        <!-- جستجو -->
-        <div class="search-box">
-          <input type="text" placeholder="دنبال چه می‌گردید؟">
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog Post - Nettoria</title>
+  <link rel="stylesheet" href="Assets/css/style.css" />
+  <link rel="stylesheet" href="Assets/css/blog.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="shortcut icon" href="./Assets/img/icon.ico" type="image/x-icon" />
+</head>
 
-        <!-- محتوای اصلی -->
-        <div class="post-content">
-          <div class="sidebar">
-            <div class="categories">
-              <h3>دسته‌ها</h3>
-              <ul>
-                <li><a href="#" class="active">شبکه های کامپیوتری</a></li>
-                <li><a href="#">هوش مصنوعی</a></li>
-                <li><a href="#">امنیت شبکه</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <article class="post-main">
-            <h1>معرفی ۵ تا از بهترین نرم افزار های شبیه ساز شبکه های کامپیوتری + لینک دانلود</h1>
-            
-            <div class="post-meta">
-              <span class="date"><i class='bx bx-calendar'></i> ۲۵ اسفند ۱۴۰۲</span>
-              <span class="author"><i class='bx bx-user'></i> نویسنده: ادمین</span>
-            </div>
-
-            <div class="post-text">
-              <p>شبیه ساز ها (Simulators) یا مقلد ها (emulators) نرم افزار هایی هستند که به شما می توانید شبکه های کامپیوتری را شبیه سازی کنید و تجهیزات شبکه مستند و شبیه به تجهیزات واقعی داشته باشید.</p>
-              
-              <p>در این مقاله قصد داریم به معرفی بهترین نرم افزار های شبیه ساز شبکه بپردازیم که می توانند به شما در طراحی و پیاده سازی شبکه کمک کنند.</p>
-
-              <h2>۱. Cisco Packet Tracer</h2>
-              <div class="post-image">
-                <img src="./Assets/img/cisco-packet-tracer.jpg" alt="Cisco Packet Tracer">
-              </div>
-              <p>سیسکو پکت تریسر یکی از محبوب‌ترین نرم‌افزارهای شبیه‌سازی شبکه است که به شما امکان طراحی و تست شبکه‌های مختلف را می‌دهد. این نرم افزار به صورت رایگان در اختیار کاربران قرار می‌گیرد و دارای محیط کاربری ساده و کاربرپسندی است.</p>
-
-              <h2>۲. GNS3</h2>
-              <p>GNS3 یک شبیه‌ساز قدرتمند است که امکان شبیه‌سازی شبکه‌های پیچیده را فراهم می‌کند. این نرم‌افزار از تجهیزات واقعی سیسکو پشتیبانی می‌کند و برای آموزش CCNA و CCNP بسیار مناسب است.</p>
-            </div>
-          </article>
-        </div>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav-container">
+      <div class="logo">
+        <img src="Assets/images/logo.png" alt="Nettoria Logo" />
       </div>
-    </main>
-  </body>
-</html> 
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="blog.html" class="active">Blog</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-buttons">
+        <a href="login.html" class="btn btn-login">Login</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="blog-container">
+      <!-- Blog Post Content -->
+      <article class="blog-post" id="blogPost">
+        <!-- Content will be loaded dynamically -->
+      </article>
+
+      <!-- Comments Section -->
+      <section class="comments-section">
+        <h2>Comments</h2>
+        <div class="comments-list" id="commentsList">
+          <!-- Comments will be loaded dynamically -->
+        </div>
+
+        <!-- Comment Form -->
+        <form id="commentForm" class="comment-form">
+          <div class="form-group">
+            <label for="comment">Leave a Comment</label>
+            <textarea id="comment" name="comment" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Post Comment</button>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About Nettoria</h3>
+        <p>Your trusted partner in network solutions and services.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Contact Us</h3>
+        <p>Email: info@nettoria.com</p>
+        <p>Phone: +1 234 567 890</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 Nettoria. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" id="loadingSpinner" style="display: none">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Notifications Container -->
+  <div class="toast"></div>
+
+  <!-- Scripts -->
+  <script src="Assets/js/utils.js"></script>
+  <script src="Assets/js/blog.js"></script>
+  <script src="Assets/js/blog-comments.js"></script>
+  <script src="Assets/js/blog-post.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدیریت پیامک - نتوریا</title>
+    <link rel="stylesheet" href="./Assets/Css/common.css">
+    <link rel="stylesheet" href="./Assets/Css/sms-management.css">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="./Assets/img/icon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <i class="bx bx-menu" id="menu-icon"></i>
+        <button id="login">
+            <a href="./login.html">ورود / ثبت نام</a>
+        </button>
+        <a href="./cart.html" id="cart-icon">
+            <i class="bx bx-cart"></i>
+            <span class="cart-count">0</span>
+        </a>
+        <nav class="navbar">
+            <a href="./domain.html">دامنه</a>
+            <a href="./cloud-host.html">هاست</a>
+            <a href="./virtual-server.html">سرور مجازی</a>
+            <a href="./cloud-server.html">سرور ابری</a>
+            <a href="./blogs.html">وبلاگ</a>
+            <a href="./Contact-us.html">ارتباط باما</a>
+        </nav>
+        <a href="./index.html" class="logo">Netto<span>ria</span></a>
+        <a href="./login.html" id="login-icon"><i class="bx bx-user"></i></a>
+    </header>
+
+    <!-- SMS Management Section -->
+    <main class="sms-container">
+        <div class="sms-wrapper">
+            <!-- SMS Templates -->
+            <section class="sms-templates">
+                <div class="section-header">
+                    <h2>قالب‌های پیامک</h2>
+                    <button class="add-template-btn">
+                        <i class='bx bx-plus'></i>
+                        افزودن قالب جدید
+                    </button>
+                </div>
+                <div class="templates-list" id="templates-list">
+                    <!-- Templates will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Send SMS -->
+            <section class="send-sms">
+                <h2>ارسال پیامک</h2>
+                <form id="send-sms-form">
+                    <div class="form-group">
+                        <label for="template">قالب پیامک</label>
+                        <select id="template" required>
+                            <option value="">انتخاب قالب</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipients">گیرندگان</label>
+                        <select id="recipients-type">
+                            <option value="single">تک گیرنده</option>
+                            <option value="multiple">چند گیرنده</option>
+                            <option value="group">گروه</option>
+                        </select>
+                        <div id="recipients-input-container">
+                            <input type="text" id="recipients" placeholder="شماره موبایل گیرنده" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">متن پیام</label>
+                        <textarea id="message" rows="4" required></textarea>
+                        <div class="message-info">
+                            <span id="char-count">0</span>/<span id="max-chars">160</span> کاراکتر
+                        </div>
+                    </div>
+                    <button type="submit" class="send-button">
+                        ارسال پیامک
+                        <i class='bx bx-send'></i>
+                    </button>
+                </form>
+            </section>
+
+            <!-- SMS History -->
+            <section class="sms-history">
+                <div class="section-header">
+                    <h2>تاریخچه پیامک‌ها</h2>
+                    <div class="history-filters">
+                        <select id="status-filter">
+                            <option value="all">همه وضعیت‌ها</option>
+                            <option value="sent">ارسال شده</option>
+                            <option value="failed">ناموفق</option>
+                            <option value="pending">در انتظار</option>
+                        </select>
+                        <input type="date" id="date-filter">
+                    </div>
+                </div>
+                <div class="history-list" id="history-list">
+                    <!-- History will be loaded here -->
+                </div>
+                <div class="pagination">
+                    <button id="prev-page" disabled>
+                        <i class='bx bx-chevron-right'></i>
+                        قبلی
+                    </button>
+                    <span id="page-info">صفحه 1 از 1</span>
+                    <button id="next-page" disabled>
+                        بعدی
+                        <i class='bx bx-chevron-left'></i>
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Template Modal -->
+    <div class="modal" id="template-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>افزودن قالب جدید</h3>
+                <button class="close-modal">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <form id="template-form">
+                <div class="form-group">
+                    <label for="template-name">نام قالب</label>
+                    <input type="text" id="template-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="template-content">محتوا</label>
+                    <textarea id="template-content" rows="4" required></textarea>
+                    <div class="template-variables">
+                        <span>متغیرهای موجود:</span>
+                        <button type="button" class="variable-btn" data-var="{name}">نام</button>
+                        <button type="button" class="variable-btn" data-var="{code}">کد</button>
+                        <button type="button" class="variable-btn" data-var="{date}">تاریخ</button>
+                    </div>
+                </div>
+                <button type="submit" class="save-template-btn">ذخیره قالب</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Back to Home -->
+    <a href="./index.html" class="back-to-home">
+        <i class="bx bx-home"></i>
+    </a>
+
+    <script src="./Assets/Js/sms-management.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>خدمات | نتوریا</title>
+  <link rel="stylesheet" href="/Assets/css/style.css" />
+  <link rel="stylesheet" href="/Assets/css/common.css" />
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <a href="/" class="logo">نتوریا</a>
+    <i class='bx bx-menu' id="menu-icon"></i>
+    <nav class="navbar">
+      <a href="/">خانه</a>
+      <a href="/services.html" class="active">خدمات</a>
+      <a href="/blog.html">وبلاگ</a>
+      <a href="/about.html">درباره ما</a>
+      <a href="/contact.html">تماس با ما</a>
+    </nav>
+    <div class="header-icons">
+      <i class='bx bx-cart' id="cart-icon"></i>
+      <a href="/login.html" class="btn">ورود / ثبت نام</a>
+    </div>
+  </header>
+
+  <!-- Services Section -->
+  <section class="services-section">
+    <div class="container">
+      <h2 class="heading">خدمات ما</h2>
+      <div class="services-container">
+        <div class="services-grid"></div>
+        <div class="pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>درباره نتوریا</h3>
+        <p>نتوریا ارائه دهنده خدمات هاستینگ و سرور با بالاترین کیفیت و پشتیبانی 24/7</p>
+      </div>
+      <div class="footer-section">
+        <h3>دسترسی سریع</h3>
+        <ul>
+          <li><a href="/">خانه</a></li>
+          <li><a href="/services.html">خدمات</a></li>
+          <li><a href="/blog.html">وبلاگ</a></li>
+          <li><a href="/about.html">درباره ما</a></li>
+          <li><a href="/contact.html">تماس با ما</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>تماس با ما</h3>
+        <p>ایمیل: info@nettoria.com</p>
+        <p>تلفن: 021-12345678</p>
+        <div class="social-icons">
+          <a href="#"><i class='bx bxl-telegram'></i></a>
+          <a href="#"><i class='bx bxl-instagram'></i></a>
+          <a href="#"><i class='bx bxl-twitter'></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 نتوریا. تمامی حقوق محفوظ است.</p>
+    </div>
+  </footer>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" style="display: none;">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Notifications Container -->
+  <div class="toast"></div>
+
+  <!-- Scripts -->
+  <script src="/Assets/js/utils.js"></script>
+  <script src="/Assets/js/api-service.js"></script>
+  <script src="/Assets/js/services.js"></script>
+</body>
+
+</html>

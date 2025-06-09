@@ -1,4 +1,4 @@
-console.log('signup.js loaded');
+console.log("signup.js loaded");
 
 // password strength start
 let passwordInput = document.getElementById("password");
@@ -290,3 +290,197 @@ termsLink.addEventListener("click", (e) => {
 
 closeModalBtn.addEventListener("click", closeModal);
 overlay.addEventListener("click", closeModal);
+
+document.addEventListener("DOMContentLoaded", function () {
+  const signupForm = document.getElementById("signupForm");
+  const errorMessage = document.getElementById("errorMessage");
+
+  if (signupForm) {
+    signupForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = utils.getFormData("signupForm");
+
+      // Validate inputs
+      if (!utils.validateEmail(formData.email)) {
+        utils.showError("errorMessage", "لطفا یک ایمیل معتبر وارد کنید");
+        return;
+      }
+
+      if (!utils.validatePassword(formData.password)) {
+        utils.showError("errorMessage", "رمز عبور باید حداقل 8 کاراکتر باشد");
+        return;
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        utils.showError("errorMessage", "رمز عبور و تکرار آن مطابقت ندارند");
+        return;
+      }
+
+      try {
+        utils.showLoading("errorMessage");
+        const response = await apiClient.signup(formData);
+
+        if (response.success) {
+          utils.showSuccess(
+            "errorMessage",
+            "ثبت نام با موفقیت انجام شد. لطفا وارد شوید."
+          );
+          setTimeout(() => {
+            utils.redirectTo("/login.html");
+          }, 2000);
+        } else {
+          utils.showError("errorMessage", response.message || "خطا در ثبت نام");
+        }
+      } catch (error) {
+        utils.showError("errorMessage", "خطایی رخ داد. لطفا دوباره تلاش کنید.");
+        console.error("Signup error:", error);
+      }
+    });
+  }
+});
+
+// Signup page functionality
+document.addEventListener("DOMContentLoaded", () => {
+  const signupForm = document.getElementById("signupForm");
+  const passwordInput = document.getElementById("password");
+  const confirmPasswordInput = document.getElementById("confirm-password");
+  const togglePassword = document.getElementById("toggle");
+  const toggleConfirmPassword = document.getElementById("toggle-confirm");
+  const errorMessage = document.getElementById("errorMessage");
+  const passwordMatch = document.querySelector(".password-match");
+  const passwordStrength = document.getElementById("text");
+  const termsCheckbox = document.getElementById("terms");
+
+  // Password strength indicators
+  const strengthIndicators = {
+    weak: document.querySelector(".weak"),
+    medium: document.querySelector(".medium"),
+    strong: document.querySelector(".strong"),
+  };
+
+  // Toggle password visibility
+  togglePassword.addEventListener("click", () => {
+    const type =
+      passwordInput.getAttribute("type") === "password" ? "text" : "password";
+    passwordInput.setAttribute("type", type);
+    togglePassword.querySelector("i").classList.toggle("fa-eye");
+    togglePassword.querySelector("i").classList.toggle("fa-eye-slash");
+  });
+
+  toggleConfirmPassword.addEventListener("click", () => {
+    const type =
+      confirmPasswordInput.getAttribute("type") === "password"
+        ? "text"
+        : "password";
+    confirmPasswordInput.setAttribute("type", type);
+    toggleConfirmPassword.querySelector("i").classList.toggle("fa-eye");
+    toggleConfirmPassword.querySelector("i").classList.toggle("fa-eye-slash");
+  });
+
+  // Check password strength
+  passwordInput.addEventListener("input", () => {
+    const password = passwordInput.value;
+    const strength = Utils.validatePassword(password);
+
+    // Reset indicators
+    Object.values(strengthIndicators).forEach((indicator) => {
+      indicator.style.width = "0%";
+    });
+
+    if (password.length >= 8) {
+      strengthIndicators.weak.style.width = "100%";
+      if (password.match(/[A-Z]/) && password.match(/[a-z]/)) {
+        strengthIndicators.medium.style.width = "100%";
+        if (password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/)) {
+          strengthIndicators.strong.style.width = "100%";
+          passwordStrength.textContent = "قوی";
+        } else {
+          passwordStrength.textContent = "متوسط";
+        }
+      } else {
+        passwordStrength.textContent = "ضعیف";
+      }
+    } else {
+      passwordStrength.textContent = "";
+    }
+  });
+
+  // Check password match
+  confirmPasswordInput.addEventListener("input", () => {
+    if (confirmPasswordInput.value === passwordInput.value) {
+      passwordMatch.textContent = "رمز عبور مطابقت دارد";
+      passwordMatch.style.color = "#2ecc71";
+    } else {
+      passwordMatch.textContent = "رمز عبور مطابقت ندارد";
+      passwordMatch.style.color = "#e74c3c";
+    }
+  });
+
+  // Handle form submission
+  Utils.handleFormSubmit(signupForm, async (form) => {
+    const formData = new FormData(form);
+    const data = {
+      fullName: formData.get("fullName"),
+      phone: formData.get("phone"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirmPassword"),
+    };
+
+    // Validate form data
+    if (!Utils.validateEmail(data.email)) {
+      throw new Error("لطفا یک ایمیل معتبر وارد کنید");
+    }
+
+    if (!Utils.validatePassword(data.password)) {
+      throw new Error(
+        "رمز عبور باید حداقل 8 کاراکتر و شامل حروف بزرگ، کوچک، اعداد و کاراکترهای خاص باشد"
+      );
+    }
+
+    if (data.password !== data.confirmPassword) {
+      throw new Error("رمز عبور و تکرار آن مطابقت ندارند");
+    }
+
+    if (!termsCheckbox.checked) {
+      throw new Error("لطفا شرایط و قوانین را مطالعه و تایید کنید");
+    }
+
+    try {
+      const response = await apiService.register(
+        data.email,
+        data.password,
+        data.fullName
+      );
+      Utils.showNotification(
+        "ثبت نام با موفقیت انجام شد. لطفا وارد شوید.",
+        "success"
+      );
+      setTimeout(() => {
+        window.location.href = "/login.html";
+      }, 2000);
+    } catch (error) {
+      errorMessage.textContent = error.message;
+      errorMessage.style.display = "block";
+    }
+  });
+
+  // Terms and conditions modal
+  const modalContainer = document.querySelector("[data-modal-container]");
+  const overlay = document.querySelector("[data-overlay]");
+  const closeBtn = document.querySelector("[data-modal-close-btn]");
+  const termsLink = document.querySelector(".terms-link");
+
+  termsLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    modalContainer.classList.add("active");
+  });
+
+  const closeModal = () => {
+    modalContainer.classList.remove("active");
+  };
+
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", closeModal);
+});

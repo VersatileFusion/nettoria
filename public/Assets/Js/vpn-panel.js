@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const card = this.closest(".vpn-card");
       const name = card.querySelector("h2").textContent;
       const price = card.querySelector(".price").textContent;
-      window.cart.addItem(name, 'VPN-' + Date.now(), 1, price, 'vpn');
+      window.cart.addItem(name, "VPN-" + Date.now(), 1, price, "vpn");
       Alert("موفقیت", "محصول به سبد خرید اضافه شد", 3000, "success");
     });
   });
