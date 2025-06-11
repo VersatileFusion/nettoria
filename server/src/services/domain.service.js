@@ -1,179 +1,313 @@
-const axios = require("axios");
-const config = require("../config");
-const ApiError = require("../utils/ApiError");
-const logger = require("../utils/logger");
+const { Domain, DNSRecord, User } = require('../models');
+const { Op } = require('sequelize');
+const { createNotification } = require('../utils/notifications');
+const { calculateDomainPrice } = require('../utils/pricing');
+const { registrarAPI } = require('../utils/registrar-api');
 
 class DomainService {
-  constructor() {
-    this.registrarApi = axios.create({
-      baseURL: config.domainRegistrar.apiUrl,
-      headers: {
-        Authorization: `Bearer ${config.domainRegistrar.apiKey}`,
-        "Content-Type": "application/json",
-      },
+  static async getUserDomains(userId) {
+    return await Domain.findAll({
+      where: { userId },
+      order: [['createdAt', 'DESC']]
     });
   }
 
-  /**
-   * Check domain availability
-   * @param {string} domain - Domain name to check
-   * @returns {Promise<boolean>} - Whether the domain is available
-   */
-  async checkAvailability(domain) {
-    try {
-      const response = await this.registrarApi.post("/check", { domain });
-      return response.data.available;
-    } catch (error) {
-      logger.error("Error checking domain availability:", error);
-      throw new ApiError("Failed to check domain availability", 500);
+  static async getDomainDetails(userId, domainId) {
+    const domain = await Domain.findOne({
+      where: {
+        id: domainId,
+        userId
+      },
+      include: [DNSRecord]
+    });
+
+    if (!domain) {
+      throw new Error('Domain not found');
     }
+
+    return domain;
   }
 
-  /**
-   * Register a new domain
-   * @param {string} domain - Domain name to register
-   * @param {number} period - Registration period in years
-   * @param {Object} registrant - Registrant information
-   * @returns {Promise<Object>} - Registration result
-   */
-  async registerDomain(domain, period, registrant) {
-    try {
-      const response = await this.registrarApi.post("/register", {
-        domain,
-        period,
-        registrant: {
-          name: registrant.name,
-          email: registrant.email,
-          phone: registrant.phone,
-          address: registrant.address,
-          city: registrant.city,
-          state: registrant.state,
-          country: registrant.country,
-          postalCode: registrant.postalCode,
-        },
-      });
+  static async registerDomain(userId, domainData) {
+    const { name, registrar, registrationPeriod, autoRenew, nameservers, contacts } = domainData;
 
-      return {
-        expiryDate: response.data.expiryDate,
-        registrationId: response.data.registrationId,
-      };
-    } catch (error) {
-      logger.error("Error registering domain:", error);
-      throw new ApiError("Failed to register domain", 500);
+    // Check domain availability
+    const availability = await this.checkDomainAvailability(name);
+    if (!availability.isAvailable) {
+      throw new Error('Domain is not available');
     }
+
+    // Calculate price
+    const price = calculateDomainPrice(name, registrationPeriod);
+
+    // Check user's balance
+    const user = await User.findByPk(userId);
+    if (!user || user.balance < price) {
+      throw new Error('Insufficient balance');
+    }
+
+    // Register domain with registrar
+    const registrarResponse = await registrarAPI.registerDomain({
+      name,
+      period: registrationPeriod,
+      nameservers,
+      contacts
+    });
+
+    // Create domain record
+    const domain = await Domain.create({
+      userId,
+      name,
+      registrar,
+      registrationPeriod,
+      autoRenew,
+      nameservers: nameservers || [],
+      contacts: contacts || {},
+      status: 'active',
+      expiryDate: new Date(Date.now() + registrationPeriod * 365 * 24 * 60 * 60 * 1000),
+      price
+    });
+
+    // Deduct balance
+    await user.update({
+      balance: user.balance - price
+    });
+
+    // Create notification
+    await createNotification({
+      userId,
+      type: 'domain_registered',
+      title: 'Domain Registered',
+      message: `Your domain "${name}" has been registered successfully`,
+      data: { domainId: domain.id }
+    });
+
+    return domain;
   }
 
-  /**
-   * Renew domain registration
-   * @param {string} domain - Domain name to renew
-   * @param {number} period - Renewal period in years
-   * @returns {Promise<Object>} - Renewal result
-   */
-  async renewDomain(domain, period) {
-    try {
-      const response = await this.registrarApi.post("/renew", {
-        domain,
-        period,
-      });
+  static async updateDomain(userId, domainId, updateData) {
+    const domain = await Domain.findOne({
+      where: {
+        id: domainId,
+        userId
+      }
+    });
 
-      return {
-        expiryDate: response.data.expiryDate,
-        renewalId: response.data.renewalId,
-      };
-    } catch (error) {
-      logger.error("Error renewing domain:", error);
-      throw new ApiError("Failed to renew domain", 500);
+    if (!domain) {
+      throw new Error('Domain not found');
     }
+
+    // Update domain with registrar
+    await registrarAPI.updateDomain(domain.name, updateData);
+
+    // Update domain record
+    await domain.update(updateData);
+
+    return domain;
   }
 
-  /**
-   * Transfer domain to another registrar
-   * @param {string} domain - Domain name to transfer
-   * @param {string} transferCode - Transfer authorization code
-   * @param {string} newRegistrar - New registrar information
-   * @returns {Promise<Object>} - Transfer result
-   */
-  async transferDomain(domain, transferCode, newRegistrar) {
-    try {
-      const response = await this.registrarApi.post("/transfer", {
-        domain,
-        transferCode,
-        newRegistrar,
-      });
+  static async renewDomain(userId, domainId, period) {
+    const domain = await Domain.findOne({
+      where: {
+        id: domainId,
+        userId
+      }
+    });
 
-      return {
-        transferId: response.data.transferId,
-        status: response.data.status,
-      };
-    } catch (error) {
-      logger.error("Error transferring domain:", error);
-      throw new ApiError("Failed to transfer domain", 500);
+    if (!domain) {
+      throw new Error('Domain not found');
     }
+
+    // Calculate renewal price
+    const price = calculateDomainPrice(domain.name, period);
+
+    // Check user's balance
+    const user = await User.findByPk(userId);
+    if (!user || user.balance < price) {
+      throw new Error('Insufficient balance');
+    }
+
+    // Renew domain with registrar
+    await registrarAPI.renewDomain(domain.name, period);
+
+    // Update domain record
+    const newExpiryDate = new Date(domain.expiryDate.getTime() + period * 365 * 24 * 60 * 60 * 1000);
+    await domain.update({
+      expiryDate: newExpiryDate,
+      registrationPeriod: domain.registrationPeriod + period
+    });
+
+    // Deduct balance
+    await user.update({
+      balance: user.balance - price
+    });
+
+    // Create notification
+    await createNotification({
+      userId,
+      type: 'domain_renewed',
+      title: 'Domain Renewed',
+      message: `Your domain "${domain.name}" has been renewed for ${period} year(s)`,
+      data: { domainId: domain.id }
+    });
+
+    return domain;
   }
 
-  /**
-   * Add DNS record
-   * @param {string} domain - Domain name
-   * @param {Object} record - DNS record information
-   * @returns {Promise<Object>} - DNS record result
-   */
-  async addDNSRecord(domain, record) {
-    try {
-      const response = await this.registrarApi.post(
-        `/dns/${domain}/records`,
-        record
-      );
-      return response.data;
-    } catch (error) {
-      logger.error("Error adding DNS record:", error);
-      throw new ApiError("Failed to add DNS record", 500);
+  static async transferDomain(userId, domainId, transferData) {
+    const domain = await Domain.findOne({
+      where: {
+        id: domainId,
+        userId
+      }
+    });
+
+    if (!domain) {
+      throw new Error('Domain not found');
     }
+
+    // Initiate transfer with registrar
+    await registrarAPI.transferDomain(domain.name, transferData);
+
+    // Update domain record
+    await domain.update({
+      status: 'transfer_pending',
+      newRegistrar: transferData.newRegistrar
+    });
+
+    // Create notification
+    await createNotification({
+      userId,
+      type: 'domain_transfer',
+      title: 'Domain Transfer Initiated',
+      message: `Transfer of domain "${domain.name}" has been initiated`,
+      data: { domainId: domain.id }
+    });
+
+    return domain;
   }
 
-  /**
-   * Delete DNS record
-   * @param {string} domain - Domain name
-   * @param {Object} record - DNS record to delete
-   * @returns {Promise<void>}
-   */
-  async deleteDNSRecord(domain, record) {
-    try {
-      await this.registrarApi.delete(`/dns/${domain}/records/${record.id}`);
-    } catch (error) {
-      logger.error("Error deleting DNS record:", error);
-      throw new ApiError("Failed to delete DNS record", 500);
+  static async getDNSRecords(userId, domainId) {
+    const domain = await Domain.findOne({
+      where: {
+        id: domainId,
+        userId
+      }
+    });
+
+    if (!domain) {
+      throw new Error('Domain not found');
     }
+
+    return await DNSRecord.findAll({
+      where: { domainId },
+      order: [['type', 'ASC'], ['name', 'ASC']]
+    });
   }
 
-  /**
-   * Get domain pricing
-   * @param {string} domain - Domain name
-   * @returns {Promise<Object>} - Pricing information
-   */
-  async getDomainPricing(domain) {
-    try {
-      const response = await this.registrarApi.get(`/pricing/${domain}`);
-      return response.data;
-    } catch (error) {
-      logger.error("Error getting domain pricing:", error);
-      throw new ApiError("Failed to get domain pricing", 500);
+  static async addDNSRecord(userId, domainId, recordData) {
+    const domain = await Domain.findOne({
+      where: {
+        id: domainId,
+        userId
+      }
+    });
+
+    if (!domain) {
+      throw new Error('Domain not found');
     }
+
+    // Add DNS record with registrar
+    await registrarAPI.addDNSRecord(domain.name, recordData);
+
+    // Create DNS record
+    const record = await DNSRecord.create({
+      domainId,
+      ...recordData
+    });
+
+    return record;
   }
 
-  /**
-   * Get domain status
-   * @param {string} domain - Domain name
-   * @returns {Promise<Object>} - Domain status information
-   */
-  async getDomainStatus(domain) {
-    try {
-      const response = await this.registrarApi.get(`/status/${domain}`);
-      return response.data;
-    } catch (error) {
-      logger.error("Error getting domain status:", error);
-      throw new ApiError("Failed to get domain status", 500);
+  static async updateDNSRecord(userId, domainId, recordId, updateData) {
+    const domain = await Domain.findOne({
+      where: {
+        id: domainId,
+        userId
+      }
+    });
+
+    if (!domain) {
+      throw new Error('Domain not found');
     }
+
+    const record = await DNSRecord.findOne({
+      where: {
+        id: recordId,
+        domainId
+      }
+    });
+
+    if (!record) {
+      throw new Error('DNS record not found');
+    }
+
+    // Update DNS record with registrar
+    await registrarAPI.updateDNSRecord(domain.name, record.name, updateData);
+
+    // Update DNS record
+    await record.update(updateData);
+
+    return record;
+  }
+
+  static async deleteDNSRecord(userId, domainId, recordId) {
+    const domain = await Domain.findOne({
+      where: {
+        id: domainId,
+        userId
+      }
+    });
+
+    if (!domain) {
+      throw new Error('Domain not found');
+    }
+
+    const record = await DNSRecord.findOne({
+      where: {
+        id: recordId,
+        domainId
+      }
+    });
+
+    if (!record) {
+      throw new Error('DNS record not found');
+    }
+
+    // Delete DNS record with registrar
+    await registrarAPI.deleteDNSRecord(domain.name, record.name);
+
+    // Delete DNS record
+    await record.destroy();
+  }
+
+  static async checkDomainAvailability(domainName) {
+    const availability = await registrarAPI.checkAvailability(domainName);
+    const price = calculateDomainPrice(domainName, 1);
+    return { ...availability, price };
+  }
+
+  static async getDomainSuggestions(keyword) {
+    const suggestions = await registrarAPI.getSuggestions(keyword);
+    return suggestions.map(suggestion => ({
+      ...suggestion,
+      price: calculateDomainPrice(suggestion.name, 1)
+    }));
+  }
+
+  static async getDomainPricing(tld) {
+    return await registrarAPI.getPricing(tld);
   }
 }
 
-module.exports = new DomainService();
+module.exports = DomainService;

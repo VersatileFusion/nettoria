@@ -1,122 +1,146 @@
-const mongoose = require("mongoose");
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const domainSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    status: {
-      type: String,
-      enum: [
-        "pending",
-        "active",
-        "expired",
-        "transfer_pending",
-        "transferring",
-      ],
-      default: "pending",
-    },
-    period: {
-      type: Number,
-      required: true,
-      min: 1,
-      max: 10,
-    },
-    expiryDate: {
-      type: Date,
-    },
-    transferCode: {
-      type: String,
-    },
-    dnsRecords: [
-      {
-        type: {
-          type: String,
-          enum: ["A", "AAAA", "CNAME", "MX", "TXT"],
-          required: true,
-        },
-        name: {
-          type: String,
-          required: true,
-        },
-        value: {
-          type: String,
-          required: true,
-        },
-        ttl: {
-          type: Number,
-          default: 3600,
-          min: 60,
-        },
-        createdAt: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
-    },
+const Domain = sequelize.define('Domain', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
   },
-  {
-    timestamps: true,
+  userId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'Users',
+      key: 'id'
+    }
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
+  registrar: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  registrationPeriod: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      min: 1,
+      max: 10
+    }
+  },
+  autoRenew: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  },
+  nameservers: {
+    type: DataTypes.ARRAY(DataTypes.STRING),
+    defaultValue: []
+  },
+  contacts: {
+    type: DataTypes.JSONB,
+    defaultValue: {}
+  },
+  status: {
+    type: DataTypes.ENUM('active', 'expired', 'transfer_pending', 'suspended'),
+    defaultValue: 'active'
+  },
+  expiryDate: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  price: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false
+  },
+  newRegistrar: {
+    type: DataTypes.STRING
+  },
+  transferDate: {
+    type: DataTypes.DATE
+  },
+  notes: {
+    type: DataTypes.TEXT
   }
-);
+}, {
+  indexes: [
+    {
+      fields: ['userId']
+    },
+    {
+      fields: ['status']
+    },
+    {
+      fields: ['expiryDate']
+    }
+  ]
+});
 
-// Indexes
-domainSchema.index({ name: 1 });
-domainSchema.index({ userId: 1 });
-domainSchema.index({ status: 1 });
+const DNSRecord = sequelize.define('DNSRecord', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
+  },
+  domainId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'Domains',
+      key: 'id'
+    }
+  },
+  type: {
+    type: DataTypes.ENUM('A', 'AAAA', 'CNAME', 'MX', 'TXT', 'SRV', 'NS'),
+    allowNull: false
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  value: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  ttl: {
+    type: DataTypes.INTEGER,
+    defaultValue: 3600,
+    validate: {
+      min: 60
+    }
+  },
+  priority: {
+    type: DataTypes.INTEGER,
+    validate: {
+      min: 0
+    }
+  },
+  isActive: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  }
+}, {
+  indexes: [
+    {
+      fields: ['domainId']
+    },
+    {
+      fields: ['type']
+    },
+    {
+      fields: ['name']
+    }
+  ]
+});
 
-// Methods
-domainSchema.methods.isExpired = function () {
-  return (
-    this.status === "expired" ||
-    (this.expiryDate && this.expiryDate < new Date())
-  );
+// Define relationships
+Domain.hasMany(DNSRecord, { foreignKey: 'domainId' });
+DNSRecord.belongsTo(Domain, { foreignKey: 'domainId' });
+
+module.exports = {
+  Domain,
+  DNSRecord
 };
-
-domainSchema.methods.canTransfer = function () {
-  return this.status === "active" && !this.isExpired();
-};
-
-domainSchema.methods.addDNSRecord = async function (record) {
-  this.dnsRecords.push(record);
-  return this.save();
-};
-
-domainSchema.methods.removeDNSRecord = async function (recordId) {
-  this.dnsRecords = this.dnsRecords.filter(
-    (record) => record._id.toString() !== recordId
-  );
-  return this.save();
-};
-
-// Static methods
-domainSchema.statics.findByUserId = function (userId, page = 1, limit = 10) {
-  return this.find({ userId })
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .sort({ createdAt: -1 });
-};
-
-domainSchema.statics.countByUserId = function (userId) {
-  return this.countDocuments({ userId });
-};
-
-const Domain = mongoose.model("Domain", domainSchema);
-
-module.exports = Domain;

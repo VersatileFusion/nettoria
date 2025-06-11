@@ -5,7 +5,9 @@ const { authenticate, authorize } = require("../middleware/auth");
 const { validate } = require("../middleware/validate");
 const { domainValidation } = require("../validations/domain.validation");
 const authMiddleware = require("../middleware/auth.middleware");
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, param } = require("express-validator");
+const DomainService = require('../services/domain.service');
+const { validateRequest } = require('../middleware/validation');
 
 /**
  * @swagger
@@ -34,31 +36,10 @@ const { body, validationResult } = require("express-validator");
  */
 router.get("/", authMiddleware.protect, async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
-
-    // TODO: Implement domain fetching from database
-    const domains = [];
-    const total = 0;
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        domains,
-        pagination: {
-          page,
-          limit,
-          total,
-          pages: Math.ceil(total / limit),
-        },
-      },
-    });
+    const domains = await DomainService.getUserDomains(req.user.id);
+    res.json(domains);
   } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: "Error fetching domains",
-    });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -85,7 +66,16 @@ router.get("/", authMiddleware.protect, async (req, res) => {
  *       404:
  *         description: Domain not found
  */
-router.get("/:id", authenticate, domainController.getDomainById);
+router.get("/:domainId", authenticate, [
+  param('domainId').isUUID()
+], validateRequest, async (req, res) => {
+  try {
+    const domain = await DomainService.getDomainDetails(req.user.id, req.params.domainId);
+    res.json(domain);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
 /**
  * @swagger
@@ -107,27 +97,12 @@ router.get("/:id", authenticate, domainController.getDomainById);
  *       200:
  *         description: Domain availability check result
  */
-router.post("/check", async (req, res) => {
+router.post("/check/:domainName", async (req, res) => {
   try {
-    const { name } = req.body;
-
-    // TODO: Implement domain availability check
-    const isAvailable = true;
-    const price = 1000000; // Example price in IRR
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        name,
-        isAvailable,
-        price,
-      },
-    });
+    const availability = await DomainService.checkDomainAvailability(req.params.domainName);
+    res.json(availability);
   } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: "Error checking domain availability",
-    });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -156,50 +131,21 @@ router.post("/check", async (req, res) => {
  *       201:
  *         description: Domain registered successfully
  */
-router.post(
-  "/register",
-  authMiddleware.protect,
-  [
-    body("name").trim().notEmpty().withMessage("Domain name is required"),
-    body("period")
-      .isInt({ min: 1, max: 10 })
-      .withMessage("Period must be between 1 and 10 years"),
-  ],
-  async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          status: "error",
-          errors: errors.array(),
-        });
-      }
-
-      const { name, period } = req.body;
-
-      // TODO: Implement domain registration
-      const domain = {
-        id: "dom-" + Date.now(),
-        name,
-        period,
-        status: "pending",
-        createdAt: new Date(),
-      };
-
-      res.status(201).json({
-        status: "success",
-        data: {
-          domain,
-        },
-      });
-    } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Error registering domain",
-      });
-    }
+router.post("/register", authenticate, [
+  body('name').isString().notEmpty(),
+  body('registrar').isString().notEmpty(),
+  body('registrationPeriod').isInt({ min: 1, max: 10 }),
+  body('autoRenew').isBoolean(),
+  body('nameservers').isArray().optional(),
+  body('contacts').isObject().optional()
+], validateRequest, async (req, res) => {
+  try {
+    const domain = await DomainService.registerDomain(req.user.id, req.body);
+    res.status(201).json(domain);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-);
+});
 
 /**
  * @swagger
@@ -237,12 +183,17 @@ router.post(
  *       404:
  *         description: Domain not found
  */
-router.post(
-  "/:id/renew",
-  authenticate,
-  validate(domainValidation.renew),
-  domainController.renewDomain
-);
+router.post("/:domainId/renew", authenticate, [
+  param('domainId').isUUID(),
+  body('period').isInt({ min: 1, max: 10 })
+], validateRequest, async (req, res) => {
+  try {
+    const domain = await DomainService.renewDomain(req.user.id, req.params.domainId, req.body.period);
+    res.json(domain);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
 /**
  * @swagger
@@ -269,50 +220,18 @@ router.post(
  *       201:
  *         description: Domain transfer initiated successfully
  */
-router.post(
-  "/transfer",
-  authMiddleware.protect,
-  [
-    body("name").trim().notEmpty().withMessage("Domain name is required"),
-    body("authCode")
-      .trim()
-      .notEmpty()
-      .withMessage("Authorization code is required"),
-  ],
-  async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          status: "error",
-          errors: errors.array(),
-        });
-      }
-
-      const { name, authCode } = req.body;
-
-      // TODO: Implement domain transfer
-      const domain = {
-        id: "dom-" + Date.now(),
-        name,
-        status: "transfer_pending",
-        createdAt: new Date(),
-      };
-
-      res.status(201).json({
-        status: "success",
-        data: {
-          domain,
-        },
-      });
-    } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Error initiating domain transfer",
-      });
-    }
+router.post("/:domainId/transfer", authenticate, [
+  param('domainId').isUUID(),
+  body('newRegistrar').isString().notEmpty(),
+  body('authCode').isString().notEmpty()
+], validateRequest, async (req, res) => {
+  try {
+    const domain = await DomainService.transferDomain(req.user.id, req.params.domainId, req.body);
+    res.json(domain);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-);
+});
 
 /**
  * @swagger
@@ -332,31 +251,14 @@ router.post(
  *       200:
  *         description: Domain DNS records
  */
-router.get("/:id/dns", authMiddleware.protect, async (req, res) => {
+router.get("/:domainId/dns", authenticate, [
+  param('domainId').isUUID()
+], validateRequest, async (req, res) => {
   try {
-    const { id } = req.params;
-
-    // TODO: Implement DNS records fetching
-    const records = [
-      {
-        type: "A",
-        name: "@",
-        value: "192.168.1.1",
-        ttl: 3600,
-      },
-    ];
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        records,
-      },
-    });
+    const records = await DomainService.getDNSRecords(req.user.id, req.params.domainId);
+    res.json(records);
   } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: "Error fetching DNS records",
-    });
+    res.status(404).json({ error: error.message });
   }
 });
 
@@ -394,56 +296,21 @@ router.get("/:id/dns", authMiddleware.protect, async (req, res) => {
  *       201:
  *         description: DNS record added successfully
  */
-router.post(
-  "/:id/dns",
-  authMiddleware.protect,
-  [
-    body("type")
-      .isIn(["A", "AAAA", "CNAME", "MX", "TXT"])
-      .withMessage("Invalid record type"),
-    body("name").trim().notEmpty().withMessage("Record name is required"),
-    body("value").trim().notEmpty().withMessage("Record value is required"),
-    body("ttl")
-      .isInt({ min: 60 })
-      .withMessage("TTL must be at least 60 seconds"),
-  ],
-  async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          status: "error",
-          errors: errors.array(),
-        });
-      }
-
-      const { id } = req.params;
-      const { type, name, value, ttl } = req.body;
-
-      // TODO: Implement DNS record addition
-      const record = {
-        id: "dns-" + Date.now(),
-        type,
-        name,
-        value,
-        ttl,
-        createdAt: new Date(),
-      };
-
-      res.status(201).json({
-        status: "success",
-        data: {
-          record,
-        },
-      });
-    } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "Error adding DNS record",
-      });
-    }
+router.post("/:domainId/dns", authenticate, [
+  param('domainId').isUUID(),
+  body('type').isIn(['A', 'AAAA', 'CNAME', 'MX', 'TXT', 'SRV', 'NS']),
+  body('name').isString().notEmpty(),
+  body('value').isString().notEmpty(),
+  body('ttl').isInt({ min: 60 }).optional(),
+  body('priority').isInt().optional()
+], validateRequest, async (req, res) => {
+  try {
+    const record = await DomainService.addDNSRecord(req.user.id, req.params.domainId, req.body);
+    res.status(201).json(record);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-);
+});
 
 /**
  * @swagger
@@ -474,10 +341,66 @@ router.post(
  *       404:
  *         description: Domain or DNS record not found
  */
-router.delete(
-  "/:id/dns/:recordId",
-  authenticate,
-  domainController.deleteDNSRecord
-);
+router.delete("/:domainId/dns/:recordId", authenticate, [
+  param('domainId').isUUID(),
+  param('recordId').isUUID()
+], validateRequest, async (req, res) => {
+  try {
+    await DomainService.deleteDNSRecord(req.user.id, req.params.domainId, req.params.recordId);
+    res.status(204).send();
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/domains/suggestions/:keyword:
+ *   get:
+ *     summary: Get domain suggestions
+ *     tags: [Domains]
+ *     parameters:
+ *       - in: path
+ *         name: keyword
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of domain suggestions
+ */
+router.get("/suggestions/:keyword", async (req, res) => {
+  try {
+    const suggestions = await DomainService.getDomainSuggestions(req.params.keyword);
+    res.json(suggestions);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/domains/pricing/:tld:
+ *   get:
+ *     summary: Get domain pricing
+ *     tags: [Domains]
+ *     parameters:
+ *       - in: path
+ *         name: tld
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Domain pricing
+ */
+router.get("/pricing/:tld", async (req, res) => {
+  try {
+    const pricing = await DomainService.getDomainPricing(req.params.tld);
+    res.json(pricing);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
 module.exports = router;

@@ -6,6 +6,8 @@ const vpnController = require("../controllers/vpn.controller");
 const vpnValidators = require("../validators/vpn.validator");
 const { validateRequest } = require("../middleware/validate-request");
 const { requireAuth } = require("../middleware/require-auth");
+const { authenticateToken } = require("../middleware/auth");
+const VPNService = require('../services/vpn.service');
 
 // Validation middleware
 const validateVPN = [
@@ -325,5 +327,178 @@ router.delete("/:id", authMiddleware.authenticate, async (req, res) => {
     });
   }
 });
+
+// Get user's VPN connections
+router.get("/connections",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const connections = await VPNService.getUserConnections(req.user.id);
+      res.json(connections);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// Get VPN connection details
+router.get("/connections/:connectionId",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const connection = await VPNService.getConnectionDetails(req.user.id, req.params.connectionId);
+      res.json(connection);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// Create new VPN connection
+router.post("/connections/create",
+  authenticateToken,
+  [
+    body('name').isString().notEmpty().withMessage('Connection name is required'),
+    body('serverId').isUUID().withMessage('Invalid server ID'),
+    body('protocol').isIn(['openvpn', 'wireguard']).withMessage('Invalid protocol'),
+    body('config').isObject().withMessage('Configuration must be an object')
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const connection = await VPNService.createConnection(req.user.id, req.body);
+      res.status(201).json(connection);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// Update VPN connection
+router.put("/connections/:connectionId",
+  authenticateToken,
+  [
+    body('name').optional().isString().notEmpty().withMessage('Connection name cannot be empty'),
+    body('config').optional().isObject().withMessage('Configuration must be an object')
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const connection = await VPNService.updateConnection(req.user.id, req.params.connectionId, req.body);
+      res.json(connection);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// Get connection configuration
+router.get("/connections/:connectionId/config",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const config = await VPNService.getConnectionConfig(req.user.id, req.params.connectionId);
+      res.json(config);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// Get available servers
+router.get("/servers",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const servers = await VPNService.getAvailableServers();
+      res.json(servers);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// Get server status
+router.get("/servers/:serverId/status",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const status = await VPNService.getServerStatus(req.params.serverId);
+      res.json(status);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// Get connection statistics
+router.get("/connections/:connectionId/stats",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const stats = await VPNService.getConnectionStats(req.user.id, req.params.connectionId);
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// Delete VPN connection
+router.delete("/connections/:connectionId",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      await VPNService.deleteConnection(req.user.id, req.params.connectionId);
+      res.json({ message: 'VPN connection deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// Get connection logs
+router.get("/connections/:connectionId/logs",
+  authenticateToken,
+  [
+    body('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
+    body('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100')
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { page = 1, limit = 10 } = req.query;
+      const logs = await VPNService.getConnectionLogs(req.user.id, req.params.connectionId, page, limit);
+      res.json(logs);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// Get connection usage
+router.get("/connections/:connectionId/usage",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const usage = await VPNService.getConnectionUsage(req.user.id, req.params.connectionId);
+      res.json(usage);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
 
 module.exports = router;

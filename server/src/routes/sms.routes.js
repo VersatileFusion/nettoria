@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const smsController = require("../controllers/sms.controller");
 const authMiddleware = require("../middleware/auth.middleware");
+const { body, validationResult } = require('express-validator');
+const SMSService = require('../services/sms.service');
 
 /**
  * @swagger
@@ -161,18 +163,112 @@ router.delete(
 );
 
 // SMS Sending
-router.post("/send", authMiddleware.authenticate, smsController.sendSMS);
-router.post(
-  "/bulk-send",
+router.post('/send',
   authMiddleware.authenticate,
-  smsController.sendBulkSMS
+  [
+    body('phoneNumber').isMobilePhone().withMessage('Invalid phone number'),
+    body('message').isString().notEmpty().withMessage('Message is required'),
+    body('templateId').optional().isUUID().withMessage('Invalid template ID')
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { phoneNumber, message, templateId } = req.body;
+      const result = await SMSService.sendSMS(req.user.id, phoneNumber, message, templateId);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+router.post('/send-bulk',
+  authMiddleware.authenticate,
+  [
+    body('phoneNumbers').isArray().withMessage('Phone numbers must be an array'),
+    body('message').isString().notEmpty().withMessage('Message is required'),
+    body('templateId').optional().isUUID().withMessage('Invalid template ID')
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { phoneNumbers, message, templateId } = req.body;
+      const result = await SMSService.sendBulkSMS(req.user.id, phoneNumbers, message, templateId);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 );
 
 // SMS History
-router.get(
-  "/history",
+router.get('/history',
   authMiddleware.authenticate,
-  smsController.getSMSHistory
+  [
+    body('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
+    body('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100')
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { page = 1, limit = 10 } = req.query;
+      const history = await SMSService.getHistory(req.user.id, page, limit);
+      res.json(history);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+router.get('/status/:smsId',
+  authMiddleware.authenticate,
+  async (req, res) => {
+    try {
+      const { smsId } = req.params;
+      const status = await SMSService.getStatus(req.user.id, smsId);
+      res.json(status);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// Get SMS categories
+router.get('/categories',
+  authMiddleware.authenticate,
+  async (req, res) => {
+    try {
+      const categories = await SMSService.getCategories();
+      res.json(categories);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// Get SMS statistics
+router.get('/statistics',
+  authMiddleware.authenticate,
+  async (req, res) => {
+    try {
+      const statistics = await SMSService.getStatistics(req.user.id);
+      res.json(statistics);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 );
 
 module.exports = router;

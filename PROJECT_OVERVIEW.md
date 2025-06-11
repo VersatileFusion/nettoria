@@ -1,82 +1,110 @@
 # Nettoria Cloud Service Provider Platform - Project Overview
 
-## 1. Project Overview (FA)
+## 1. Project Overview
 
-نکتوریا یک پلتفرم جامع ارائه‌دهنده خدمات ابری است که با Node.js و Express توسعه یافته است. این سیستم به کاربران اجازه می‌دهد تا ثبت‌نام کنند، ماشین‌های مجازی (VM) را مدیریت کنند، صورتحساب‌ها را پرداخت نمایند و به خدمات پشتیبانی دسترسی داشته باشند. این پروژه با ادغام عمیق با VMware vCenter، امکان تهیه و مدیریت خودکار ماشین‌های مجازی را فراهم می‌کند. همچنین مجموعه‌ای از ابزارهای تشخیصی برای تست اتصال به محیط‌های vCenter، به ویژه از طریق VPN، ارائه می‌دهد.
+Nettoria is a comprehensive cloud services platform built with Node.js and Express. The system allows users to register, manage virtual machines (VMs), process payments, and access support services. The project integrates deeply with VMware vCenter for automated VM provisioning and management. It also provides a suite of diagnostic tools for testing connectivity to vCenter environments, especially through VPN.
 
-## 2. Main Features (FA)
+## 2. Main Features
 
-### احراز هویت و مدیریت کاربران
-- ثبت‌نام کاربران با اطلاعات شخصی
-- تایید شماره تلفن و ایمیل
-- روش‌های ورود متعدد (رمز عبور، رمز یکبار مصرف)
-- احراز هویت مبتنی بر JWT
-- بازیابی امن رمز عبور
-- تکمیل پروفایل با تایید کد ملی
+### Authentication and User Management
+- User registration with personal information
+- Phone and email verification
+- Multiple login methods (password, one-time code)
+- JWT-based authentication
+- Secure password recovery
+- Profile completion with national ID verification
+- Two-factor authentication
+- Session management
+- Activity logging
 
-### مدیریت سرویس و ماشین مجازی
-- پلن‌های آماده و سفارشی (CPU، RAM، فضای ذخیره‌سازی و ...)
-- گزینه‌های متعدد دیتاسنتر و سیستم‌عامل
-- دوره‌های پرداخت منعطف (ماهانه، فصلی و ...)
-- صورتحساب ساعتی با کیف پول
-- ایجاد، روشن/خاموش، ریست، بازسازی و حذف خودکار VM
-- تخصیص منابع بر اساس پلن
+### Service and Virtual Machine Management
+- Ready-made and custom plans (CPU, RAM, storage, etc.)
+- Multiple datacenter and OS options
+- Flexible payment periods (monthly, quarterly, etc.)
+- Hourly billing with wallet
+- Automated VM creation, power on/off, reset, rebuild, and deletion
+- Resource allocation based on plan
+- Real-time monitoring
+- Automated backups
+- Resource scaling
 
-### صورتحساب و مالی
-- صدور و پرداخت صورتحساب
-- پشتیبانی از درگاه‌های پرداخت مختلف
-- پشتیبانی از کد تخفیف
-- تاریخچه تراکنش و سیستم کیف پول
-- ارسال پیامک برای موجودی کم
-- تعلیق سرویس‌های منقضی شده
+### Billing and Finance
+- Invoice generation and payment
+- Support for multiple payment gateways
+- Discount code support
+- Transaction history and wallet system
+- SMS notifications for low balance
+- Suspension of expired services
+- Multiple currency support
+- Automated billing
+- Invoice generation
 
-### داشبورد کاربر
-- لیست و مدیریت سرویس‌ها
-- تاریخچه تراکنش‌ها
-- تمدید/لغو سرویس
-- مرکز اعلان‌ها
+### User Dashboard
+- Service list and management
+- Transaction history
+- Service renewal/cancellation
+- Notification center
+- Resource usage statistics
+- Billing information
+- Support ticket management
 
-### سیستم پشتیبانی
-- ایجاد و دسته‌بندی تیکت
-- پیوست فایل
-- اعلان ایمیلی
-- پیگیری وضعیت تیکت
+### Support System
+- Ticket creation and categorization
+- File attachments
+- Email notifications
+- Ticket status tracking
+- Priority support
+- SLA monitoring
+- Knowledge base
+- FAQ section
 
-### داشبورد ادمین
-- مدیریت کاربران، سفارشات و تیکت‌ها
-- گزارش‌گیری و تحلیل
-- ارسال پیام تبلیغاتی (ایمیل/پیامک)
+### Admin Dashboard
+- User, order, and ticket management
+- Reporting and analytics
+- Promotional message sending (email/SMS)
+- System monitoring
+- Resource allocation
+- Service management
+- User management
+- Financial reports
 
-### مجموعه تست vCenter API
-- تشخیص اتصال VPN
-- تست‌های اتصال شبکه و API (REST/SOAP)
-- اجرای خودکار و تعاملی تست‌ها
+### vCenter API Test Suite
+- VPN connection detection
+- Network and API connectivity tests (REST/SOAP)
+- Automated and interactive test execution
+- Connection diagnostics
+- Performance testing
+- Security testing
 
-## 3. Technical Stack (FA)
+## 3. Technical Stack
 
-- **بک‌اند:** Node.js، Express.js (API مبتنی بر REST)
-- **دیتابیس:** MySQL/PostgreSQL (سازگار با SQL Server)
+- **Backend:** Node.js, Express.js (REST API)
+- **Database:** MySQL/PostgreSQL (SQL Server compatible)
 - **ORM:** Sequelize
-- **احراز هویت:** JWT
-- **ادغام VMware:** vCenter API (node-vsphere-soap)
-- **اعلان‌ها:** ایمیل (Nodemailer)، پیامک (SMS.ir)
-- **مستندسازی:** Swagger
-- **سایر:** dotenv، helmet، cors، morgan، axios
+- **Authentication:** JWT, 2FA
+- **VMware Integration:** vCenter API (node-vsphere-soap)
+- **Notifications:** Email (Nodemailer), SMS (SMS.ir)
+- **Documentation:** Swagger
+- **Testing:** Jest, Supertest
+- **Frontend:** HTML, CSS, JavaScript, Bootstrap
+- **Security:** Helmet, CORS, Rate Limiting
+- **Monitoring:** Winston, Morgan
+- **Other:** dotenv, axios, bcrypt
 
-## 4. Project Structure (FA)
+## 4. Project Structure
 
 ```
 / (root)
-├── node_modules/                # وابستگی‌های پروژه اصلی
-├── scripts/                     # اسکریپت‌های مدیریتی و تست دیتابیس/ادمین
+├── node_modules/                # Project dependencies
+├── scripts/                     # Management and test scripts
 │   ├── test-pg-connection.js
 │   ├── admin-setup-full.js
 │   ├── register-admin-user.js
 │   ├── get-admin-jwt.js
 │   ├── promote-admin-user.js
 │   └── verify-test-user.js
-├── server/                      # سرور و بک‌اند اصلی
-│   ├── node_modules/            # وابستگی‌های سرور
+├── server/                      # Main server and backend
+│   ├── node_modules/            # Server dependencies
 │   ├── test-vcenter.js
 │   ├── test-vcenter-api.js
 │   ├── test-suite.js
@@ -131,11 +159,13 @@
 │       │   └── auth.utils.js
 │       └── views/
 │           └── payment/
-├── src/                         # (نمونه اولیه یا ماژولار، فقط کنترلر، روت و سرویس)
-│   ├── controllers/
-│   ├── routes/
-│   └── services/
-├── test/                        # اسکریپت‌ها و ابزارهای تست و عیب‌یابی
+├── public/                      # Frontend files
+│   ├── Assets/                  # Static assets
+│   │   ├── Css/                # Stylesheets
+│   │   ├── Js/                 # JavaScript files
+│   │   └── Images/             # Image assets
+│   └── *.html                  # HTML pages
+├── test/                        # Test scripts and tools
 │   ├── helpers/
 │   │   └── setup-test-user.js
 │   ├── test-vm-feature.js
@@ -146,237 +176,143 @@
 │   ├── test-dashboard-feature.js
 │   ├── test-billing-feature.js
 │   ├── test-vcenter-suite-feature.js
-│   ├── vcenter-test.env
-│   ├── vcenter-test.env.example
-│   ├── test-vcenter-auto.js
-│   ├── test-vcenter-rest-auto.js
-│   ├── test-vpn-connection.js
-│   ├── run-api-test.js
-│   ├── test-internal-ip.js
-│   ├── test-vcenter-connectivity.js
-│   ├── vpn-solution-summary.md
-│   ├── vmware-connectivity-report.md
-│   ├── advanced-vmware-test.js
-│   ├── test-esxi-direct.js
-│   ├── test-vcenter-security.js
-│   ├── simple-test.js
-│   ├── test-vcenter-ping.js
-│   ├── vcenter-proxy-test.env
-│   ├── tls-version-test.js
-│   ├── http-test.js
-│   ├── vcenter-direct-ip-test.js
-│   ├── vcenter-socks-test.js
-│   ├── port-scanner.js
-│   ├── vcenter-rest-test.js
-│   ├── vcenter-connection-test-with-proxy.js
-│   ├── vcenter-test-readme.md
-│   ├── vcenter-connection-test.js
-│   ├── test-vcenter-fix.js
-│   ├── test-vcenter-rest.js
-│   ├── test-vcenter.js
-│   ├── test-auth-fix.js
-│   └── test-api.js
+│   └── ... (other test files)
 ├── .gitignore
 ├── PROJECT_OVERVIEW.md
 ├── README.md
+├── API_DOCUMENTATION.md
 ├── reset-test-db.js
 ├── setup-nettoria-db.js
 ├── check-schema.js
 ├── test-db-connection.js
-├── db-config.js
+└── db-config.js
 ```
 
-**English:**
+## 5. How It Works (High-Level Flow)
 
-- `/ (root)`: Main project root, contains configuration, scripts, documentation, and entry points.
-- `node_modules/`: Project dependencies.
-- `scripts/`: Utility and admin scripts for database and user management.
-- `server/`: Main backend application, with its own dependencies, entry point, and all backend source code under `src/`.
-- `src/` (root): (Legacy or modular, contains only controllers, routes, and services.)
-- `test/`: All test and diagnostic scripts, helpers, and environment files.
-- `.gitignore`, `README.md`, `PROJECT_OVERVIEW.md`, etc.: Standard project files.
+1. **User Registration:** Users register, verify phone/email, and complete their profile.
+2. **Service Selection:** Users choose or configure a VM service plan.
+3. **Order and Payment:** Users place orders, pay invoices, or use wallet balance.
+4. **VM Provisioning:** System provisions VM through vCenter API based on user specifications.
+5. **VM Management:** Users can power on/off, reset, rebuild, or delete VMs.
+6. **Billing:** Invoices are generated and wallet balance is managed for hourly billing.
+7. **Support:** Users can create support tickets and receive notifications.
+8. **Admin:** Admins manage users, orders, tickets, and send notifications.
 
-**فارسی:**
+## 6. API Endpoints
 
-- `/ (ریشه)`: ریشه اصلی پروژه، شامل پیکربندی، اسکریپت‌ها، مستندات و نقاط ورود.
-- `node_modules/`: وابستگی‌های پروژه.
-- `scripts/`: اسکریپت‌های کمکی و مدیریتی برای دیتابیس و کاربران.
-- `server/`: برنامه اصلی بک‌اند، با وابستگی‌ها، نقطه ورود و سورس کامل در `src/`.
-- `src/` (ریشه): (نمونه اولیه یا ماژولار، فقط کنترلر، روت و سرویس دارد.)
-- `test/`: همه اسکریپت‌ها و ابزارهای تست و عیب‌یابی.
-- `.gitignore`، `README.md`، `PROJECT_OVERVIEW.md` و ...: فایل‌های استاندارد پروژه.
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - Login
+- `POST /api/auth/2fa/setup` - Setup 2FA
+- `POST /api/auth/2fa/verify` - Verify 2FA
 
-## 5. How It Works (High-Level Flow) (FA)
+### Services
+- `GET /api/services` - List services
+- `POST /api/orders` - Place order
+- `GET /api/vcenter/vms` - List VMs
+- `POST /api/vcenter/vms/:id/power` - Power on/off VM
 
-۱. **ثبت‌نام کاربر:** کاربران ثبت‌نام می‌کنند، شماره تلفن/ایمیل را تایید و پروفایل را تکمیل می‌کنند.
-۲. **انتخاب سرویس:** کاربران یک پلن سرویس VM انتخاب یا پیکربندی می‌کنند.
-۳. **سفارش و پرداخت:** کاربران سفارش ثبت می‌کنند، صورتحساب پرداخت یا از کیف پول استفاده می‌کنند.
-۴. **تهیه VM:** سیستم بر اساس مشخصات کاربر، VM را از طریق vCenter API تهیه می‌کند.
-۵. **مدیریت VM:** کاربران می‌توانند VM را روشن/خاموش، ریست، بازسازی یا حذف کنند.
-۶. **صورتحساب:** صورتحساب صادر و موجودی کیف پول برای صورتحساب ساعتی مدیریت می‌شود.
-۷. **پشتیبانی:** کاربران می‌توانند تیکت پشتیبانی ایجاد و اعلان دریافت کنند.
-۸. **ادمین:** ادمین‌ها کاربران، سفارشات، تیکت‌ها را مدیریت و اعلان ارسال می‌کنند.
+### Wallet & Payment
+- `GET /api/wallet` - Wallet information
+- `POST /api/wallet/deposit` - Add funds
+- `POST /api/wallet/withdraw` - Withdraw funds
 
-## 6. API Endpoints (Examples) (FA)
+### Support
+- `POST /api/tickets` - Create support ticket
+- `GET /api/tickets` - List tickets
+- `POST /api/tickets/:id/reply` - Reply to ticket
 
-- `POST /api/auth/register` - ثبت‌نام کاربر
-- `POST /api/auth/login` - ورود
-- `GET /api/services` - لیست سرویس‌ها
-- `POST /api/orders` - ثبت سفارش
-- `GET /api/vcenter/vms` - لیست VMها
-- `POST /api/vcenter/vms/:id/power` - روشن/خاموش کردن VM
-- `GET /api/wallet` - اطلاعات کیف پول
-- `POST /api/tickets` - ایجاد تیکت پشتیبانی
-- `GET /api/admin/users` - ادمین: لیست کاربران
+### Admin
+- `GET /api/admin/users` - List users
+- `GET /api/admin/orders` - List orders
+- `GET /api/admin/tickets` - List tickets
+- `POST /api/admin/notifications` - Send notifications
 
-(برای مشاهده کامل API به مستندات Swagger در `/api-docs` مراجعه کنید)
+(For complete API documentation, visit `/api-docs`)
 
-## 7. Configuration & Setup (FA)
+## 7. Configuration & Setup
 
-۱. **کلون کردن مخزن**
-۲. **نصب وابستگی‌ها:**
+1. **Clone Repository**
+2. **Install Dependencies:**
    ```bash
    npm install
    cd server && npm install
    ```
-۳. **پیکربندی متغیرهای محیطی:**
-   - فایل `.env.example` را به `.env` کپی و مقادیر دیتابیس، JWT، پیامک، ایمیل و vCenter را وارد کنید
-۴. **راه‌اندازی دیتابیس:**
+3. **Configure Environment Variables:**
+   - Copy `.env.example` to `.env` and enter database, JWT, SMS, email, and vCenter values
+4. **Initialize Database:**
    ```bash
    npm run setup-db
    ```
-۵. **اجرای سرور:**
+5. **Run Server:**
    ```bash
    npm run dev
-   # یا برای محیط عملیاتی
-   npm start
    ```
-۶. **دسترسی به مستندات API:**
-   - آدرس `http://localhost:5000/api-docs` را باز کنید
 
-## 8. Testing & Troubleshooting (FA)
+## 8. Security Measures
 
-- **اجرای تست‌ها:**
-  ```bash
-  node server/test-suite.js
-  ```
-- **تست‌های اتصال:**
-  - از اسکریپت‌هایی مانند `test-vpn-connection.js`، `test-vcenter-rest-auto.js` و ... استفاده کنید
-- **مشکلات رایج:**
-  - عدم اتصال VPN، اطلاعات ورود اشتباه، فایروال، خطاهای SSL
+1. **Authentication**
+   - JWT-based authentication
+   - Two-factor authentication
+   - Session management
+   - Password hashing with PBKDF2
 
-## 9. Security & Best Practices (FA)
+2. **API Security**
+   - Rate limiting
+   - CORS protection
+   - Input validation
+   - SQL injection prevention
+   - XSS protection
 
-- احراز هویت JWT برای همه مسیرهای محافظت‌شده
-- رمزنگاری رمز عبور با bcrypt
-- استفاده از Helmet برای هدرهای امنیتی HTTP
-- فعال بودن CORS
-- نگهداری اطلاعات حساس در فایل‌های `.env`
-- اعتبارسنجی ورودی و مدیریت خطا در کنترلرها
+3. **Data Protection**
+   - Data encryption
+   - Secure password storage
+   - Audit logging
+   - Access control
 
-## 10. Additional Notes (FA)
+4. **Network Security**
+   - HTTPS enforcement
+   - VPN support
+   - Firewall rules
+   - DDoS protection
 
-- **ادغام پیامک:** استفاده از SMS.ir برای تایید شماره و اعلان‌ها
-- **ادغام ایمیل:** Nodemailer برای تایید ایمیل و اعلان تیکت
-- **ادغام VMware:** مدیریت خودکار چرخه عمر VM از طریق vCenter API
-- **Swagger:** مستندسازی کامل API در `/api-docs`
-- **لایسنس:** ISC (سرور)، MIT (مجموعه تست)
+## 9. Monitoring and Logging
 
-## 11. File-by-File Codebase Overview (FA)
+1. **System Monitoring**
+   - Server health checks
+   - Resource usage monitoring
+   - Performance metrics
+   - Error tracking
 
-در ادامه، شرح دقیقی از فایل‌ها و دایرکتوری‌های اصلی پروژه نکتوریا ارائه شده است. از این بخش برای آشنایی با ساختار کد و ارائه آن به ذینفعان استفاده کنید.
+2. **Application Logging**
+   - Request logging
+   - Error logging
+   - Audit logging
+   - Security logging
 
-### Root Directory (دایرکتوری ریشه)
+3. **User Activity**
+   - Login attempts
+   - Service usage
+   - Payment transactions
+   - Support interactions
 
-- **package.json**: تعریف پروژه اصلی به عنوان مجموعه تست vCenter API و لیست وابستگی‌ها و اسکریپت‌های تست و تشخیص اتصال.
-- **package-lock.json**: قفل کردن نسخه دقیق وابستگی‌ها به صورت خودکار.
-- **README.md**: مستندات مجموعه تست vCenter API شامل راه‌اندازی، استفاده و رفع اشکال اسکریپت‌های اتصال.
-- **PROJECT_OVERVIEW.md**: این سند که نمای کلی و جزئیات پروژه را ارائه می‌دهد.
-- **reset-test-db.js**: اسکریپت حذف کاربران تستی از دیتابیس PostgreSQL برای ریست محیط تست.
-- **setup-nettoria-db.js**: اسکریپت ایجاد و به‌روزرسانی دیتابیس اصلی PostgreSQL و اطمینان از وجود جداول و ستون‌های مورد نیاز.
-- **check-schema.js**: اسکریپت بررسی ساختار جدول Users و گزارش ستون‌های مفقود.
-- **test-db-connection.js**: اسکریپت ساده برای تست اتصال به دیتابیس PostgreSQL.
-- **db-config.js**: خروجی گرفتن از pool اتصال PostgreSQL و توابع کمکی برای کوئری گرفتن از دیتابیس.
+## 10. Future Enhancements
 
-### scripts/ (اسکریپت‌ها)
+1. **Planned Features**
+   - Kubernetes integration
+   - Container management
+   - Serverless functions
+   - AI-powered monitoring
 
-- **test-pg-connection.js**: بررسی اجرای صحیح و دسترسی به PostgreSQL با استفاده از متغیرهای محیطی.
-- **admin-setup-full.js**: خودکارسازی ثبت، ارتقا و دریافت JWT برای کاربر ادمین.
-- **register-admin-user.js**: ثبت کاربر ادمین جدید از طریق API.
-- **get-admin-jwt.js**: ورود به عنوان ادمین و چاپ توکن JWT.
-- **promote-admin-user.js**: ارتقا کاربر به سطح ادمین و تایید آن در دیتابیس.
-- **verify-test-user.js**: تایید کامل و فعال‌سازی کاربر تستی در دیتابیس.
+2. **Infrastructure**
+   - Multi-region deployment
+   - Load balancing
+   - Auto-scaling
+   - Disaster recovery
 
-### test/ (تست)
-
-- **test-vm-feature.js, test-auth-feature.js, ...**: اسکریپت‌های تست فیچر برای بخش‌های مختلف پلتفرم (ماشین مجازی، احراز هویت، صورتحساب، داشبورد، پشتیبانی، ادمین، مجموعه vCenter).
-- **run-feature-tests.js**: اجرای همه تست‌های اصلی به صورت متوالی.
-- **helpers/setup-test-user.js**: ایجاد و تایید کاربر تستی در دیتابیس برای تست API.
-- **run-api-test.js**: منوی تعاملی برای مدیریت اتصال VPN و اجرای تست‌های vCenter.
-- **test-vpn-connection.js**: اسکریپت تشخیص جامع اتصال VPN.
-- **test-internal-ip.js**: تست اتصال پایه به IP داخلی vCenter.
-- **test-vcenter-rest-auto.js**: تست خودکار اتصال REST API vCenter.
-- **test-vcenter-auto.js**: تست خودکار اتصال SOAP API vCenter.
-- **test-vcenter-ping.js**: بررسی دسترسی به vCenter (پینگ، DNS، TCP، HTTPS).
-- **test-vcenter-rest-test.js, ...**: اسکریپت‌های مختلف تشخیصی و اتصال برای vCenter و ESXi شامل سناریوهای مستقیم، پروکسی و VPN و همچنین اسکن پورت و تست نسخه TLS.
-- **vpn-solution-summary.md, ...**: گزارش‌ها و خلاصه‌های راهکار اتصال و یافته‌های تست.
-- **vcenter-test.env, ...**: فایل‌های متغیر محیطی برای پیکربندی اطلاعات تست و اتصال.
-
-### server/ (سرور)
-
-- **server.js**: نقطه ورود اصلی سرور و مدیریت سناریوهای جایگزین در صورت خطا در بارگذاری برنامه اصلی.
-- **package.json**: تعریف برنامه سمت سرور، وابستگی‌ها و اسکریپت‌های اجرا و مدیریت دیتابیس.
-- **package-lock.json**: قفل کردن نسخه وابستگی‌های سمت سرور.
-- **README.md**: مستندات جامع برنامه سمت سرور شامل ویژگی‌ها، راه‌اندازی، نقاط API و پیکربندی محیطی.
-- **test-vcenter.js, ...**: اسکریپت‌های تست سمت سرور برای vCenter API و عملکرد کلی سرور.
-- **src/**: شامل تمام سورس کد سمت سرور (در ادامه توضیح داده شده).
-
-### server/src/ (سورس سرور)
-
-- **app.js**: مقداردهی اولیه برنامه Express، پیکربندی میدل‌ویرها، راه‌اندازی مستندات Swagger و بارگذاری مسیرهای API.
-- **setup-db.js**: اسکریپت راه‌اندازی یا ریست دیتابیس سمت سرور.
-
-#### server/src/controllers/ (کنترلرها)
-- **auth.controller.js**: مدیریت منطق احراز هویت (ثبت‌نام، ورود، تایید، بازیابی رمز و ...).
-- **ticket.controller.js**: مدیریت ایجاد، به‌روزرسانی و پیگیری تیکت‌های پشتیبانی.
-- **service.controller.js**: منطق تجاری مدیریت سرویس‌های ابری (VM، پلن‌ها و ...).
-- **vcenter.controller.js**: مدیریت ادغام و عملیات با VMware vCenter (تهیه و مدیریت VM).
-- **sms.controller.js**: مدیریت ارسال و تایید پیامک.
-
-#### server/src/routes/ (مسیرها)
-- **auth.routes.js, ...**: تعریف نقاط پایانی API برای هر دامنه (احراز هویت، کاربران، سرویس‌ها، سفارشات، کیف پول، تیکت‌ها، vCenter، پرداخت، پیامک).
-
-#### server/src/services/ (سرویس‌ها)
-- **vcenter.service.js**: منطق اصلی تعامل با APIهای vCenter (SOAP/REST) و مدیریت چرخه عمر VM.
-- **sms.service.js**: مدیریت ارسال پیامک از طریق SMS.ir.
-- **sms-test.js**: اسکریپت تست عملکرد پیامک.
-
-#### server/src/models/ (مدل‌ها)
-- **user.model.js, ...**: مدل‌های Sequelize برای موجودیت‌های اصلی سیستم (کاربر، سرویس، سفارش، کیف پول، تیکت، کامنت، ماشین مجازی).
-- **index.js**: خروجی گرفتن همه مدل‌ها برای استفاده در برنامه.
-
-#### server/src/config/ (پیکربندی)
-- **index.js**: متمرکزسازی همه متغیرهای پیکربندی (دیتابیس، JWT، پیامک، ایمیل، vCenter و ...).
-- **database.js**: راه‌اندازی اتصال دیتابیس با Sequelize.
-- **operating-systems.js, vm-plans.js**: تعریف سیستم‌عامل‌ها و پلن‌های VM قابل ارائه.
-
-#### server/src/middleware/ (میدل‌ویر)
-- **auth.middleware.js**: میدل‌ویر Express برای احراز هویت و مجوزدهی درخواست‌های API.
-
-#### server/src/utils/ (ابزارها)
-- **auth.utils.js**: توابع کمکی برای احراز هویت، JWT و ارسال ایمیل/پیامک.
-- **error.js**: ابزارهای مدیریت خطا به صورت متمرکز.
-- **logger.js**: ابزار ساده لاگ‌گیری برای پیام‌های info، error و debug.
-- **notification.util.js**: ابزار ارسال اعلان (ایمیل، پیامک و ...).
-- **setup-db.js**: (یک خطی، احتمالاً بلااستفاده یا برای توسعه آینده.)
-
-#### server/src/views/ (نماها)
-- **payment/**: (خالی یا محل نگهداری نماهای مرتبط با پرداخت.)
-
----
-
-این بخش، شرح فایل به فایل پروژه را ارائه می‌دهد تا بتوانید به سرعت با نقش و هدف هر بخش از کد نکتوریا آشنا شوید. از این بخش برای آموزش، ارائه یا بررسی فنی استفاده کنید.
-
----
-
-*This document provides a high-level yet comprehensive overview of the Nettoria project for employer or stakeholder review. For detailed code-level documentation, see inline comments and Swagger API docs.* 
+3. **User Experience**
+   - Mobile application
+   - API client libraries
+   - Enhanced analytics
+   - Custom dashboards 

@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
 const vpnSchema = new mongoose.Schema(
   {
@@ -143,4 +145,190 @@ vpnSchema.statics.findByUsername = function (username) {
 
 const VPN = mongoose.model("VPN", vpnSchema);
 
-module.exports = VPN;
+// VPN Server Model
+const VPNServer = sequelize.define('VPNServer', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  location: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  ipAddress: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      isIP: true
+    }
+  },
+  status: {
+    type: DataTypes.ENUM('active', 'maintenance', 'offline'),
+    defaultValue: 'active'
+  },
+  load: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0
+  },
+  capacity: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  activeConnections: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  },
+  supportedProtocols: {
+    type: DataTypes.ARRAY(DataTypes.STRING),
+    defaultValue: ['openvpn', 'wireguard']
+  },
+  configuration: {
+    type: DataTypes.JSONB,
+    defaultValue: {}
+  }
+});
+
+// VPN Connection Model
+const VPNConnection = sequelize.define('VPNConnection', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
+  },
+  userId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'Users',
+      key: 'id'
+    }
+  },
+  serverId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'VPNServers',
+      key: 'id'
+    }
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  protocol: {
+    type: DataTypes.ENUM('openvpn', 'wireguard'),
+    allowNull: false
+  },
+  config: {
+    type: DataTypes.JSONB,
+    allowNull: false
+  },
+  status: {
+    type: DataTypes.ENUM('active', 'inactive', 'error'),
+    defaultValue: 'active'
+  },
+  lastConnected: {
+    type: DataTypes.DATE
+  },
+  lastDisconnected: {
+    type: DataTypes.DATE
+  },
+  totalBytesUp: {
+    type: DataTypes.BIGINT,
+    defaultValue: 0
+  },
+  totalBytesDown: {
+    type: DataTypes.BIGINT,
+    defaultValue: 0
+  },
+  totalDuration: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  }
+});
+
+// VPN Log Model
+const VPNLog = sequelize.define('VPNLog', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
+  },
+  connectionId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'VPNConnections',
+      key: 'id'
+    }
+  },
+  event: {
+    type: DataTypes.ENUM('connect', 'disconnect', 'error'),
+    allowNull: false
+  },
+  bytesUp: {
+    type: DataTypes.BIGINT,
+    defaultValue: 0
+  },
+  bytesDown: {
+    type: DataTypes.BIGINT,
+    defaultValue: 0
+  },
+  duration: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  },
+  speed: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0
+  },
+  error: {
+    type: DataTypes.STRING
+  },
+  ipAddress: {
+    type: DataTypes.STRING,
+    validate: {
+      isIP: true
+    }
+  },
+  userAgent: {
+    type: DataTypes.STRING
+  }
+});
+
+// Define relationships
+VPNServer.hasMany(VPNConnection, {
+  foreignKey: 'serverId',
+  as: 'connections'
+});
+
+VPNConnection.belongsTo(VPNServer, {
+  foreignKey: 'serverId',
+  as: 'server'
+});
+
+VPNConnection.hasMany(VPNLog, {
+  foreignKey: 'connectionId',
+  as: 'logs'
+});
+
+VPNLog.belongsTo(VPNConnection, {
+  foreignKey: 'connectionId',
+  as: 'connection'
+});
+
+// Add indexes
+VPNServer.addIndex(['status', 'location']);
+VPNConnection.addIndex(['userId', 'status']);
+VPNLog.addIndex(['connectionId', 'createdAt']);
+
+module.exports = {
+  VPNServer,
+  VPNConnection,
+  VPNLog
+};

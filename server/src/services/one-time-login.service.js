@@ -1,27 +1,24 @@
 const crypto = require("crypto");
-const User = require("../models/user.model");
-const OneTimeLogin = require("../models/one-time-login.model");
-const { NotFoundError, ValidationError } = require("../utils/errors");
+const { User } = require("../models");
 const { sendEmail } = require("../utils/email");
+const { createToken } = require("../utils/jwt");
 
 class OneTimeLoginService {
-  static async generateOneTimeLogin(email) {
-    const user = await User.findOne({ email });
+  static async generateToken(email) {
+    const user = await User.findOne({ where: { email } });
     if (!user) {
-      throw new NotFoundError("User not found");
+      throw new Error("User not found");
     }
 
-    // Generate a secure random token
+    // Generate a random token
     const token = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
-    const oneTimeLogin = new OneTimeLogin({
-      userId: user._id,
-      token,
-      expiresAt,
+    // Store token in user's record
+    await user.update({
+      oneTimeLoginToken: token,
+      oneTimeLoginExpires: expiresAt
     });
-
-    await oneTimeLogin.save();
 
     // Send email with login link
     const loginLink = `${process.env.FRONTEND_URL}/one-time-login?token=${token}`;
@@ -29,60 +26,59 @@ class OneTimeLoginService {
       to: email,
       subject: "One-Time Login Link",
       html: `
-                <p>Click the link below to log in to your account:</p>
-                <a href="${loginLink}">${loginLink}</a>
-                <p>This link will expire in 15 minutes.</p>
-            `,
+        <h1>One-Time Login Link</h1>
+        <p>Click the link below to log in to your account:</p>
+        <a href="${loginLink}">${loginLink}</a>
+        <p>This link will expire in 15 minutes.</p>
+      `
     });
 
     return { message: "One-time login link sent to your email" };
   }
 
-  static async validateOneTimeLogin(token) {
-    const oneTimeLogin = await OneTimeLogin.findOne({
-      token,
-      expiresAt: { $gt: new Date() },
-      used: false,
+  static async validateToken(token) {
+    const user = await User.findOne({
+      where: {
+        oneTimeLoginToken: token,
+        oneTimeLoginExpires: { [Op.gt]: new Date() }
+      }
     });
 
-    if (!oneTimeLogin) {
-      throw new ValidationError("Invalid or expired token");
-    }
-
-    const user = await User.findById(oneTimeLogin.userId);
     if (!user) {
-      throw new NotFoundError("User not found");
+      throw new Error("Invalid or expired token");
     }
 
-    // Mark token as used
-    oneTimeLogin.used = true;
-    await oneTimeLogin.save();
+    // Clear the one-time login token
+    await user.update({
+      oneTimeLoginToken: null,
+      oneTimeLoginExpires: null
+    });
 
-    // Generate JWT token for the user
-    const jwtToken = user.generateAuthToken();
+    // Generate JWT token
+    const jwtToken = createToken(user);
 
     return {
       token: jwtToken,
       user: {
-        id: user._id,
+        id: user.id,
         email: user.email,
-        name: user.name,
-      },
+        name: user.name
+      }
     };
   }
 
-  static async checkOneTimeLoginStatus(token) {
-    const oneTimeLogin = await OneTimeLogin.findOne({ token });
+  static async checkTokenStatus(token) {
+    const user = await User.findOne({
+      where: {
+        oneTimeLoginToken: token
+      }
+    });
 
-    if (!oneTimeLogin) {
+    if (!user) {
       return { valid: false, message: "Invalid token" };
     }
 
-    if (oneTimeLogin.used) {
-      return { valid: false, message: "Token already used" };
-    }
-
-    if (oneTimeLogin.expiresAt < new Date()) {
+    if (user.oneTimeLoginExpires < new Date()) {
       return { valid: false, message: "Token expired" };
     }
 

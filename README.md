@@ -1,98 +1,268 @@
-# vCenter API Test Suite
+# Nettoria - Cloud Services Platform
 
-A collection of Node.js scripts for testing and troubleshooting connectivity to VMware vCenter Server through VPN.
+Nettoria is a comprehensive cloud services platform that provides VPN, Domain Management, Virtual Server Hosting, and other cloud-based solutions. The platform offers a modern, secure, and user-friendly interface for managing various cloud services.
 
-## Overview
+## 🌟 Features
 
-This test suite helps diagnose and resolve connectivity issues when accessing vCenter Server APIs through a VPN connection. It includes scripts for:
+### Core Services
 
-- Testing VPN connectivity
-- Verifying basic network connectivity to the vCenter server
-- Testing REST API connectivity
-- Testing SOAP API connectivity
+- **Virtual Server Hosting**
+  - Customizable VM configurations
+  - Real-time server monitoring
+  - Automated backups
+  - Resource scaling
+  - Multiple datacenter locations
+  - Various OS options
 
-## Prerequisites
+- **VPN Services**
+  - Secure VPN connections
+  - Multiple server locations
+  - Real-time connection monitoring
+  - Bandwidth usage tracking
+  - Custom VPN configurations
+  - Multiple protocol support
 
-- Node.js 14+ installed
-- Windows operating system (scripts use Windows-specific VPN commands)
-- VPN access to the vCenter environment
+- **Domain Management**
+  - Domain registration and management
+  - DNS record management
+  - Domain transfer services
+  - SSL certificate integration
+  - WHOIS privacy protection
+  - Auto-renewal options
 
-## Installation
+- **Cloud Hosting**
+  - Managed cloud solutions
+  - Load balancing
+  - Auto-scaling
+  - High availability
+  - CDN integration
+  - Backup solutions
 
-1. Clone this repository or download the scripts
+### Additional Features
+
+- **User Management**
+  - Two-factor authentication
+  - Role-based access control
+  - User profile management
+  - Security preferences
+  - Activity logging
+  - Session management
+
+- **Payment System**
+  - Secure payment processing
+  - Multiple currency support
+  - Transaction history
+  - Automated billing
+  - Multiple payment gateways
+  - Invoice generation
+
+- **Support System**
+  - Ticket management
+  - Real-time chat support
+  - Knowledge base
+  - FAQ section
+  - Priority support
+  - SLA monitoring
+
+- **Blog System**
+  - Content management
+  - Comment system
+  - SEO optimization
+  - Social sharing
+  - Analytics integration
+  - Newsletter subscription
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- npm or yarn
+- MySQL (v8.0 or higher)
+- Git
+- VMware vCenter (for VM management)
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/VersatileFusion/Nettoria.git
+cd Nettoria
+```
+
 2. Install dependencies:
 
 ```bash
-npm install axios
+# Install root dependencies
+npm install
+
+# Install server dependencies
+cd server
+npm install
 ```
 
-## Available Scripts
-
-### Main Runner
-
-- `run-api-test.js` - Interactive menu to manage VPN connection and run tests
-
-### Individual Test Scripts
-
-- `test-vpn-connection.js` - Comprehensive VPN connectivity diagnostic
-- `test-internal-ip.js` - Basic connectivity test to vCenter server IP
-- `test-vcenter-rest-auto.js` - REST API connectivity test
-- `test-vcenter-auto.js` - SOAP API connectivity test
-
-## Configuration
-
-Create a file named `vcenter-test.env` with your vCenter credentials:
-
-```
-VCENTER_USER=your_username
-VCENTER_PASS=your_password
-```
-
-## Usage
-
-### Running the Interactive Menu
+3. Configure environment variables:
 
 ```bash
-node run-api-test.js
+# Create .env file in root directory
+cp .env.example .env
+
+# Create .env file in server directory
+cd server
+cp .env.example .env
 ```
 
-This will display a menu with options to:
+4. Update the environment variables in both `.env` files with your configuration.
 
-1. Check VPN connection
-2. Connect to VPN
-3. Run Basic API test
-4. Run REST API test
-5. Run SOAP API test
-6. Run Diagnostic test
-7. Run all tests
-8. Exit
-
-### Running Individual Tests
-
-You can also run each test script individually:
+5. Initialize the database:
 
 ```bash
-node test-vpn-connection.js
-node test-internal-ip.js
-node test-vcenter-rest-auto.js
-node test-vcenter-auto.js
+# From the root directory
+node setup-nettoria-db.js
 ```
 
-## Troubleshooting
+6. Start the development servers:
 
-If you encounter connectivity issues:
+```bash
+# Start the backend server
+cd server
+npm run dev
 
-1. Ensure your VPN is properly connected
-2. Verify you can ping the vCenter server IP (192.168.120.251)
-3. Check if your credentials are correct in the vcenter-test.env file
-4. Review firewall settings that might block connection
+# In a new terminal, start the frontend
+cd public
+npm run dev
+```
 
-## Common Issues
+## 📁 Project Structure
 
-- **SSL/TLS Certificate Errors**: The scripts disable certificate validation for testing purposes
-- **Authentication Failures**: Verify your credentials in the vcenter-test.env file
-- **Timeout Errors**: May indicate network connectivity or routing issues through VPN
+```
+Nettoria/
+├── public/                 # Frontend files
+│   ├── Assets/            # Static assets
+│   │   ├── Css/          # Stylesheets
+│   │   ├── Js/           # JavaScript files
+│   │   └── Images/       # Image assets
+│   └── *.html            # HTML pages
+├── server/                # Backend files
+│   ├── src/
+│   │   ├── config/       # Configuration files
+│   │   ├── controllers/  # Route controllers
+│   │   ├── middleware/   # Custom middleware
+│   │   ├── models/       # Database models
+│   │   ├── routes/       # API routes
+│   │   ├── services/     # Business logic
+│   │   └── utils/        # Utility functions
+│   └── tests/            # Test files
+└── docs/                 # Documentation
+```
 
-## License
+## 🔧 API Documentation
 
-MIT
+The API documentation is available at `/api-docs` when running the server. It provides detailed information about all available endpoints, request/response formats, and authentication requirements.
+
+## 🛠️ Development
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run specific test suite
+npm test -- --grep "suite name"
+
+# Run frontend tests
+cd public
+npm test
+
+# Run backend tests
+cd server
+npm test
+```
+
+### Code Style
+
+The project uses ESLint for code linting. Run the linter:
+
+```bash
+# Lint all code
+npm run lint
+
+# Lint frontend code
+cd public
+npm run lint
+
+# Lint backend code
+cd server
+npm run lint
+```
+
+### Building for Production
+
+```bash
+# Build frontend
+cd public
+npm run build
+
+# Build backend
+cd server
+npm run build
+
+# Start production server
+cd server
+npm start
+```
+
+## 🔒 Security
+
+- JWT-based authentication
+- Two-factor authentication
+- Rate limiting
+- CORS protection
+- Helmet security headers
+- Input validation
+- SQL injection prevention
+- XSS protection
+- CSRF protection
+- Secure password hashing
+- Session management
+- Audit logging
+
+## 📝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Support
+
+For support, please:
+
+1. Check the [documentation](docs/)
+2. Open a support ticket in the dashboard
+3. Contact our support team at support@nettoria.com
+4. Join our [Discord community](https://discord.gg/nettoria)
+
+## 🙏 Acknowledgments
+
+- [Express.js](https://expressjs.com/)
+- [Sequelize](https://sequelize.org/)
+- [Swagger UI](https://swagger.io/tools/swagger-ui/)
+- [Bootstrap](https://getbootstrap.com/)
+- [jQuery](https://jquery.com/)
+- [VMware vSphere](https://www.vmware.com/products/vsphere.html)
+
+## 📞 Contact
+
+- Website: [nettoria.com](https://nettoria.com)
+- Email: contact@nettoria.com
+- Twitter: [@NettoriaCloud](https://twitter.com/NettoriaCloud)
+- LinkedIn: [Nettoria](https://linkedin.com/company/nettoria)
+- Discord: [Nettoria Community](https://discord.gg/nettoria)

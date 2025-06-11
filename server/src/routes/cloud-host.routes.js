@@ -3,6 +3,9 @@ const router = express.Router();
 const authMiddleware = require("../middleware/auth.middleware");
 const { body, validationResult } = require("express-validator");
 const CloudHost = require("../models/cloud-host");
+const CloudHostService = require('../services/cloud-host.service');
+const { validateRequest } = require('../middleware/validation');
+const { param } = require('express-validator');
 
 // Validation middleware
 const validateCloudHost = [
@@ -233,6 +236,223 @@ router.get("/:id/stats", authMiddleware.authenticate, async (req, res) => {
         code: "INTERNAL_ERROR",
       },
     });
+  }
+});
+
+// Get all cloud servers for user
+router.get('/', authMiddleware.authenticate, async (req, res) => {
+  try {
+    const servers = await CloudHostService.getUserServers(req.user.id);
+    res.json(servers);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get server details
+router.get('/:serverId', authMiddleware.authenticate, [
+  param('serverId').isUUID()
+], validateRequest, async (req, res) => {
+  try {
+    const server = await CloudHostService.getServerDetails(req.user.id, req.params.serverId);
+    res.json(server);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+// Create new server
+router.post('/create', authMiddleware.authenticate, [
+  body('name').isString().notEmpty(),
+  body('region').isString().notEmpty(),
+  body('plan').isString().notEmpty(),
+  body('image').isString().notEmpty(),
+  body('sshKeys').isArray().optional(),
+  body('tags').isArray().optional(),
+  body('backups').isBoolean().optional(),
+  body('monitoring').isBoolean().optional()
+], validateRequest, async (req, res) => {
+  try {
+    const server = await CloudHostService.createServer(req.user.id, req.body);
+    res.status(201).json(server);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Update server
+router.put('/:serverId', authMiddleware.authenticate, [
+  param('serverId').isUUID(),
+  body('name').isString().optional(),
+  body('tags').isArray().optional(),
+  body('backups').isBoolean().optional(),
+  body('monitoring').isBoolean().optional()
+], validateRequest, async (req, res) => {
+  try {
+    const server = await CloudHostService.updateServer(req.user.id, req.params.serverId, req.body);
+    res.json(server);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Control server
+router.post('/:serverId/control', authMiddleware.authenticate, [
+  param('serverId').isUUID(),
+  body('action').isIn(['start', 'stop', 'restart', 'reboot'])
+], validateRequest, async (req, res) => {
+  try {
+    const result = await CloudHostService.controlServer(req.user.id, req.params.serverId, req.body.action);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Get server metrics
+router.get('/:serverId/metrics', authMiddleware.authenticate, [
+  param('serverId').isUUID()
+], validateRequest, async (req, res) => {
+  try {
+    const metrics = await CloudHostService.getServerMetrics(req.user.id, req.params.serverId);
+    res.json(metrics);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+// Get available regions
+router.get('/regions', async (req, res) => {
+  try {
+    const regions = await CloudHostService.getAvailableRegions();
+    res.json(regions);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get available plans
+router.get('/plans', async (req, res) => {
+  try {
+    const plans = await CloudHostService.getAvailablePlans();
+    res.json(plans);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get available images
+router.get('/images', async (req, res) => {
+  try {
+    const images = await CloudHostService.getAvailableImages();
+    res.json(images);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create backup
+router.post('/:serverId/backup', authMiddleware.authenticate, [
+  param('serverId').isUUID(),
+  body('name').isString().optional(),
+  body('description').isString().optional()
+], validateRequest, async (req, res) => {
+  try {
+    const backup = await CloudHostService.createBackup(req.user.id, req.params.serverId, req.body);
+    res.status(201).json(backup);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Get backups
+router.get('/:serverId/backups', authMiddleware.authenticate, [
+  param('serverId').isUUID()
+], validateRequest, async (req, res) => {
+  try {
+    const backups = await CloudHostService.getBackups(req.user.id, req.params.serverId);
+    res.json(backups);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+// Restore from backup
+router.post('/:serverId/restore/:backupId', authMiddleware.authenticate, [
+  param('serverId').isUUID(),
+  param('backupId').isUUID()
+], validateRequest, async (req, res) => {
+  try {
+    const result = await CloudHostService.restoreFromBackup(req.user.id, req.params.serverId, req.params.backupId);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Delete server
+router.delete('/:serverId', authMiddleware.authenticate, [
+  param('serverId').isUUID()
+], validateRequest, async (req, res) => {
+  try {
+    await CloudHostService.deleteServer(req.user.id, req.params.serverId);
+    res.status(204).send();
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Get server console
+router.get('/:serverId/console', authMiddleware.authenticate, [
+  param('serverId').isUUID()
+], validateRequest, async (req, res) => {
+  try {
+    const console = await CloudHostService.getServerConsole(req.user.id, req.params.serverId);
+    res.json(console);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+// Get server firewall rules
+router.get('/:serverId/firewall', authMiddleware.authenticate, [
+  param('serverId').isUUID()
+], validateRequest, async (req, res) => {
+  try {
+    const rules = await CloudHostService.getFirewallRules(req.user.id, req.params.serverId);
+    res.json(rules);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+// Add firewall rule
+router.post('/:serverId/firewall', authMiddleware.authenticate, [
+  param('serverId').isUUID(),
+  body('type').isIn(['inbound', 'outbound']),
+  body('protocol').isIn(['tcp', 'udp', 'icmp']),
+  body('port').isString(),
+  body('source').isString(),
+  body('description').isString().optional()
+], validateRequest, async (req, res) => {
+  try {
+    const rule = await CloudHostService.addFirewallRule(req.user.id, req.params.serverId, req.body);
+    res.status(201).json(rule);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Delete firewall rule
+router.delete('/:serverId/firewall/:ruleId', authMiddleware.authenticate, [
+  param('serverId').isUUID(),
+  param('ruleId').isUUID()
+], validateRequest, async (req, res) => {
+  try {
+    await CloudHostService.deleteFirewallRule(req.user.id, req.params.serverId, req.params.ruleId);
+    res.status(204).send();
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 });
 

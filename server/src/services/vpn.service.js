@@ -1,7 +1,8 @@
-const VPN = require("../models/vpn.model");
-const { exec } = require("child_process");
-const util = require("util");
-const execPromise = util.promisify(exec);
+const { VPNConnection, VPNServer, VPNLog, User } = require('../models');
+const { Op } = require('sequelize');
+const { v4: uuidv4 } = require('uuid');
+const { generateOpenVPNConfig, generateWireguardConfig } = require('../utils/vpn-config');
+const { sendNotification } = require('./notification.service');
 
 class VPNService {
   constructor() {
@@ -169,6 +170,300 @@ class VPNService {
       console.error("Server load check error:", error);
       throw error;
     }
+  }
+
+  // Get all VPN connections for a user
+  static async getUserConnections(userId) {
+    const connections = await VPNConnection.findAll({
+      where: { userId },
+      include: [
+        {
+          model: VPNServer,
+          attributes: ['name', 'location', 'ipAddress', 'status']
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+    return connections;
+  }
+
+  // Get details of a specific VPN connection
+  static async getConnectionDetails(userId, connectionId) {
+    const connection = await VPNConnection.findOne({
+      where: {
+        id: connectionId,
+        userId
+      },
+      include: [
+        {
+          model: VPNServer,
+          attributes: ['name', 'location', 'ipAddress', 'status']
+        }
+      ]
+    });
+
+    if (!connection) {
+      throw new Error('VPN connection not found');
+    }
+
+    return connection;
+  }
+
+  // Create a new VPN connection
+  static async createConnection(userId, connectionData) {
+    const { name, serverId, protocol, config } = connectionData;
+
+    // Check if server exists and is available
+    const server = await VPNServer.findOne({
+      where: {
+        id: serverId,
+        status: 'active'
+      }
+    });
+
+    if (!server) {
+      throw new Error('VPN server not found or not available');
+    }
+
+    // Generate configuration based on protocol
+    let generatedConfig;
+    if (protocol === 'openvpn') {
+      generatedConfig = await generateOpenVPNConfig(server, config);
+    } else if (protocol === 'wireguard') {
+      generatedConfig = await generateWireguardConfig(server, config);
+    } else {
+      throw new Error('Unsupported VPN protocol');
+    }
+
+    // Create connection
+    const connection = await VPNConnection.create({
+      id: uuidv4(),
+      userId,
+      serverId,
+      name,
+      protocol,
+      config: generatedConfig,
+      status: 'active'
+    });
+
+    // Send notification
+    await sendNotification(userId, {
+      type: 'vpn_connection_created',
+      title: 'New VPN Connection Created',
+      message: `Your VPN connection "${name}" has been created successfully.`
+    });
+
+    return connection;
+  }
+
+  // Update VPN connection
+  static async updateConnection(userId, connectionId, updateData) {
+    const connection = await VPNConnection.findOne({
+      where: {
+        id: connectionId,
+        userId
+      }
+    });
+
+    if (!connection) {
+      throw new Error('VPN connection not found');
+    }
+
+    // Update connection
+    await connection.update(updateData);
+
+    // Send notification
+    await sendNotification(userId, {
+      type: 'vpn_connection_updated',
+      title: 'VPN Connection Updated',
+      message: `Your VPN connection "${connection.name}" has been updated.`
+    });
+
+    return connection;
+  }
+
+  // Get connection configuration
+  static async getConnectionConfig(userId, connectionId) {
+    const connection = await VPNConnection.findOne({
+      where: {
+        id: connectionId,
+        userId
+      }
+    });
+
+    if (!connection) {
+      throw new Error('VPN connection not found');
+    }
+
+    return connection.config;
+  }
+
+  // Get available VPN servers
+  static async getAvailableServers() {
+    const servers = await VPNServer.findAll({
+      where: {
+        status: 'active'
+      },
+      attributes: ['id', 'name', 'location', 'ipAddress', 'status', 'load', 'capacity']
+    });
+    return servers;
+  }
+
+  // Get server status
+  static async getServerStatus(serverId) {
+    const server = await VPNServer.findOne({
+      where: { id: serverId }
+    });
+
+    if (!server) {
+      throw new Error('VPN server not found');
+    }
+
+    return {
+      status: server.status,
+      load: server.load,
+      capacity: server.capacity,
+      activeConnections: server.activeConnections
+    };
+  }
+
+  // Get connection statistics
+  static async getConnectionStats(userId, connectionId) {
+    const connection = await VPNConnection.findOne({
+      where: {
+        id: connectionId,
+        userId
+      }
+    });
+
+    if (!connection) {
+      throw new Error('VPN connection not found');
+    }
+
+    // Get logs for the last 24 hours
+    const logs = await VPNLog.findAll({
+      where: {
+        connectionId,
+        createdAt: {
+          [Op.gte]: new Date(Date.now() - 24 * 60 * 60 * 1000)
+        }
+      },
+      order: [['createdAt', 'DESC']]
+    });
+
+    // Calculate statistics
+    const stats = {
+      totalBytesUp: logs.reduce((sum, log) => sum + log.bytesUp, 0),
+      totalBytesDown: logs.reduce((sum, log) => sum + log.bytesDown, 0),
+      totalDuration: logs.reduce((sum, log) => sum + log.duration, 0),
+      averageSpeed: logs.length > 0 ? 
+        (logs.reduce((sum, log) => sum + log.speed, 0) / logs.length) : 0,
+      connectionCount: logs.length
+    };
+
+    return stats;
+  }
+
+  // Delete VPN connection
+  static async deleteConnection(userId, connectionId) {
+    const connection = await VPNConnection.findOne({
+      where: {
+        id: connectionId,
+        userId
+      }
+    });
+
+    if (!connection) {
+      throw new Error('VPN connection not found');
+    }
+
+    // Delete all associated logs
+    await VPNLog.destroy({
+      where: { connectionId }
+    });
+
+    // Delete connection
+    await connection.destroy();
+
+    // Send notification
+    await sendNotification(userId, {
+      type: 'vpn_connection_deleted',
+      title: 'VPN Connection Deleted',
+      message: `Your VPN connection "${connection.name}" has been deleted.`
+    });
+  }
+
+  // Get connection logs
+  static async getConnectionLogs(userId, connectionId, page = 1, limit = 10) {
+    const connection = await VPNConnection.findOne({
+      where: {
+        id: connectionId,
+        userId
+      }
+    });
+
+    if (!connection) {
+      throw new Error('VPN connection not found');
+    }
+
+    const offset = (page - 1) * limit;
+
+    const logs = await VPNLog.findAndCountAll({
+      where: { connectionId },
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset
+    });
+
+    return {
+      logs: logs.rows,
+      total: logs.count,
+      page,
+      totalPages: Math.ceil(logs.count / limit)
+    };
+  }
+
+  // Get connection usage
+  static async getConnectionUsage(userId, connectionId) {
+    const connection = await VPNConnection.findOne({
+      where: {
+        id: connectionId,
+        userId
+      }
+    });
+
+    if (!connection) {
+      throw new Error('VPN connection not found');
+    }
+
+    // Get usage for the last 30 days
+    const logs = await VPNLog.findAll({
+      where: {
+        connectionId,
+        createdAt: {
+          [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        }
+      },
+      order: [['createdAt', 'ASC']]
+    });
+
+    // Group usage by day
+    const usageByDay = logs.reduce((acc, log) => {
+      const date = log.createdAt.toISOString().split('T')[0];
+      if (!acc[date]) {
+        acc[date] = {
+          bytesUp: 0,
+          bytesDown: 0,
+          duration: 0
+        };
+      }
+      acc[date].bytesUp += log.bytesUp;
+      acc[date].bytesDown += log.bytesDown;
+      acc[date].duration += log.duration;
+      return acc;
+    }, {});
+
+    return usageByDay;
   }
 }
 
