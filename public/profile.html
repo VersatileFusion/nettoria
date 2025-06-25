@@ -168,6 +168,86 @@
         <!-- Messages -->
         <div id="error-message" class="message error"></div>
         <div id="success-message" class="message success"></div>
+
+        <!-- Update Profile Section -->
+        <button id="updateProfileBtn">Update Profile</button>
+        <script>
+            document.getElementById('updateProfileBtn').onclick = async function () {
+                // Collect profile fields
+                const data = { /* collect from form fields */ };
+                const res = await fetch('/api/users/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) alert('Profile updated!');
+                else alert('Failed to update profile.');
+            };
+        </script>
+
+        <!-- Change Password Section -->
+        <button id="changePasswordBtn">Change Password</button>
+        <script>
+            document.getElementById('changePasswordBtn').onclick = async function () {
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const res = await fetch('/api/users/password', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+                if (res.ok) alert('Password changed!');
+                else alert('Failed to change password.');
+            };
+        </script>
+
+        <script>
+            // Security Settings Form
+            const securityForm = document.getElementById('security-form');
+            if (securityForm) {
+                securityForm.onsubmit = async function (e) {
+                    e.preventDefault();
+                    const twoFactorEnabled = securityForm.querySelector('input[name="twoFactorEnabled"]').checked;
+                    const res = await fetch('/api/users/security', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ twoFactorEnabled })
+                    });
+                    if (res.ok) alert('Security settings updated!');
+                    else alert('Failed to update security settings.');
+                };
+            }
+            // Notification Settings Form
+            const notificationForm = document.getElementById('notification-form');
+            if (notificationForm) {
+                notificationForm.onsubmit = async function (e) {
+                    e.preventDefault();
+                    const notify_email = notificationForm.querySelector('input[name="notify_email"]').checked;
+                    const notify_sms = notificationForm.querySelector('input[name="notify_sms"]').checked;
+                    const notify_service = notificationForm.querySelector('input[name="notify_service"]').checked;
+                    const notify_payment = notificationForm.querySelector('input[name="notify_payment"]').checked;
+                    const res = await fetch('/api/users/notifications', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ notify_email, notify_sms, notify_service, notify_payment })
+                    });
+                    if (res.ok) alert('Notification settings updated!');
+                    else alert('Failed to update notification settings.');
+                };
+            }
+            // Fetch and display login history
+            async function loadLoginHistory() {
+                const res = await fetch('/api/users/login-history');
+                if (res.ok) {
+                    const data = await res.json();
+                    const list = document.querySelector('.login-list');
+                    if (list && data && data.history) {
+                        list.innerHTML = data.history.map(item => `<div>${item.date} - ${item.ip}</div>`).join('');
+                    }
+                }
+            }
+            loadLoginHistory();
+        </script>
     </main>
 
     <footer>

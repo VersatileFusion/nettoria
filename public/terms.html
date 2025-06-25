@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms and Conditions - Nettoria</title>
+  <link rel="stylesheet" href="Assets/css/style.css">
+</head>
+
+<body>
+  <h1>Terms and Conditions</h1>
+  <div id="terms-content"></div>
+  <script>
+    async function loadTerms() {
+      const res = await fetch('/api/content/terms');
+      if (res.ok) {
+        const data = await res.json();
+        document.getElementById('terms-content').innerText = data.content || JSON.stringify(data);
+      } else {
+        document.getElementById('terms-content').innerText = 'خطا در دریافت قوانین.';
+      }
+    }
+    loadTerms();
+  </script>
+</body>
+
+</html>

@@ -1,194 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
-    <title>Domain Management - Nettoria</title>
-    <link rel="stylesheet" href="./Assets/css/style.css" />
-    <link rel="stylesheet" href="./Assets/css/domain.css" />
-    <link rel="stylesheet" href="./Assets/Css/common.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="shortcut icon"
-      href="./Assets/img/icon.ico"
-      type="image/x-icon"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-  </head>
 
-  <body>
-    <!-- Header -->
-    <header class="header">
-      <nav class="nav">
-        <div class="logo">
-          <a href="index.html">
-            <img src="Assets/images/logo.png" alt="Nettoria Logo" />
-          </a>
-        </div>
-        <ul class="nav-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="about-us.html">About Us</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="login.html" class="btn btn-primary">Login</a></li>
-        </ul>
-      </nav>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="keywords" content="Nettoria,نتوریا,VPS,سرور مجازی" />
+  <title>Domain Management - Nettoria</title>
+  <link rel="stylesheet" href="./Assets/css/style.css" />
+  <link rel="stylesheet" href="./Assets/css/domain.css" />
+  <link rel="stylesheet" href="./Assets/Css/common.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="shortcut icon" href="./Assets/img/icon.ico" type="image/x-icon" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <!-- Domain Search Section -->
-      <section id="domainSearch" class="domain-search">
-        <div class="container">
-          <h1>Find Your Perfect Domain Name</h1>
-          <p>Search for available domain names and register them instantly</p>
-          <form id="domainSearchForm" class="domain-search-form">
-            <input
-              type="text"
-              id="domainName"
-              placeholder="Enter domain name (e.g., example.com)"
-              required
-            />
-            <button type="submit">Search Domain</button>
-          </form>
-        </div>
-      </section>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">
+        <a href="index.html">
+          <img src="Assets/images/logo.png" alt="Nettoria Logo" />
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="about-us.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="login.html" class="btn btn-primary">Login</a></li>
+      </ul>
+    </nav>
+  </header>
 
-      <!-- Domain Results Section -->
-      <section id="domainResults" class="domain-results">
-        <!-- Results will be loaded here dynamically -->
-      </section>
-
-      <!-- Domain Management Section -->
-      <section class="domain-management">
-        <div class="container">
-          <h2 class="section-title">Your Domains</h2>
-          <div id="userDomains" class="domains-container">
-            <!-- User's domains will be loaded here dynamically -->
-          </div>
-        </div>
-      </section>
-
-      <!-- Domain Features Section -->
-      <section class="domain-features">
-        <div class="container">
-          <h2 class="section-title">Domain Features</h2>
-          <div class="features-grid">
-            <div class="feature-card">
-              <i class="fas fa-shield-alt"></i>
-              <h3>Free SSL Certificate</h3>
-              <p>
-                Secure your website with a free SSL certificate included with
-                every domain registration.
-              </p>
-            </div>
-            <div class="feature-card">
-              <i class="fas fa-globe"></i>
-              <h3>DNS Management</h3>
-              <p>
-                Easy-to-use DNS management tools to configure your domain
-                settings.
-              </p>
-            </div>
-            <div class="feature-card">
-              <i class="fas fa-sync"></i>
-              <h3>Auto-renewal</h3>
-              <p>
-                Never worry about your domain expiring with our automatic
-                renewal service.
-              </p>
-            </div>
-            <div class="feature-card">
-              <i class="fas fa-headset"></i>
-              <h3>24/7 Support</h3>
-              <p>
-                Our support team is available around the clock to help you with
-                any domain-related issues.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Domain Pricing Section -->
-      <section class="domain-pricing">
-        <div class="container">
-          <h2 class="section-title">Domain Pricing</h2>
-          <div class="pricing-grid">
-            <div class="pricing-card">
-              <h3>.com</h3>
-              <p class="price">$12.99<span>/year</span></p>
-              <ul class="features">
-                <li>Most popular TLD</li>
-                <li>Global recognition</li>
-                <li>Professional look</li>
-              </ul>
-              <button class="btn btn-primary">Register Now</button>
-            </div>
-            <div class="pricing-card">
-              <h3>.net</h3>
-              <p class="price">$14.99<span>/year</span></p>
-              <ul class="features">
-                <li>Network focused</li>
-                <li>Tech industry standard</li>
-                <li>High availability</li>
-              </ul>
-              <button class="btn btn-primary">Register Now</button>
-            </div>
-            <div class="pricing-card">
-              <h3>.org</h3>
-              <p class="price">$13.99<span>/year</span></p>
-              <ul class="features">
-                <li>Non-profit focused</li>
-                <li>Trusted by organizations</li>
-                <li>Community oriented</li>
-              </ul>
-              <button class="btn btn-primary">Register Now</button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Domain Search Section -->
+    <section id="domainSearch" class="domain-search">
       <div class="container">
-        <div class="footer-content">
-          <div class="footer-section">
-            <h3>About Nettoria</h3>
-            <p>Your trusted partner in cloud hosting and IT solutions.</p>
-          </div>
-          <div class="footer-section">
-            <h3>Quick Links</h3>
-            <ul>
-              <li><a href="about-us.html">About Us</a></li>
-              <li><a href="services.html">Services</a></li>
-              <li><a href="contact.html">Contact</a></li>
-            </ul>
-          </div>
-          <div class="footer-section">
-            <h3>Contact Us</h3>
-            <p>Email: info@nettoria.com</p>
-            <p>Phone: +1 (555) 123-4567</p>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <p>&copy; 2024 Nettoria. All rights reserved.</p>
+        <h1>Find Your Perfect Domain Name</h1>
+        <p>Search for available domain names and register them instantly</p>
+        <form id="domainSearchForm" class="domain-search-form">
+          <input type="text" id="domainName" placeholder="Enter domain name (e.g., example.com)" required />
+          <button type="submit">Search Domain</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Domain Results Section -->
+    <section id="domainResults" class="domain-results">
+      <!-- Results will be loaded here dynamically -->
+    </section>
+
+    <!-- Domain Management Section -->
+    <section class="domain-management">
+      <div class="container">
+        <h2 class="section-title">Your Domains</h2>
+        <div id="userDomains" class="domains-container">
+          <!-- User's domains will be loaded here dynamically -->
         </div>
       </div>
-    </footer>
+    </section>
 
-    <!-- Scripts -->
-    <script src="Assets/js/utils.js"></script>
-    <script src="Assets/js/domain.js"></script>
-  </body>
+    <!-- Domain Features Section -->
+    <section class="domain-features">
+      <div class="container">
+        <h2 class="section-title">Domain Features</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Free SSL Certificate</h3>
+            <p>
+              Secure your website with a free SSL certificate included with
+              every domain registration.
+            </p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-globe"></i>
+            <h3>DNS Management</h3>
+            <p>
+              Easy-to-use DNS management tools to configure your domain
+              settings.
+            </p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-sync"></i>
+            <h3>Auto-renewal</h3>
+            <p>
+              Never worry about your domain expiring with our automatic
+              renewal service.
+            </p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-headset"></i>
+            <h3>24/7 Support</h3>
+            <p>
+              Our support team is available around the clock to help you with
+              any domain-related issues.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Domain Pricing Section -->
+    <section class="domain-pricing">
+      <div class="container">
+        <h2 class="section-title">Domain Pricing</h2>
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <h3>.com</h3>
+            <p class="price">$12.99<span>/year</span></p>
+            <ul class="features">
+              <li>Most popular TLD</li>
+              <li>Global recognition</li>
+              <li>Professional look</li>
+            </ul>
+            <button class="btn btn-primary">Register Now</button>
+          </div>
+          <div class="pricing-card">
+            <h3>.net</h3>
+            <p class="price">$14.99<span>/year</span></p>
+            <ul class="features">
+              <li>Network focused</li>
+              <li>Tech industry standard</li>
+              <li>High availability</li>
+            </ul>
+            <button class="btn btn-primary">Register Now</button>
+          </div>
+          <div class="pricing-card">
+            <h3>.org</h3>
+            <p class="price">$13.99<span>/year</span></p>
+            <ul class="features">
+              <li>Non-profit focused</li>
+              <li>Trusted by organizations</li>
+              <li>Community oriented</li>
+            </ul>
+            <button class="btn btn-primary">Register Now</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Domain Actions Section -->
+    <div id="domain-actions-section">
+      <button onclick="loadDomains()">لیست دامنه‌ها</button>
+      <input type="text" id="domainName" placeholder="نام دامنه">
+      <button onclick="checkDomain()">بررسی دامنه</button>
+      <button onclick="registerDomain()">ثبت دامنه</button>
+      <input type="text" id="renewDomainId" placeholder="شناسه دامنه برای تمدید">
+      <button onclick="renewDomain()">تمدید دامنه</button>
+      <input type="text" id="transferDomainId" placeholder="شناسه دامنه برای انتقال">
+      <input type="text" id="authCode" placeholder="کد انتقال">
+      <button onclick="transferDomain()">انتقال دامنه</button>
+      <input type="text" id="dnsDomainId" placeholder="شناسه دامنه برای DNS">
+      <button onclick="getDNSRecords()">دریافت DNS</button>
+      <div id="domain-output"></div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About Nettoria</h3>
+          <p>Your trusted partner in cloud hosting and IT solutions.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>Email: info@nettoria.com</p>
+          <p>Phone: +1 (555) 123-4567</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Nettoria. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="Assets/js/utils.js"></script>
+  <script src="Assets/js/domain.js"></script>
+  <script>
+    async function loadDomains() {
+      const res = await fetch('/api/domains');
+      document.getElementById('domain-output').innerText = res.ok ? JSON.stringify(await res.json()) : 'خطا در دریافت دامنه‌ها';
+    }
+    async function checkDomain() {
+      const name = document.getElementById('domainName').value;
+      const res = await fetch(`/api/domains/check/${name}`, { method: 'POST' });
+      document.getElementById('domain-output').innerText = res.ok ? JSON.stringify(await res.json()) : 'خطا در بررسی دامنه';
+    }
+    async function registerDomain() {
+      const name = document.getElementById('domainName').value;
+      const res = await fetch('/api/domains/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, registrar: 'default', registrationPeriod: 1, autoRenew: false })
+      });
+      document.getElementById('domain-output').innerText = res.ok ? 'دامنه ثبت شد!' : 'خطا در ثبت دامنه';
+    }
+    async function renewDomain() {
+      const domainId = document.getElementById('renewDomainId').value;
+      const res = await fetch(`/api/domains/${domainId}/renew`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ period: 1 })
+      });
+      document.getElementById('domain-output').innerText = res.ok ? 'دامنه تمدید شد!' : 'خطا در تمدید دامنه';
+    }
+    async function transferDomain() {
+      const domainId = document.getElementById('transferDomainId').value;
+      const authCode = document.getElementById('authCode').value;
+      const res = await fetch(`/api/domains/${domainId}/transfer`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newRegistrar: 'default', authCode })
+      });
+      document.getElementById('domain-output').innerText = res.ok ? 'دامنه منتقل شد!' : 'خطا در انتقال دامنه';
+    }
+    async function getDNSRecords() {
+      const domainId = document.getElementById('dnsDomainId').value;
+      const res = await fetch(`/api/domains/${domainId}/dns`);
+      document.getElementById('domain-output').innerText = res.ok ? JSON.stringify(await res.json()) : 'خطا در دریافت DNS';
+    }
+  </script>
+</body>
+
 </html>

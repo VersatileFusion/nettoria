@@ -1,7 +1,13 @@
 // About Us Page Management
-document.addEventListener('DOMContentLoaded', () => {
-    // Load about us content
-    loadAboutContent();
+document.addEventListener('DOMContentLoaded', async () => {
+    const container = document.getElementById('about-content');
+    try {
+        const res = await fetch('/api/content/about-us');
+        const data = await res.json();
+        container.textContent = data.content;
+    } catch (err) {
+        container.textContent = 'Failed to load content.';
+    }
 });
 
 // Load about us content from the backend

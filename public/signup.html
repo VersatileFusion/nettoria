@@ -156,10 +156,29 @@
         </div>
       </div>
     </div>
+    <!-- Phone Verification Section -->
+    <div id="phone-verification-section" style="display:none;">
+      <label for="verificationCode">Enter the code sent to your phone:</label>
+      <input type="text" id="verificationCode" name="verificationCode">
+      <button id="verifyPhoneBtn">Verify Phone</button>
+    </div>
   </section>
   <script src="./Assets/js/utils.js"></script>
   <script src="./Assets/js/api-client.js"></script>
   <script src="./Assets/js/signup.js"></script>
+  <script>
+    document.getElementById('verifyPhoneBtn').onclick = async function () {
+      const code = document.getElementById('verificationCode').value;
+      const phone = document.getElementById('phone').value;
+      const res = await fetch('/api/auth/verify-phone', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: phone, verificationCode: code })
+      });
+      if (res.ok) alert('Phone verified!');
+      else alert('Verification failed.');
+    };
+  </script>
 </body>
 
 </html>

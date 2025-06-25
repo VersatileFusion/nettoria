@@ -72,6 +72,17 @@
           <button type="button" id="cancel2FA" class="btn btn-secondary">انصراف</button>
         </div>
       </form>
+
+      <!-- OTP Login Section -->
+      <div id="otp-login-section" style="display:none;">
+        <label for="otpPhone">Phone Number:</label>
+        <input type="text" id="otpPhone" name="otpPhone">
+        <button id="requestOtpBtn">Request OTP</button>
+        <br>
+        <label for="otpCode">Enter OTP:</label>
+        <input type="text" id="otpCode" name="otpCode">
+        <button id="verifyOtpBtn">Verify OTP</button>
+      </div>
     </div>
   </section>
 
@@ -171,6 +182,28 @@
         }
       }
     });
+
+    document.getElementById('requestOtpBtn').onclick = async function () {
+      const phone = document.getElementById('otpPhone').value;
+      await fetch('/api/auth/request-login-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: phone })
+      });
+      alert('OTP sent!');
+    };
+
+    document.getElementById('verifyOtpBtn').onclick = async function () {
+      const phone = document.getElementById('otpPhone').value;
+      const code = document.getElementById('otpCode').value;
+      const res = await fetch('/api/auth/verify-login-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: phone, verificationCode: code })
+      });
+      if (res.ok) alert('Login successful!');
+      else alert('OTP verification failed.');
+    };
   </script>
 </body>
 

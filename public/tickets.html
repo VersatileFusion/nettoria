@@ -1,296 +1,318 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nettoria - Tickets</title>
-    <link rel="stylesheet" href="Assets/Css/tickets.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-  </head>
-  <body>
-    <div class="app-container">
-      <!-- Main Content -->
-      <div class="main-content full-width">
-        <!-- Mobile Header (visible on mobile only) -->
-        <div class="mobile-header">
-          <div class="mobile-logo">
-            <img
-              src="Assets/Images/logo.png"
-              alt="Nettoria Logo"
-              onerror="this.src='./Assets/img/icon.ico'"
-            />
-          </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nettoria - Tickets</title>
+  <link rel="stylesheet" href="Assets/Css/tickets.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body>
+  <div class="app-container">
+    <!-- Main Content -->
+    <div class="main-content full-width">
+      <!-- Mobile Header (visible on mobile only) -->
+      <div class="mobile-header">
+        <div class="mobile-logo">
+          <img src="Assets/Images/logo.png" alt="Nettoria Logo" onerror="this.src='./Assets/img/icon.ico'" />
+        </div>
+        <h2>تیکت ها</h2>
+        <div class="mobile-user">
+          <img src="Assets/Images/user.jpg" alt="User"
+            onerror="this.src='https://ui-avatars.com/api/?name=K+N&background=00A9D1&color=fff&size=32'" />
+        </div>
+      </div>
+
+      <!-- Chat Container -->
+      <div class="chat-container">
+        <!-- Chat Header -->
+        <div class="chat-header">
           <h2>تیکت ها</h2>
-          <div class="mobile-user">
-            <img
-              src="Assets/Images/user.jpg"
-              alt="User"
-              onerror="this.src='https://ui-avatars.com/api/?name=K+N&background=00A9D1&color=fff&size=32'"
-            />
-          </div>
+          <button class="new-ticket-btn">
+            <i class="fas fa-plus"></i>
+            <span>تیکت جدید</span>
+          </button>
         </div>
 
-        <!-- Chat Container -->
-        <div class="chat-container">
-          <!-- Chat Header -->
-          <div class="chat-header">
-            <h2>تیکت ها</h2>
-            <button class="new-ticket-btn">
-              <i class="fas fa-plus"></i>
-              <span>تیکت جدید</span>
-            </button>
-          </div>
-
-          <!-- Search Bar -->
-          <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="جستجو تیکت..." />
-          </div>
-
-          <!-- Chat Actions -->
-          <div class="chat-actions">
-            <button class="action-btn active">
-              <i class="fas fa-envelope-open"></i>
-              <span>تیکت باز</span>
-            </button>
-            <button class="action-btn">
-              <i class="fas fa-envelope"></i>
-              <span>خوانده نشده</span>
-            </button>
-            <button class="action-btn">
-              <i class="fas fa-check-circle"></i>
-              <span>بسته</span>
-            </button>
-            <button class="action-btn filter">
-              <i class="fas fa-filter"></i>
-            </button>
-          </div>
-
-          <!-- Chat List -->
-          <div class="chat-list">
-            <!-- Chat Item 1 -->
-            <div class="chat-item active">
-              <div class="chat-avatar" style="background-color: #ffa500">
-                <img
-                  src="Assets/Images/avatar1.jpg"
-                  alt="User"
-                  onerror="this.style.display='none'"
-                />
-                <span class="avatar-text">KA</span>
-              </div>
-              <div class="chat-info">
-                <div class="chat-name">کاربر الیمنتور</div>
-                <div class="chat-last-message">درخواست پشتیبانی دارم</div>
-              </div>
-              <div class="chat-meta">
-                <div class="chat-time">12:30</div>
-                <div class="chat-badge blue">1</div>
-              </div>
-            </div>
-
-            <!-- Chat Item 2 -->
-            <div class="chat-item">
-              <div class="chat-avatar" style="background-color: #e74c3c">
-                <img
-                  src="Assets/Images/avatar2.jpg"
-                  alt="User"
-                  onerror="this.style.display='none'"
-                />
-                <span class="avatar-text">SA</span>
-              </div>
-              <div class="chat-info">
-                <div class="chat-name">سارا احمدی</div>
-                <div class="chat-last-message">
-                  سلام، وضعیت درخواست من چطور است؟
-                </div>
-              </div>
-              <div class="chat-meta">
-                <div class="chat-time">10:45</div>
-                <div class="chat-badge green">2</div>
-              </div>
-            </div>
-
-            <!-- Chat Item 3 -->
-            <div class="chat-item">
-              <div class="chat-avatar" style="background-color: #3498db">
-                <img
-                  src="Assets/Images/avatar3.jpg"
-                  alt="User"
-                  onerror="this.style.display='none'"
-                />
-                <span class="avatar-text">HM</span>
-              </div>
-              <div class="chat-info">
-                <div class="chat-name">حمید محمدی</div>
-                <div class="chat-last-message">با تشکر از پاسخگویی شما</div>
-              </div>
-              <div class="chat-meta">
-                <div class="chat-time">دیروز</div>
-                <div class="chat-badge blue">1</div>
-              </div>
-            </div>
-
-            <!-- Chat Item 4 -->
-            <div class="chat-item">
-              <div class="chat-avatar" style="background-color: #e67e22">
-                <img
-                  src="Assets/Images/avatar4.jpg"
-                  alt="User"
-                  onerror="this.style.display='none'"
-                />
-                <span class="avatar-text">RK</span>
-              </div>
-              <div class="chat-info">
-                <div class="chat-name">رضا کریمی</div>
-                <div class="chat-last-message">درخواست فضای ابری دارم</div>
-              </div>
-              <div class="chat-meta">
-                <div class="chat-time">دیروز</div>
-                <div class="chat-badge purple">3</div>
-              </div>
-            </div>
-
-            <!-- Chat Item 5 -->
-            <div class="chat-item">
-              <div class="chat-avatar" style="background-color: #9b59b6">
-                <img
-                  src="Assets/Images/avatar5.jpg"
-                  alt="User"
-                  onerror="this.style.display='none'"
-                />
-                <span class="avatar-text">ZR</span>
-              </div>
-              <div class="chat-info">
-                <div class="chat-name">زهرا رضایی</div>
-                <div class="chat-last-message">باتشکر از همکاری شما</div>
-              </div>
-              <div class="chat-meta">
-                <div class="chat-time">2 روز پیش</div>
-              </div>
-            </div>
-          </div>
+        <!-- Search Bar -->
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="جستجو تیکت..." />
         </div>
 
-        <!-- Chat Detail Area (shown when a chat is selected on desktop) -->
-        <div class="chat-detail">
-          <div class="chat-detail-header">
-            <div class="back-button">
-              <i class="fas fa-arrow-right"></i>
+        <!-- Chat Actions -->
+        <div class="chat-actions">
+          <button class="action-btn active">
+            <i class="fas fa-envelope-open"></i>
+            <span>تیکت باز</span>
+          </button>
+          <button class="action-btn">
+            <i class="fas fa-envelope"></i>
+            <span>خوانده نشده</span>
+          </button>
+          <button class="action-btn">
+            <i class="fas fa-check-circle"></i>
+            <span>بسته</span>
+          </button>
+          <button class="action-btn filter">
+            <i class="fas fa-filter"></i>
+          </button>
+        </div>
+
+        <!-- Chat List -->
+        <div class="chat-list">
+          <!-- Chat Item 1 -->
+          <div class="chat-item active">
+            <div class="chat-avatar" style="background-color: #ffa500">
+              <img src="Assets/Images/avatar1.jpg" alt="User" onerror="this.style.display='none'" />
+              <span class="avatar-text">KA</span>
             </div>
-            <div class="chat-detail-user">
-              <div class="chat-avatar" style="background-color: #ffa500">
-                <img
-                  src="Assets/Images/avatar1.jpg"
-                  alt="User"
-                  onerror="this.style.display='none'"
-                />
-                <span class="avatar-text">KA</span>
-              </div>
-              <div class="chat-detail-info">
-                <div class="chat-name">کاربر الیمنتور</div>
-                <div class="ticket-status open">تیکت باز</div>
-              </div>
+            <div class="chat-info">
+              <div class="chat-name">کاربر الیمنتور</div>
+              <div class="chat-last-message">درخواست پشتیبانی دارم</div>
             </div>
-            <div class="chat-actions-right">
-              <i class="fas fa-ellipsis-v"></i>
+            <div class="chat-meta">
+              <div class="chat-time">12:30</div>
+              <div class="chat-badge blue">1</div>
             </div>
           </div>
 
-          <div class="chat-messages">
-            <!-- Admin Message -->
-            <div class="message admin-message">
-              <div class="message-content">
-                <p>سلام، چطور می‌توانم به شما کمک کنم؟</p>
-                <span class="message-time">12:25</span>
+          <!-- Chat Item 2 -->
+          <div class="chat-item">
+            <div class="chat-avatar" style="background-color: #e74c3c">
+              <img src="Assets/Images/avatar2.jpg" alt="User" onerror="this.style.display='none'" />
+              <span class="avatar-text">SA</span>
+            </div>
+            <div class="chat-info">
+              <div class="chat-name">سارا احمدی</div>
+              <div class="chat-last-message">
+                سلام، وضعیت درخواست من چطور است؟
               </div>
             </div>
-
-            <!-- User Message -->
-            <div class="message user-message">
-              <div class="message-content">
-                <p>سلام، من درخواست پشتیبانی دارم</p>
-                <span class="message-time">12:28</span>
-              </div>
-            </div>
-
-            <!-- Admin Message -->
-            <div class="message admin-message">
-              <div class="message-content">
-                <p>چه نوع پشتیبانی نیاز دارید؟</p>
-                <span class="message-time">12:30</span>
-              </div>
+            <div class="chat-meta">
+              <div class="chat-time">10:45</div>
+              <div class="chat-badge green">2</div>
             </div>
           </div>
 
-          <div class="chat-input-area">
-            <button class="attach-btn">
-              <i class="fas fa-paperclip"></i>
-            </button>
-            <input type="text" placeholder="پیام خود را بنویسید..." />
-            <button class="send-btn">
-              <i class="fas fa-paper-plane"></i>
-            </button>
+          <!-- Chat Item 3 -->
+          <div class="chat-item">
+            <div class="chat-avatar" style="background-color: #3498db">
+              <img src="Assets/Images/avatar3.jpg" alt="User" onerror="this.style.display='none'" />
+              <span class="avatar-text">HM</span>
+            </div>
+            <div class="chat-info">
+              <div class="chat-name">حمید محمدی</div>
+              <div class="chat-last-message">با تشکر از پاسخگویی شما</div>
+            </div>
+            <div class="chat-meta">
+              <div class="chat-time">دیروز</div>
+              <div class="chat-badge blue">1</div>
+            </div>
+          </div>
+
+          <!-- Chat Item 4 -->
+          <div class="chat-item">
+            <div class="chat-avatar" style="background-color: #e67e22">
+              <img src="Assets/Images/avatar4.jpg" alt="User" onerror="this.style.display='none'" />
+              <span class="avatar-text">RK</span>
+            </div>
+            <div class="chat-info">
+              <div class="chat-name">رضا کریمی</div>
+              <div class="chat-last-message">درخواست فضای ابری دارم</div>
+            </div>
+            <div class="chat-meta">
+              <div class="chat-time">دیروز</div>
+              <div class="chat-badge purple">3</div>
+            </div>
+          </div>
+
+          <!-- Chat Item 5 -->
+          <div class="chat-item">
+            <div class="chat-avatar" style="background-color: #9b59b6">
+              <img src="Assets/Images/avatar5.jpg" alt="User" onerror="this.style.display='none'" />
+              <span class="avatar-text">ZR</span>
+            </div>
+            <div class="chat-info">
+              <div class="chat-name">زهرا رضایی</div>
+              <div class="chat-last-message">باتشکر از همکاری شما</div>
+            </div>
+            <div class="chat-meta">
+              <div class="chat-time">2 روز پیش</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- New Ticket Modal -->
-    <div class="modal" id="newTicketModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>ایجاد تیکت جدید</h3>
-          <button class="close-modal"><i class="fas fa-times"></i></button>
+      <!-- Chat Detail Area (shown when a chat is selected on desktop) -->
+      <div class="chat-detail">
+        <div class="chat-detail-header">
+          <div class="back-button">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+          <div class="chat-detail-user">
+            <div class="chat-avatar" style="background-color: #ffa500">
+              <img src="Assets/Images/avatar1.jpg" alt="User" onerror="this.style.display='none'" />
+              <span class="avatar-text">KA</span>
+            </div>
+            <div class="chat-detail-info">
+              <div class="chat-name">کاربر الیمنتور</div>
+              <div class="ticket-status open">تیکت باز</div>
+            </div>
+          </div>
+          <div class="chat-actions-right">
+            <i class="fas fa-ellipsis-v"></i>
+          </div>
         </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label for="ticket-subject">موضوع</label>
-            <input
-              type="text"
-              id="ticket-subject"
-              placeholder="موضوع تیکت را وارد کنید"
-            />
+
+        <div class="chat-messages">
+          <!-- Admin Message -->
+          <div class="message admin-message">
+            <div class="message-content">
+              <p>سلام، چطور می‌توانم به شما کمک کنم؟</p>
+              <span class="message-time">12:25</span>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="ticket-category">دسته‌بندی</label>
-            <select id="ticket-category">
-              <option value="technical">پشتیبانی فنی</option>
-              <option value="billing">امور مالی</option>
-              <option value="cloud">فضای ابری</option>
-              <option value="domain">دامنه</option>
-              <option value="server">سرور</option>
-              <option value="other">سایر</option>
-            </select>
+
+          <!-- User Message -->
+          <div class="message user-message">
+            <div class="message-content">
+              <p>سلام، من درخواست پشتیبانی دارم</p>
+              <span class="message-time">12:28</span>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="ticket-message">متن پیام</label>
-            <textarea
-              id="ticket-message"
-              rows="5"
-              placeholder="متن پیام خود را وارد کنید"
-            ></textarea>
-          </div>
-          <div class="form-group">
-            <label for="ticket-attachment">پیوست</label>
-            <div class="file-input-container">
-              <input type="file" id="ticket-attachment" />
-              <button class="file-select-btn">
-                <i class="fas fa-paperclip"></i> انتخاب فایل
-              </button>
-              <span class="file-name">فایلی انتخاب نشده</span>
+
+          <!-- Admin Message -->
+          <div class="message admin-message">
+            <div class="message-content">
+              <p>چه نوع پشتیبانی نیاز دارید؟</p>
+              <span class="message-time">12:30</span>
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button class="cancel-btn">انصراف</button>
-          <button class="submit-btn">ارسال تیکت</button>
+
+        <div class="chat-input-area">
+          <button class="attach-btn">
+            <i class="fas fa-paperclip"></i>
+          </button>
+          <input type="text" placeholder="پیام خود را بنویسید..." />
+          <button class="send-btn">
+            <i class="fas fa-paper-plane"></i>
+          </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <script src="Assets/Js/tickets.js"></script>
-  </body>
+  <!-- New Ticket Modal -->
+  <div class="modal" id="newTicketModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>ایجاد تیکت جدید</h3>
+        <button class="close-modal"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="ticket-subject">موضوع</label>
+          <input type="text" id="ticket-subject" placeholder="موضوع تیکت را وارد کنید" />
+        </div>
+        <div class="form-group">
+          <label for="ticket-category">دسته‌بندی</label>
+          <select id="ticket-category">
+            <option value="technical">پشتیبانی فنی</option>
+            <option value="billing">امور مالی</option>
+            <option value="cloud">فضای ابری</option>
+            <option value="domain">دامنه</option>
+            <option value="server">سرور</option>
+            <option value="other">سایر</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="ticket-message">متن پیام</label>
+          <textarea id="ticket-message" rows="5" placeholder="متن پیام خود را وارد کنید"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="ticket-attachment">پیوست</label>
+          <div class="file-input-container">
+            <input type="file" id="ticket-attachment" />
+            <button class="file-select-btn">
+              <i class="fas fa-paperclip"></i> انتخاب فایل
+            </button>
+            <span class="file-name">فایلی انتخاب نشده</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="cancel-btn">انصراف</button>
+        <button class="submit-btn">ارسال تیکت</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Actions Section -->
+  <div id="ticket-actions-section">
+    <button onclick="loadTickets()">لیست تیکت‌ها</button>
+    <div id="ticket-list"></div>
+    <div id="ticket-details"></div>
+    <input type="text" id="newTicketSubject" placeholder="موضوع تیکت">
+    <input type="text" id="newTicketDescription" placeholder="توضیح تیکت">
+    <button onclick="createTicket()">ایجاد تیکت</button>
+  </div>
+
+  <script src="Assets/Js/tickets.js"></script>
+  <script>
+    async function loadTickets() {
+      const res = await fetch('/api/tickets');
+      if (res.ok) {
+        const data = await res.json();
+        const list = document.getElementById('ticket-list');
+        list.innerHTML = data.map(t => `<div onclick=\"loadTicketDetails('${t.id}')\">${t.subject} (${t.status})</div>`).join('');
+      }
+    }
+    async function loadTicketDetails(ticketId) {
+      const res = await fetch(`/api/tickets/${ticketId}`);
+      if (res.ok) {
+        const data = await res.json();
+        const details = document.getElementById('ticket-details');
+        details.innerHTML = `<h3>${data.subject}</h3><div>${data.description}</div><button onclick=\"deleteTicket('${ticketId}')\">حذف</button><input type='text' id='commentContent' placeholder='نظر'><button onclick=\"addComment('${ticketId}')\">ارسال نظر</button><div id='ticket-comments'></div>`;
+        loadComments(ticketId);
+      }
+    }
+    async function createTicket() {
+      const subject = document.getElementById('newTicketSubject').value;
+      const description = document.getElementById('newTicketDescription').value;
+      await fetch('/api/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject, description, priority: 'medium' })
+      });
+      alert('تیکت ایجاد شد!');
+    }
+    async function addComment(ticketId) {
+      const content = document.getElementById('commentContent').value;
+      await fetch(`/api/tickets/${ticketId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content })
+      });
+      alert('نظر ارسال شد!');
+      loadComments(ticketId);
+    }
+    async function loadComments(ticketId) {
+      const res = await fetch(`/api/tickets/${ticketId}/comments`);
+      if (res.ok) {
+        const data = await res.json();
+        document.getElementById('ticket-comments').innerHTML = data.map(c => `<div>${c.content}</div>`).join('');
+      }
+    }
+    async function deleteTicket(ticketId) {
+      await fetch(`/api/tickets/${ticketId}`, { method: 'DELETE' });
+      alert('تیکت حذف شد!');
+      loadTickets();
+    }
+  </script>
+</body>
+
 </html>

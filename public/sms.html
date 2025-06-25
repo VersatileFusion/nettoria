@@ -1,136 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SMS Service - Nettoria</title>
-    <link rel="stylesheet" href="Assets/css/style.css" />
-    <link rel="stylesheet" href="Assets/css/sms.css" />
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-  </head>
 
-  <body>
-    <!-- Header -->
-    <header class="header">
-      <nav class="nav">
-        <div class="logo">
-          <a href="index.html">
-            <img src="Assets/images/logo.png" alt="Nettoria Logo" />
-          </a>
-        </div>
-        <ul class="nav-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="about-us.html">About Us</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="login.html" class="btn btn-primary">Login</a></li>
-        </ul>
-      </nav>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMS Service - Nettoria</title>
+  <link rel="stylesheet" href="Assets/css/style.css" />
+  <link rel="stylesheet" href="Assets/css/sms.css" />
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
 
-    <!-- Main Content -->
-    <main class="sms-container">
-      <!-- Send SMS Section -->
-      <section class="send-sms-section">
-        <h2 class="section-title">Send SMS</h2>
-        <form id="sendSMSForm" class="send-sms-form">
-          <div class="form-group">
-            <label for="recipient">Recipient Number</label>
-            <input
-              type="tel"
-              id="recipient"
-              name="recipient"
-              placeholder="Enter phone number"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="template">Select Template (Optional)</label>
-            <select id="template" name="template">
-              <option value="">Custom Message</option>
-              <!-- Templates will be loaded dynamically -->
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="message">Message</label>
-            <textarea
-              id="message"
-              name="message"
-              placeholder="Enter your message"
-              required
-            ></textarea>
-          </div>
-          <button type="submit" class="submit-btn">Send SMS</button>
-        </form>
-      </section>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">
+        <a href="index.html">
+          <img src="Assets/images/logo.png" alt="Nettoria Logo" />
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="about-us.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="login.html" class="btn btn-primary">Login</a></li>
+      </ul>
+    </nav>
+  </header>
 
-      <!-- SMS History Section -->
-      <section class="sms-history-section">
-        <h2 class="section-title">SMS History</h2>
-        <div id="smsHistory" class="sms-history">
-          <!-- SMS history will be loaded dynamically -->
+  <!-- Main Content -->
+  <main class="sms-container">
+    <!-- Send SMS Section -->
+    <section class="send-sms-section">
+      <h2 class="section-title">Send SMS</h2>
+      <form id="sendSMSForm" class="send-sms-form">
+        <div class="form-group">
+          <label for="recipient">Recipient Number</label>
+          <input type="tel" id="recipient" name="recipient" placeholder="Enter phone number" required />
         </div>
-      </section>
+        <div class="form-group">
+          <label for="template">Select Template (Optional)</label>
+          <select id="template" name="template">
+            <option value="">Custom Message</option>
+            <!-- Templates will be loaded dynamically -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Enter your message" required></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Send SMS</button>
+      </form>
+    </section>
 
-      <!-- Templates Section -->
-      <section class="templates-section">
-        <div class="section-header">
-          <h2 class="section-title">Message Templates</h2>
-          <button onclick="createTemplate()" class="btn btn-primary">
-            <i class="fas fa-plus"></i> New Template
-          </button>
-        </div>
-        <div id="smsTemplates" class="templates-grid">
-          <!-- Templates will be loaded dynamically -->
-        </div>
-      </section>
-    </main>
+    <!-- SMS History Section -->
+    <section class="sms-history-section">
+      <h2 class="section-title">SMS History</h2>
+      <div id="smsHistory" class="sms-history">
+        <!-- SMS history will be loaded dynamically -->
+      </div>
+    </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-section">
-            <h3>About Nettoria</h3>
-            <p>Your trusted partner in cloud hosting and IT solutions.</p>
-          </div>
-          <div class="footer-section">
-            <h3>Quick Links</h3>
-            <ul>
-              <li><a href="about-us.html">About Us</a></li>
-              <li><a href="services.html">Services</a></li>
-              <li><a href="contact.html">Contact</a></li>
-            </ul>
-          </div>
-          <div class="footer-section">
-            <h3>Contact Us</h3>
-            <p>Email: info@nettoria.com</p>
-            <p>Phone: +1 (555) 123-4567</p>
-          </div>
+    <!-- Templates Section -->
+    <section class="templates-section">
+      <div class="section-header">
+        <h2 class="section-title">Message Templates</h2>
+        <button onclick="createTemplate()" class="btn btn-primary">
+          <i class="fas fa-plus"></i> New Template
+        </button>
+      </div>
+      <div id="smsTemplates" class="templates-grid">
+        <!-- Templates will be loaded dynamically -->
+      </div>
+    </section>
+
+    <!-- SMS Actions Section -->
+    <div id="sms-actions-section">
+      <input type="text" id="smsRecipient" placeholder="شماره گیرنده">
+      <input type="text" id="smsMessage" placeholder="متن پیامک">
+      <button onclick="sendSMS()">ارسال پیامک</button>
+      <button onclick="loadSMSHistory()">تاریخچه پیامک‌ها</button>
+      <button onclick="loadSMSTemplates()">قالب‌های پیامک</button>
+      <div id="sms-output"></div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About Nettoria</h3>
+          <p>Your trusted partner in cloud hosting and IT solutions.</p>
         </div>
-        <div class="footer-bottom">
-          <p>&copy; 2024 Nettoria. All rights reserved.</p>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>Email: info@nettoria.com</p>
+          <p>Phone: +1 (555) 123-4567</p>
         </div>
       </div>
-    </footer>
-
-    <!-- Loading Spinner -->
-    <div class="loading-spinner" style="display: none">
-      <div class="spinner"></div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Nettoria. All rights reserved.</p>
+      </div>
     </div>
+  </footer>
 
-    <!-- Notifications Container -->
-    <div class="toast"></div>
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" style="display: none">
+    <div class="spinner"></div>
+  </div>
 
-    <!-- Scripts -->
-    <script src="Assets/js/utils.js"></script>
-    <script src="Assets/js/sms.js"></script>
-  </body>
+  <!-- Notifications Container -->
+  <div class="toast"></div>
+
+  <!-- Scripts -->
+  <script src="Assets/js/utils.js"></script>
+  <script src="Assets/js/sms.js"></script>
+  <script>
+    async function sendSMS() {
+      const recipient = document.getElementById('smsRecipient').value;
+      const message = document.getElementById('smsMessage').value;
+      const res = await fetch('/api/sms/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: recipient, message })
+      });
+      document.getElementById('sms-output').innerText = res.ok ? 'پیامک ارسال شد!' : 'خطا در ارسال پیامک';
+    }
+    async function loadSMSHistory() {
+      const res = await fetch('/api/sms/history');
+      document.getElementById('sms-output').innerText = res.ok ? JSON.stringify(await res.json()) : 'خطا در دریافت تاریخچه';
+    }
+    async function loadSMSTemplates() {
+      const res = await fetch('/api/sms/templates');
+      document.getElementById('sms-output').innerText = res.ok ? JSON.stringify(await res.json()) : 'خطا در دریافت قالب‌ها';
+    }
+  </script>
+</body>
+
 </html>

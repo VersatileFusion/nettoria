@@ -1,0 +1,129 @@
+body {
+  margin: 0;
+  font-family: "Vazirmatn", Tahoma, "Segoe UI", Arial, sans-serif;
+  background: #f4f6f8;
+  direction: rtl;
+}
+.admin-dashboard {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: row-reverse !important;
+}
+.sidebar {
+  width: 220px;
+  background: #232946;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 2rem 0;
+  text-align: right;
+}
+.sidebar h2 {
+  margin: 1.5rem 1.5rem 1rem 0;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar nav ul li {
+  margin: 0;
+}
+.sidebar nav ul li a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  padding: 1rem 1.5rem 1rem 0.5rem;
+  transition: background 0.2s;
+  border-right: 4px solid transparent;
+  border-left: none;
+  text-align: right;
+}
+.sidebar nav ul li a.active,
+.sidebar nav ul li a:hover {
+  background: #121629;
+  border-right: 4px solid #eebbc3;
+  color: #eebbc3;
+}
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  background: #f4f6f8;
+  overflow-x: auto;
+  text-align: right;
+}
+.admin-section {
+  display: none;
+}
+.admin-section:target,
+.admin-section.active {
+  display: block;
+}
+.admin-section h1 {
+  margin-top: 0;
+  font-size: 2rem;
+  color: #232946;
+}
+/* Table styles for admin data */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  direction: rtl;
+}
+.admin-table th,
+.admin-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: right;
+}
+.admin-table th {
+  background: #eebbc3;
+  color: #232946;
+  font-weight: 600;
+}
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+.admin-table tr:hover {
+  background: #f7e6e6;
+}
+/* Responsive */
+@media (max-width: 900px) {
+  .admin-dashboard {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    flex-direction: row-reverse;
+    overflow-x: auto;
+    height: auto;
+  }
+  .main-content {
+  }
+  .sidebar nav ul {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+  .sidebar nav ul li a {
+    padding: 1rem 0.75rem 1rem 0.5rem;
+    border-right: none;
+    border-bottom: 4px solid transparent;
+  }
+  .sidebar nav ul li a.active,
+  .sidebar nav ul li a:hover {
+    border-right: none;
+    border-bottom: 4px solid #eebbc3;
+  }
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("https://cdn.fontcdn.ir/Font/Persian/Vazirmatn/Vazirmatn-Regular.woff2")
+    format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}

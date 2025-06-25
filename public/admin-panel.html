@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Nettoria</title>
+  <link rel="stylesheet" href="Assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="logo"><a href="index.html">Nettoria Admin</a></div>
+      <ul class="nav-links">
+        <li><a href="admin-panel.html" class="active">Admin Panel</a></li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="logout.html">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="admin-container">
+    <h1>Admin Panel</h1>
+    <!-- User Management -->
+    <section>
+      <h2>Users</h2>
+      <button onclick="loadUsers()">Load Users</button>
+      <div id="admin-users"></div>
+    </section>
+    <!-- Order Management -->
+    <section>
+      <h2>Orders</h2>
+      <button onclick="loadOrders()">Load Orders</button>
+      <div id="admin-orders"></div>
+    </section>
+    <!-- Ticket Management -->
+    <section>
+      <h2>Tickets</h2>
+      <button onclick="loadTickets()">Load Tickets</button>
+      <div id="admin-tickets"></div>
+    </section>
+    <!-- vCenter Quotas/Tasks -->
+    <section>
+      <h2>vCenter Quotas</h2>
+      <button onclick="loadQuotas()">Load Quotas</button>
+      <div id="admin-quotas"></div>
+      <h2>vCenter Tasks</h2>
+      <button onclick="loadTasks()">Load Tasks</button>
+      <div id="admin-tasks"></div>
+    </section>
+    <!-- VM Analytics/Forecast/Optimize -->
+    <section>
+      <h2>VM Analytics/Forecast/Optimize</h2>
+      <input type="text" id="adminVmId" placeholder="VM ID">
+      <button onclick="loadAnalytics()">Analytics</button>
+      <button onclick="loadForecast()">Forecast</button>
+      <button onclick="optimizeVM()">Optimize</button>
+      <div id="admin-vm-output"></div>
+    </section>
+  </main>
+  <script>
+    async function loadUsers() {
+      const res = await fetch('/api/users');
+      document.getElementById('admin-users').innerText = res.ok ? JSON.stringify(await res.json()) : 'Error loading users';
+    }
+    async function loadOrders() {
+      const res = await fetch('/api/orders');
+      document.getElementById('admin-orders').innerText = res.ok ? JSON.stringify(await res.json()) : 'Error loading orders';
+    }
+    async function loadTickets() {
+      const res = await fetch('/api/tickets');
+      document.getElementById('admin-tickets').innerText = res.ok ? JSON.stringify(await res.json()) : 'Error loading tickets';
+    }
+    async function loadQuotas() {
+      const res = await fetch('/api/vcenter/quotas');
+      document.getElementById('admin-quotas').innerText = res.ok ? JSON.stringify(await res.json()) : 'Error loading quotas';
+    }
+    async function loadTasks() {
+      const res = await fetch('/api/vcenter/tasks');
+      document.getElementById('admin-tasks').innerText = res.ok ? JSON.stringify(await res.json()) : 'Error loading tasks';
+    }
+    async function loadAnalytics() {
+      const vmId = document.getElementById('adminVmId').value;
+      const res = await fetch(`/api/vcenter/vms/${vmId}/analytics`);
+      document.getElementById('admin-vm-output').innerText = res.ok ? JSON.stringify(await res.json()) : 'Error loading analytics';
+    }
+    async function loadForecast() {
+      const vmId = document.getElementById('adminVmId').value;
+      const res = await fetch(`/api/vcenter/vms/${vmId}/forecast`);
+      document.getElementById('admin-vm-output').innerText = res.ok ? JSON.stringify(await res.json()) : 'Error loading forecast';
+    }
+    async function optimizeVM() {
+      const vmId = document.getElementById('adminVmId').value;
+      const res = await fetch(`/api/vcenter/vms/${vmId}/optimize`, { method: 'POST' });
+      document.getElementById('admin-vm-output').innerText = res.ok ? 'Optimization started!' : 'Error optimizing VM';
+    }
+  </script>
+</body>
+
+</html>

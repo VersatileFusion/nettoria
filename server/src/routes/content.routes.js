@@ -191,4 +191,43 @@ router.delete(
   }
 );
 
+// Example dynamic content endpoints for static pages
+router.get('/about-us', (req, res) => {
+  res.json({ content: 'This is the dynamic About Us content from the backend.' });
+});
+
+router.get('/layout', (req, res) => {
+  res.json({ content: 'Dynamic layout content from backend.' });
+});
+
+router.get('/success-pass', (req, res) => {
+  res.json({ content: 'Your password was successfully changed! (from backend)' });
+});
+
+router.get('/index', (req, res) => {
+  res.json({ content: 'Welcome to Nettoria! (dynamic content from backend)' });
+});
+
+router.get('/contact-us', (req, res) => {
+  res.json({ content: 'Contact us at info@nettoria.com or call 021-12345678. (Dynamic content from backend)' });
+});
+
+router.get('/faq', (req, res) => {
+  res.json({ content: 'Frequently Asked Questions: (Dynamic content from backend)' });
+});
+
+router.get('/terms', (req, res) => {
+  res.json({ content: 'Terms and Conditions: (Dynamic content from backend)' });
+});
+
+router.get('/privacy', (req, res) => {
+  res.json({ content: 'Privacy Policy: (Dynamic content from backend)' });
+});
+
+router.get('/support', (req, res) => {
+  res.json({ content: 'Support: For help, contact our 24/7 support team at support@nettoria.com or open a ticket in your dashboard. (Dynamic content from backend)' });
+});
+
+// Add more endpoints for other static pages as needed
+
 module.exports = router;
