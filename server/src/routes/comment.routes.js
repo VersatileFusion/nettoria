@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const commentController = require("../controllers/commentController");
-const authMiddleware = require("../middleware/authMiddleware");
-const adminMiddleware = require("../middleware/adminMiddleware");
+const authMiddleware = require("../middleware/auth.middleware");
+const { auth, adminAuth } = require("../middleware/auth");
 const { body, validationResult } = require("express-validator");
 
 // Validation middleware
@@ -16,20 +16,20 @@ router.get("/blogs/:blogId/comments", commentController.getBlogComments);
 // Protected routes (require authentication)
 router.post(
   "/blogs/:blogId/comments",
-  [authMiddleware, validateComment],
+  [authMiddleware.protect, validateComment],
   commentController.addComment
 );
 router.put(
   "/comments/:id",
-  [authMiddleware, validateComment],
+  [authMiddleware.protect, validateComment],
   commentController.updateComment
 );
-router.delete("/comments/:id", authMiddleware, commentController.deleteComment);
+router.delete("/comments/:id", authMiddleware.protect, commentController.deleteComment);
 
 // Admin routes
 router.put(
   "/admin/comments/:id/moderate",
-  [authMiddleware, adminMiddleware],
+  [authMiddleware.protect, adminAuth],
   commentController.moderateComment
 );
 

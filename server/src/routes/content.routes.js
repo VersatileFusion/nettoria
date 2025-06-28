@@ -66,7 +66,7 @@ router.get("/:slug", async (req, res) => {
 // Create content (admin only)
 router.post(
   "/",
-  authMiddleware.authenticate,
+  authMiddleware.protect,
   authMiddleware.isAdmin,
   validateContent,
   async (req, res) => {
@@ -109,7 +109,7 @@ router.post(
 // Update content (admin only)
 router.put(
   "/:id",
-  authMiddleware.authenticate,
+  authMiddleware.protect,
   authMiddleware.isAdmin,
   validateContent,
   async (req, res) => {
@@ -162,7 +162,7 @@ router.put(
 // Delete content (admin only)
 router.delete(
   "/:id",
-  authMiddleware.authenticate,
+  authMiddleware.protect,
   authMiddleware.isAdmin,
   async (req, res) => {
     try {

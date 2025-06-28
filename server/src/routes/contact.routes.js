@@ -75,7 +75,7 @@ router.post("/", contactController.submitContactForm);
  */
 router.get(
   "/",
-  authMiddleware.authenticate,
+  authMiddleware.protect,
   authMiddleware.isAdmin,
   contactController.getMessages
 );
@@ -105,7 +105,7 @@ router.get(
  */
 router.get(
   "/:id",
-  authMiddleware.authenticate,
+  authMiddleware.protect,
   authMiddleware.isAdmin,
   contactController.getMessageById
 );
@@ -146,7 +146,7 @@ router.get(
  */
 router.post(
   "/:id/reply",
-  authMiddleware.authenticate,
+  authMiddleware.protect,
   authMiddleware.isAdmin,
   contactController.replyToMessage
 );
@@ -188,7 +188,7 @@ router.post(
  */
 router.patch(
   "/:id/status",
-  authMiddleware.authenticate,
+  authMiddleware.protect,
   authMiddleware.isAdmin,
   contactController.updateMessageStatus
 );

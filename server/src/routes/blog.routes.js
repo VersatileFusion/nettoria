@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const blogController = require("../controllers/blogController");
-const authMiddleware = require("../middleware/authMiddleware");
-const adminMiddleware = require("../middleware/adminMiddleware");
+const authMiddleware = require("../middleware/auth.middleware");
+const { auth, adminAuth } = require("../middleware/auth");
 const { body, validationResult } = require("express-validator");
 const Blog = require("../models/Blog");
 const BlogService = require('../services/blog.service');
@@ -26,8 +26,8 @@ router.put("/:id", [authMiddleware, validateBlog], blogController.updateBlog);
 router.delete("/:id", authMiddleware, blogController.deleteBlog);
 
 // Admin routes
-router.get("/admin/all", [authMiddleware, adminMiddleware], blogController.getAllBlogs);
-router.put("/admin/:id/status", [authMiddleware, adminMiddleware], blogController.updateBlogStatus);
+router.get("/admin/all", [authMiddleware, adminAuth], blogController.getAllBlogs);
+router.put("/admin/:id/status", [authMiddleware, adminAuth], blogController.updateBlogStatus);
 
 // Get all blogs with pagination
 router.get("/", async (req, res) => {
@@ -126,7 +126,7 @@ router.get('/posts/:postId', async (req, res) => {
 
 // Create blog post (admin only)
 router.post('/posts',
-  adminMiddleware,
+  adminAuth,
   [
     body('title').isString().notEmpty().withMessage('Title is required'),
     body('content').isString().notEmpty().withMessage('Content is required'),
@@ -152,7 +152,7 @@ router.post('/posts',
 
 // Update blog post (admin only)
 router.put('/posts/:postId',
-  adminMiddleware,
+  adminAuth,
   [
     body('title').optional().isString().notEmpty().withMessage('Title cannot be empty'),
     body('content').optional().isString().notEmpty().withMessage('Content cannot be empty'),
@@ -179,7 +179,7 @@ router.put('/posts/:postId',
 
 // Delete blog post (admin only)
 router.delete('/posts/:postId',
-  adminMiddleware,
+  adminAuth,
   async (req, res) => {
     try {
       const { postId } = req.params;
@@ -287,7 +287,7 @@ router.get('/categories', async (req, res) => {
 
 // Add blog category (admin only)
 router.post('/categories',
-  adminMiddleware,
+  adminAuth,
   [
     body('name').isString().notEmpty().withMessage('Category name is required'),
     body('description').optional().isString().withMessage('Description must be a string')

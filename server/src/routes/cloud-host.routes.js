@@ -27,7 +27,7 @@ const validateCloudHost = [
 ];
 
 // Get all cloud hosts
-router.get("/", authMiddleware.authenticate, async (req, res) => {
+router.get("/", authMiddleware.protect, async (req, res) => {
   try {
     const cloudHosts = await CloudHost.findAll({
       where: { userId: req.user.id },
@@ -45,7 +45,7 @@ router.get("/", authMiddleware.authenticate, async (req, res) => {
 });
 
 // Get cloud host by ID
-router.get("/:id", authMiddleware.authenticate, async (req, res) => {
+router.get("/:id", authMiddleware.protect, async (req, res) => {
   try {
     const cloudHost = await CloudHost.findOne({
       where: {
@@ -79,7 +79,7 @@ router.get("/:id", authMiddleware.authenticate, async (req, res) => {
 // Create new cloud host
 router.post(
   "/",
-  authMiddleware.authenticate,
+  authMiddleware.protect,
   validateCloudHost,
   async (req, res) => {
     try {
@@ -117,7 +117,7 @@ router.post(
 // Update cloud host
 router.put(
   "/:id",
-  authMiddleware.authenticate,
+  authMiddleware.protect,
   validateCloudHost,
   async (req, res) => {
     try {
@@ -165,7 +165,7 @@ router.put(
 );
 
 // Delete cloud host
-router.delete("/:id", authMiddleware.authenticate, async (req, res) => {
+router.delete("/:id", authMiddleware.protect, async (req, res) => {
   try {
     const cloudHost = await CloudHost.findOne({
       where: {
@@ -198,7 +198,7 @@ router.delete("/:id", authMiddleware.authenticate, async (req, res) => {
 });
 
 // Get cloud host usage statistics
-router.get("/:id/stats", authMiddleware.authenticate, async (req, res) => {
+router.get("/:id/stats", authMiddleware.protect, async (req, res) => {
   try {
     const cloudHost = await CloudHost.findOne({
       where: {
@@ -240,7 +240,7 @@ router.get("/:id/stats", authMiddleware.authenticate, async (req, res) => {
 });
 
 // Get all cloud servers for user
-router.get('/', authMiddleware.authenticate, async (req, res) => {
+router.get('/', authMiddleware.protect, async (req, res) => {
   try {
     const servers = await CloudHostService.getUserServers(req.user.id);
     res.json(servers);
@@ -250,7 +250,7 @@ router.get('/', authMiddleware.authenticate, async (req, res) => {
 });
 
 // Get server details
-router.get('/:serverId', authMiddleware.authenticate, [
+router.get('/:serverId', authMiddleware.protect, [
   param('serverId').isUUID()
 ], validateRequest, async (req, res) => {
   try {
@@ -262,7 +262,7 @@ router.get('/:serverId', authMiddleware.authenticate, [
 });
 
 // Create new server
-router.post('/create', authMiddleware.authenticate, [
+router.post('/create', authMiddleware.protect, [
   body('name').isString().notEmpty(),
   body('region').isString().notEmpty(),
   body('plan').isString().notEmpty(),
@@ -281,7 +281,7 @@ router.post('/create', authMiddleware.authenticate, [
 });
 
 // Update server
-router.put('/:serverId', authMiddleware.authenticate, [
+router.put('/:serverId', authMiddleware.protect, [
   param('serverId').isUUID(),
   body('name').isString().optional(),
   body('tags').isArray().optional(),
@@ -297,7 +297,7 @@ router.put('/:serverId', authMiddleware.authenticate, [
 });
 
 // Control server
-router.post('/:serverId/control', authMiddleware.authenticate, [
+router.post('/:serverId/control', authMiddleware.protect, [
   param('serverId').isUUID(),
   body('action').isIn(['start', 'stop', 'restart', 'reboot'])
 ], validateRequest, async (req, res) => {
@@ -310,7 +310,7 @@ router.post('/:serverId/control', authMiddleware.authenticate, [
 });
 
 // Get server metrics
-router.get('/:serverId/metrics', authMiddleware.authenticate, [
+router.get('/:serverId/metrics', authMiddleware.protect, [
   param('serverId').isUUID()
 ], validateRequest, async (req, res) => {
   try {
@@ -352,7 +352,7 @@ router.get('/images', async (req, res) => {
 });
 
 // Create backup
-router.post('/:serverId/backup', authMiddleware.authenticate, [
+router.post('/:serverId/backup', authMiddleware.protect, [
   param('serverId').isUUID(),
   body('name').isString().optional(),
   body('description').isString().optional()
@@ -366,7 +366,7 @@ router.post('/:serverId/backup', authMiddleware.authenticate, [
 });
 
 // Get backups
-router.get('/:serverId/backups', authMiddleware.authenticate, [
+router.get('/:serverId/backups', authMiddleware.protect, [
   param('serverId').isUUID()
 ], validateRequest, async (req, res) => {
   try {
@@ -378,7 +378,7 @@ router.get('/:serverId/backups', authMiddleware.authenticate, [
 });
 
 // Restore from backup
-router.post('/:serverId/restore/:backupId', authMiddleware.authenticate, [
+router.post('/:serverId/restore/:backupId', authMiddleware.protect, [
   param('serverId').isUUID(),
   param('backupId').isUUID()
 ], validateRequest, async (req, res) => {
@@ -391,7 +391,7 @@ router.post('/:serverId/restore/:backupId', authMiddleware.authenticate, [
 });
 
 // Delete server
-router.delete('/:serverId', authMiddleware.authenticate, [
+router.delete('/:serverId', authMiddleware.protect, [
   param('serverId').isUUID()
 ], validateRequest, async (req, res) => {
   try {
@@ -403,7 +403,7 @@ router.delete('/:serverId', authMiddleware.authenticate, [
 });
 
 // Get server console
-router.get('/:serverId/console', authMiddleware.authenticate, [
+router.get('/:serverId/console', authMiddleware.protect, [
   param('serverId').isUUID()
 ], validateRequest, async (req, res) => {
   try {
@@ -415,7 +415,7 @@ router.get('/:serverId/console', authMiddleware.authenticate, [
 });
 
 // Get server firewall rules
-router.get('/:serverId/firewall', authMiddleware.authenticate, [
+router.get('/:serverId/firewall', authMiddleware.protect, [
   param('serverId').isUUID()
 ], validateRequest, async (req, res) => {
   try {
@@ -427,7 +427,7 @@ router.get('/:serverId/firewall', authMiddleware.authenticate, [
 });
 
 // Add firewall rule
-router.post('/:serverId/firewall', authMiddleware.authenticate, [
+router.post('/:serverId/firewall', authMiddleware.protect, [
   param('serverId').isUUID(),
   body('type').isIn(['inbound', 'outbound']),
   body('protocol').isIn(['tcp', 'udp', 'icmp']),
@@ -444,7 +444,7 @@ router.post('/:serverId/firewall', authMiddleware.authenticate, [
 });
 
 // Delete firewall rule
-router.delete('/:serverId/firewall/:ruleId', authMiddleware.authenticate, [
+router.delete('/:serverId/firewall/:ruleId', authMiddleware.protect, [
   param('serverId').isUUID(),
   param('ruleId').isUUID()
 ], validateRequest, async (req, res) => {

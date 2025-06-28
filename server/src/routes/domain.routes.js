@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const domainController = require("../controllers/domain.controller");
-const { authenticate, authorize } = require("../middleware/auth");
-const { validate } = require("../middleware/validate");
+const { auth, adminAuth } = require("../middleware/auth");
+const { validate } = require("../middleware/validation.middleware");
 const { domainValidation } = require("../validations/domain.validation");
 const authMiddleware = require("../middleware/auth.middleware");
 const { body, validationResult, param } = require("express-validator");
 const DomainService = require('../services/domain.service');
-const { validateRequest } = require('../middleware/validation');
+const { validateRequest } = require('../middleware/validate-request');
 
 /**
  * @swagger
@@ -66,7 +66,7 @@ router.get("/", authMiddleware.protect, async (req, res) => {
  *       404:
  *         description: Domain not found
  */
-router.get("/:domainId", authenticate, [
+router.get("/:domainId", auth, [
   param('domainId').isUUID()
 ], validateRequest, async (req, res) => {
   try {
@@ -131,7 +131,7 @@ router.post("/check/:domainName", async (req, res) => {
  *       201:
  *         description: Domain registered successfully
  */
-router.post("/register", authenticate, [
+router.post("/register", auth, [
   body('name').isString().notEmpty(),
   body('registrar').isString().notEmpty(),
   body('registrationPeriod').isInt({ min: 1, max: 10 }),
@@ -183,7 +183,7 @@ router.post("/register", authenticate, [
  *       404:
  *         description: Domain not found
  */
-router.post("/:domainId/renew", authenticate, [
+router.post("/:domainId/renew", auth, [
   param('domainId').isUUID(),
   body('period').isInt({ min: 1, max: 10 })
 ], validateRequest, async (req, res) => {
@@ -220,7 +220,7 @@ router.post("/:domainId/renew", authenticate, [
  *       201:
  *         description: Domain transfer initiated successfully
  */
-router.post("/:domainId/transfer", authenticate, [
+router.post("/:domainId/transfer", auth, [
   param('domainId').isUUID(),
   body('newRegistrar').isString().notEmpty(),
   body('authCode').isString().notEmpty()
@@ -251,7 +251,7 @@ router.post("/:domainId/transfer", authenticate, [
  *       200:
  *         description: Domain DNS records
  */
-router.get("/:domainId/dns", authenticate, [
+router.get("/:domainId/dns", auth, [
   param('domainId').isUUID()
 ], validateRequest, async (req, res) => {
   try {
@@ -296,7 +296,7 @@ router.get("/:domainId/dns", authenticate, [
  *       201:
  *         description: DNS record added successfully
  */
-router.post("/:domainId/dns", authenticate, [
+router.post("/:domainId/dns", auth, [
   param('domainId').isUUID(),
   body('type').isIn(['A', 'AAAA', 'CNAME', 'MX', 'TXT', 'SRV', 'NS']),
   body('name').isString().notEmpty(),
@@ -341,7 +341,7 @@ router.post("/:domainId/dns", authenticate, [
  *       404:
  *         description: Domain or DNS record not found
  */
-router.delete("/:domainId/dns/:recordId", authenticate, [
+router.delete("/:domainId/dns/:recordId", auth, [
   param('domainId').isUUID(),
   param('recordId').isUUID()
 ], validateRequest, async (req, res) => {

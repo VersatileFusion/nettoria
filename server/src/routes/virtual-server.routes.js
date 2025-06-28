@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
-const { authenticateToken } = require("../middleware/auth");
+const authMiddleware = require("../middleware/auth.middleware");
 const VirtualServerService = require('../services/virtual-server.service');
 
 // Get all VMs for user
 router.get("/",
-  authenticateToken,
+  authMiddleware.protect,
   async (req, res) => {
     try {
       const vms = await VirtualServerService.getUserVMs(req.user.id);
@@ -19,7 +19,7 @@ router.get("/",
 
 // Get VM details
 router.get("/:vmId",
-  authenticateToken,
+  authMiddleware.protect,
   async (req, res) => {
     try {
       const vm = await VirtualServerService.getVMDetails(req.user.id, req.params.vmId);
@@ -32,7 +32,7 @@ router.get("/:vmId",
 
 // Create new VM
 router.post("/create",
-  authenticateToken,
+  authMiddleware.protect,
   [
     body('name').isString().notEmpty().withMessage('VM name is required'),
     body('templateId').isUUID().withMessage('Invalid template ID'),
@@ -58,7 +58,7 @@ router.post("/create",
 
 // Update VM configuration
 router.put("/:vmId",
-  authenticateToken,
+  authMiddleware.protect,
   [
     body('cpu').optional().isInt({ min: 1, max: 32 }).withMessage('CPU cores must be between 1 and 32'),
     body('ram').optional().isInt({ min: 1, max: 128 }).withMessage('RAM must be between 1 and 128 GB'),
@@ -81,7 +81,7 @@ router.put("/:vmId",
 
 // Control VM operations
 router.post("/:vmId/control",
-  authenticateToken,
+  authMiddleware.protect,
   [
     body('action').isIn(['start', 'stop', 'restart', 'reset']).withMessage('Invalid action')
   ],
@@ -102,7 +102,7 @@ router.post("/:vmId/control",
 
 // Get VM metrics
 router.get("/:vmId/metrics",
-  authenticateToken,
+  authMiddleware.protect,
   async (req, res) => {
     try {
       const metrics = await VirtualServerService.getVMMetrics(req.user.id, req.params.vmId);
@@ -115,7 +115,7 @@ router.get("/:vmId/metrics",
 
 // Get available templates
 router.get("/templates",
-  authenticateToken,
+  authMiddleware.protect,
   async (req, res) => {
     try {
       const templates = await VirtualServerService.getTemplates();
@@ -128,7 +128,7 @@ router.get("/templates",
 
 // Get VM console access
 router.get("/:vmId/console",
-  authenticateToken,
+  authMiddleware.protect,
   async (req, res) => {
     try {
       const consoleUrl = await VirtualServerService.getConsoleAccess(req.user.id, req.params.vmId);
@@ -141,7 +141,7 @@ router.get("/:vmId/console",
 
 // Backup VM
 router.post("/:vmId/backup",
-  authenticateToken,
+  authMiddleware.protect,
   [
     body('name').optional().isString().withMessage('Backup name must be a string'),
     body('description').optional().isString().withMessage('Description must be a string')
@@ -163,7 +163,7 @@ router.post("/:vmId/backup",
 
 // Get VM backups
 router.get("/:vmId/backups",
-  authenticateToken,
+  authMiddleware.protect,
   async (req, res) => {
     try {
       const backups = await VirtualServerService.getBackups(req.user.id, req.params.vmId);
@@ -176,7 +176,7 @@ router.get("/:vmId/backups",
 
 // Restore VM from backup
 router.post("/:vmId/restore/:backupId",
-  authenticateToken,
+  authMiddleware.protect,
   async (req, res) => {
     try {
       const result = await VirtualServerService.restoreFromBackup(
@@ -193,7 +193,7 @@ router.post("/:vmId/restore/:backupId",
 
 // Delete VM
 router.delete("/:vmId",
-  authenticateToken,
+  authMiddleware.protect,
   async (req, res) => {
     try {
       await VirtualServerService.deleteVM(req.user.id, req.params.vmId);

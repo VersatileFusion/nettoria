@@ -228,6 +228,16 @@ try {
     const successPasswordRoutes = require("./routes/success-password.routes");
     const securityRoutes = require("./routes/security");
 
+    // Import missing routes that exist but are not mounted
+    const domainRoutes = require("./routes/domain.routes");
+    const blogRoutes = require("./routes/blog.routes");
+    const contactRoutes = require("./routes/contact.routes");
+    const cloudHostRoutes = require("./routes/cloud-host.routes");
+    const virtualServerRoutes = require("./routes/virtual-server.routes");
+    const contentRoutes = require("./routes/content.routes");
+    const blogPostRoutes = require("./routes/blogPost.routes");
+    const commentRoutes = require("./routes/comment.routes");
+
     console.log("All routes imported successfully, now mounting...");
 
     // Use routes
@@ -257,6 +267,24 @@ try {
     app.use("/api/success-password", successPasswordRoutes);
     app.use("/api/security", securityRoutes);
     console.log("Security routes mounted at /api/security");
+
+    // Mount missing routes
+    app.use("/api/domains", domainRoutes);
+    console.log("Domain routes mounted at /api/domains");
+    app.use("/api/blogs", blogRoutes);
+    console.log("Blog routes mounted at /api/blogs");
+    app.use("/api/contact", contactRoutes);
+    console.log("Contact routes mounted at /api/contact");
+    app.use("/api/cloud-host", cloudHostRoutes);
+    console.log("Cloud host routes mounted at /api/cloud-host");
+    app.use("/api/virtual-server", virtualServerRoutes);
+    console.log("Virtual server routes mounted at /api/virtual-server");
+    app.use("/api/content", contentRoutes);
+    console.log("Content routes mounted at /api/content");
+    app.use("/api/blog-posts", blogPostRoutes);
+    console.log("Blog post routes mounted at /api/blog-posts");
+    app.use("/api/comments", commentRoutes);
+    console.log("Comment routes mounted at /api/comments");
 
     console.log("API routes loaded and mounted successfully");
   } catch (error) {

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const blogPostController = require('../controllers/blogPostController');
-const authMiddleware = require('../middleware/authMiddleware');
+const authMiddleware = require('../middleware/auth.middleware');
 const { body } = require('express-validator');
 
 // Validation middleware
@@ -17,17 +17,17 @@ router.get('/:blogId/comments', blogPostController.getBlogComments);
 // Protected routes
 router.post(
   '/:blogId/comments',
-  [authMiddleware, validateComment],
+  [authMiddleware.protect, validateComment],
   blogPostController.addComment
 );
 router.put(
   '/comments/:id',
-  [authMiddleware, validateComment],
+  [authMiddleware.protect, validateComment],
   blogPostController.updateComment
 );
 router.delete(
   '/comments/:id',
-  authMiddleware,
+  authMiddleware.protect,
   blogPostController.deleteComment
 );
 
