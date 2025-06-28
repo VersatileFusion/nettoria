@@ -2,40 +2,70 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize services
     loadServices();
-    
+
     // Initialize cart icon
     initializeCartIcon();
+
+    // Add search functionality
+    initializeSearch();
+
+    // Add filter functionality
+    initializeFilters();
 });
 
 // Load services from the backend
-async function loadServices(page = 1, limit = 12) {
+async function loadServices(page = 1, limit = 12, filters = {}) {
     try {
         showLoading();
-        
-        const response = await fetch(`/api/services?page=${page}&limit=${limit}`, {
+
+        // Build query parameters
+        const params = new URLSearchParams({
+            page: page,
+            limit: limit,
+            ...filters
+        });
+
+        const response = await fetch(`/api/services?${params}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
-        
-        if (!response.ok) throw new Error('Failed to load services');
-        
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to load services');
+        }
+
         const data = await response.json();
         renderServices(data.services);
         renderPagination(data.pagination);
-        
+
         hideLoading();
     } catch (error) {
         hideLoading();
-        showToast('error', 'Failed to load services');
+        showToast('error', `خطا در بارگذاری خدمات: ${error.message}`);
+        console.error('Error loading services:', error);
     }
 }
 
 // Render services in the grid
 function renderServices(services) {
     const servicesGrid = document.querySelector('.services-grid');
+    if (!servicesGrid) return;
+
     servicesGrid.innerHTML = '';
-    
+
+    if (services.length === 0) {
+        servicesGrid.innerHTML = `
+            <div class="no-services">
+                <i class='bx bx-package'></i>
+                <h3>هیچ خدمتی یافت نشد</h3>
+                <p>لطفا فیلترهای خود را تغییر دهید یا بعداً مراجعه کنید.</p>
+            </div>
+        `;
+        return;
+    }
+
     services.forEach(service => {
         const serviceCard = createServiceCard(service);
         servicesGrid.appendChild(serviceCard);
@@ -46,11 +76,16 @@ function renderServices(services) {
 function createServiceCard(service) {
     const card = document.createElement('div');
     card.className = 'service-card';
-    
+
+    // Calculate discount if applicable
+    const hasDiscount = service.originalPrice && service.originalPrice > service.price.amount;
+    const discountPercentage = hasDiscount ? Math.round(((service.originalPrice - service.price.amount) / service.originalPrice) * 100) : 0;
+
     card.innerHTML = `
         <div class="service-header">
             <h3>${service.name}</h3>
             <span class="service-type">${service.type}</span>
+            ${hasDiscount ? `<span class="discount-badge">${discountPercentage}% تخفیف</span>` : ''}
         </div>
         <div class="service-specs">
             <div class="spec-item">
@@ -71,8 +106,9 @@ function createServiceCard(service) {
             </div>
         </div>
         <div class="service-price">
+            ${hasDiscount ? `<div class="original-price">${service.originalPrice.toLocaleString()} ${service.price.currency}</div>` : ''}
             <div class="price-amount">
-                ${service.price.amount} ${service.price.currency}
+                ${service.price.amount.toLocaleString()} ${service.price.currency}
             </div>
             <div class="price-period">
                 / ${service.price.billingCycle}
@@ -81,29 +117,33 @@ function createServiceCard(service) {
         <div class="service-actions">
             <button class="btn btn-primary add-to-cart" data-service-id="${service.id}">
                 <i class='bx bx-cart-add'></i>
-                Add to Cart
+                افزودن به سبد خرید
             </button>
             <button class="btn btn-secondary view-details" data-service-id="${service.id}">
                 <i class='bx bx-info-circle'></i>
-                Details
+                جزئیات
             </button>
         </div>
     `;
-    
+
     // Add event listeners
     card.querySelector('.add-to-cart').addEventListener('click', () => addToCart(service));
     card.querySelector('.view-details').addEventListener('click', () => viewServiceDetails(service));
-    
+
     return card;
 }
 
 // Render pagination
 function renderPagination(pagination) {
     const paginationContainer = document.querySelector('.pagination');
+    if (!paginationContainer) return;
+
     paginationContainer.innerHTML = '';
-    
+
     const { currentPage, totalPages } = pagination;
-    
+
+    if (totalPages <= 1) return;
+
     // Previous button
     if (currentPage > 1) {
         const prevButton = document.createElement('button');
@@ -112,16 +152,19 @@ function renderPagination(pagination) {
         prevButton.addEventListener('click', () => loadServices(currentPage - 1));
         paginationContainer.appendChild(prevButton);
     }
-    
+
     // Page numbers
-    for (let i = 1; i <= totalPages; i++) {
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+
+    for (let i = startPage; i <= endPage; i++) {
         const pageButton = document.createElement('button');
         pageButton.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
         pageButton.textContent = i;
         pageButton.addEventListener('click', () => loadServices(i));
         paginationContainer.appendChild(pageButton);
     }
-    
+
     // Next button
     if (currentPage < totalPages) {
         const nextButton = document.createElement('button');
@@ -135,31 +178,102 @@ function renderPagination(pagination) {
 // Add service to cart
 async function addToCart(service) {
     try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            showToast('error', 'لطفا ابتدا وارد حساب کاربری خود شوید');
+            window.location.href = '/login.html';
+            return;
+        }
+
         const response = await fetch('/api/cart', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
                 serviceId: service.id,
                 quantity: 1
             })
         });
-        
-        if (!response.ok) throw new Error('Failed to add service to cart');
-        
-        showToast('success', 'Service added to cart');
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to add service to cart');
+        }
+
+        const data = await response.json();
+        showToast('success', 'خدمت با موفقیت به سبد خرید اضافه شد');
         updateCartCount();
+
+        // Update cart icon with animation
+        const cartIcon = document.getElementById('cart-icon');
+        if (cartIcon) {
+            cartIcon.classList.add('cart-added');
+            setTimeout(() => cartIcon.classList.remove('cart-added'), 1000);
+        }
     } catch (error) {
-        showToast('error', 'Failed to add service to cart');
+        showToast('error', `خطا در افزودن به سبد خرید: ${error.message}`);
+        console.error('Error adding to cart:', error);
     }
 }
 
 // View service details
 function viewServiceDetails(service) {
+    // Store service data in session storage for the details page
+    sessionStorage.setItem('selectedService', JSON.stringify(service));
+
     // Redirect to service details page
     window.location.href = `/service-details.html?id=${service.id}`;
+}
+
+// Initialize search functionality
+function initializeSearch() {
+    const searchInput = document.querySelector('.search-input');
+    if (!searchInput) return;
+
+    let searchTimeout;
+
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+
+        searchTimeout = setTimeout(() => {
+            const searchTerm = e.target.value.trim();
+            if (searchTerm.length >= 2 || searchTerm.length === 0) {
+                loadServices(1, 12, { search: searchTerm });
+            }
+        }, 500);
+    });
+}
+
+// Initialize filters
+function initializeFilters() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const filterType = btn.dataset.filter;
+            const filterValue = btn.dataset.value;
+
+            // Toggle active state
+            btn.classList.toggle('active');
+
+            // Get all active filters
+            const activeFilters = {};
+            document.querySelectorAll('.filter-btn.active').forEach(activeBtn => {
+                const type = activeBtn.dataset.filter;
+                const value = activeBtn.dataset.value;
+
+                if (!activeFilters[type]) {
+                    activeFilters[type] = [];
+                }
+                activeFilters[type].push(value);
+            });
+
+            // Apply filters
+            loadServices(1, 12, activeFilters);
+        });
+    });
 }
 
 // Initialize cart icon
@@ -176,19 +290,26 @@ function initializeCartIcon() {
 // Update cart count
 async function updateCartCount() {
     try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
         const response = await fetch('/api/cart/count', {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${token}`
             }
         });
-        
+
         if (!response.ok) throw new Error('Failed to get cart count');
-        
+
         const data = await response.json();
         const cartIcon = document.getElementById('cart-icon');
-        
+
         if (cartIcon && data.count > 0) {
             cartIcon.setAttribute('data-count', data.count);
+            cartIcon.classList.add('has-items');
+        } else if (cartIcon) {
+            cartIcon.removeAttribute('data-count');
+            cartIcon.classList.remove('has-items');
         }
     } catch (error) {
         console.error('Failed to update cart count:', error);
@@ -213,14 +334,33 @@ function hideLoading() {
 
 // Show toast notification
 function showToast(type, message) {
-    const toast = document.querySelector('.toast');
-    if (toast) {
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        toast.style.display = 'block';
-        
-        setTimeout(() => {
-            toast.style.display = 'none';
-        }, 3000);
-    }
+    const toastContainer = document.querySelector('.toast');
+    if (!toastContainer) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast-message ${type}`;
+    toast.innerHTML = `
+        <i class='bx ${type === 'success' ? 'bx-check-circle' : type === 'error' ? 'bx-x-circle' : 'bx-info-circle'}'></i>
+        <span>${message}</span>
+    `;
+
+    toastContainer.appendChild(toast);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        toast.remove();
+    }, 5000);
+
+    // Remove on click
+    toast.addEventListener('click', () => {
+        toast.remove();
+    });
 }
+
+// Export functions for use in other modules
+window.ServicesModule = {
+    loadServices,
+    addToCart,
+    viewServiceDetails,
+    updateCartCount
+};

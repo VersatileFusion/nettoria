@@ -119,8 +119,8 @@ class TermsManager {
       
       <div class="terms-content">
         ${this.termsContent.sections
-          .map(
-            (section, index) => `
+        .map(
+          (section, index) => `
           <div class="terms-section" id="section-${index}">
             <h2>${section.title}</h2>
             <div class="section-content">
@@ -128,8 +128,8 @@ class TermsManager {
             </div>
           </div>
         `
-          )
-          .join("")}
+        )
+        .join("")}
       </div>
       
       <div class="terms-footer">

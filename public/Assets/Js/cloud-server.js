@@ -32,6 +32,80 @@ document.querySelectorAll(".navbar a").forEach((link) => {
   });
 });
 
+// Global variables for cloud server configuration
+let currentValues = {
+  location: "iran",
+  os: "linux",
+  cpu: 2,
+  ram: 4096,
+  disk: 25
+};
+
+let sliderConfig = {
+  cpu: {
+    values: [8, 6, 4, 2, 1],
+    unit: "Core",
+    prices: [30000, 22000, 15000, 8000, 4500],
+    initialIndex: 3 // 2 Core
+  },
+  ram: {
+    values: [16384, 8192, 4096, 2048, 1024],
+    unit: "MB",
+    prices: [32000, 17000, 9000, 5500, 3000],
+    initialIndex: 2 // 4096 MB
+  },
+  disk: {
+    values: [200, 100, 50, 25, 15],
+    unit: "GB",
+    prices: [20000, 11000, 6000, 3500, 2000],
+    initialIndex: 3 // 25 GB
+  }
+};
+
+// API Integration Functions
+async function getCloudServerPricing() {
+  try {
+    const response = await fetch('/api/cloud-server/pricing');
+    if (!response.ok) throw new Error('Failed to fetch pricing');
+    const data = await response.json();
+    return data.data.pricing;
+  } catch (error) {
+    console.error('Error fetching pricing:', error);
+    return null;
+  }
+}
+
+async function createCloudServer(serverData) {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      Alert('خطا', 'لطفا ابتدا وارد حساب کاربری خود شوید', 3000, 'error');
+      return null;
+    }
+
+    const response = await fetch('/api/cloud-server', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(serverData)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to create server');
+    }
+
+    const data = await response.json();
+    return data.data.server;
+  } catch (error) {
+    console.error('Error creating cloud server:', error);
+    Alert('خطا', error.message, 3000, 'error');
+    return null;
+  }
+}
+
 // Wait for DOM to be fully loaded
 document.addEventListener("DOMContentLoaded", function () {
   const serverCards = document.querySelectorAll(".server-card");
@@ -120,10 +194,10 @@ document.addEventListener("DOMContentLoaded", function () {
   // Update price initially
   updateTotalPrice();
 
-  // Handle order button click
+  // Handle order button click with backend integration
   const orderBtn = document.querySelector(".order-btn");
   if (orderBtn) {
-    orderBtn.addEventListener("click", function () {
+    orderBtn.addEventListener("click", async function () {
       const ramValue = sliderConfig.ram.values[currentValues.ram];
       const diskValue = sliderConfig.disk.values[currentValues.disk];
       const cpuValue = sliderConfig.cpu.values[currentValues.cpu];
@@ -132,41 +206,85 @@ document.addEventListener("DOMContentLoaded", function () {
       const priceText = document.getElementById("total-price").textContent;
       const price = parseInt(priceText.replace(/[^0-9]/g, ""));
 
-      // Create service summary with all details
-      const serviceSummary = {
-        name: `سرور ابری ${currentValues.location} - ${currentValues.os}`,
+      // Check if user is logged in
+      const token = localStorage.getItem('token');
+      if (!token) {
+        Alert('خطا', 'لطفا ابتدا وارد حساب کاربری خود شوید', 3000, 'error');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Create server data for backend
+      const serverData = {
+        name: `cloud-server-${Date.now()}`,
+        location: currentValues.location,
         specs: {
-          ram: `${ramValue} ${sliderConfig.ram.unit}`,
-          disk: `${diskValue} ${sliderConfig.disk.unit}`,
-          cpu: `${cpuValue} ${sliderConfig.cpu.unit}`,
-        },
-        price: price,
-        extras: {
-          datacenter: currentValues.location,
-          os: currentValues.os,
-          ram: ramValue,
-          disk: diskValue,
           cpu: cpuValue,
-        },
+          ram: ramValue,
+          storage: diskValue,
+          os: currentValues.os
+        }
       };
 
-      // Add to cart using the cart module
-      if (typeof cart !== "undefined") {
-        const serviceCode = `CLOUD-${Date.now()}`;
-        cart.addItem(
-          serviceSummary.name,
-          serviceCode,
-          1,
-          price,
-          "cloud-server",
-          serviceSummary.extras
-        );
+      // Show loading state
+      orderBtn.disabled = true;
+      orderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال ایجاد سرور...';
 
-        // Redirect directly to cart page
-        window.location.href = "cart.html";
-      } else {
-        // Fallback if cart is not available
-        alert("سرویس با موفقیت به سبد خرید اضافه شد.");
+      try {
+        // Create cloud server via API
+        const server = await createCloudServer(serverData);
+
+        if (server) {
+          // Create service summary with all details
+          const serviceSummary = {
+            name: `سرور ابری ${currentValues.location} - ${currentValues.os}`,
+            specs: {
+              ram: `${ramValue} ${sliderConfig.ram.unit}`,
+              disk: `${diskValue} ${sliderConfig.disk.unit}`,
+              cpu: `${cpuValue} ${sliderConfig.cpu.unit}`,
+            },
+            price: price,
+            extras: {
+              datacenter: currentValues.location,
+              os: currentValues.os,
+              ram: ramValue,
+              disk: diskValue,
+              cpu: cpuValue,
+              serverId: server.id
+            },
+          };
+
+          // Add to cart using the cart module
+          if (typeof cart !== "undefined") {
+            const serviceCode = `CLOUD-${server.id}`;
+            cart.addItem(
+              serviceSummary.name,
+              serviceCode,
+              1,
+              price,
+              "cloud-server",
+              serviceSummary.extras
+            );
+
+            Alert('موفقیت', 'سرور ابری با موفقیت ایجاد و به سبد خرید اضافه شد', 3000, 'success');
+
+            // Redirect to cart page after a short delay
+            setTimeout(() => {
+              window.location.href = "cart.html";
+            }, 1500);
+          } else {
+            // Fallback if cart is not available
+            Alert('موفقیت', 'سرور ابری با موفقیت ایجاد شد', 3000, 'success');
+            window.location.href = "cart.html";
+          }
+        }
+      } catch (error) {
+        console.error('Error in order process:', error);
+        Alert('خطا', 'خطا در ایجاد سرور ابری', 3000, 'error');
+      } finally {
+        // Reset button state
+        orderBtn.disabled = false;
+        orderBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> سفارش سرور';
       }
     });
   }
@@ -201,62 +319,28 @@ function Alert(title, message, time, type) {
   const messageElement = document.createElement("div");
   messageElement.innerText = message;
   messageElement.style.fontSize = "14px";
+  messageElement.style.opacity = "0.8";
+
+  const closeBtn = document.createElement("div");
+  closeBtn.className = "close-btn";
+  closeBtn.innerHTML = "×";
+  closeBtn.style.fontSize = "20px";
+  closeBtn.style.cursor = "pointer";
 
   main.appendChild(titleElement);
   main.appendChild(messageElement);
   wrapper.appendChild(main);
+  wrapper.appendChild(closeBtn);
   toastContainer.appendChild(wrapper);
 
-  anime({
-    targets: `#wrapper-${number}`,
-    translateX: [-300, 0],
-    duration: 750,
-    easing: "spring(1, 70, 100, 10)",
+  closeBtn.addEventListener("click", () => {
+    wrapper.remove();
   });
 
   setTimeout(() => {
-    anime({
-      targets: `#wrapper-${number}`,
-      translateX: [0, 300],
-      duration: 750,
-      easing: "spring(1, 80, 100, 0)",
-    });
-    setTimeout(() => {
-      wrapper.remove();
-    }, 750);
+    wrapper.remove();
   }, time);
 }
-
-// Slider configuration
-const sliderConfig = {
-  ram: {
-    values: [16384, 8192, 4096, 2048, 1024],
-    unit: "MB",
-    prices: [32000, 17000, 9000, 5500, 3000],
-    initialIndex: 2, // 4096 MB
-  },
-  disk: {
-    values: [200, 100, 50, 25, 15],
-    unit: "GB",
-    prices: [20000, 11000, 6000, 3500, 2000],
-    initialIndex: 3, // 25 GB
-  },
-  cpu: {
-    values: [8, 6, 4, 2, 1],
-    unit: "Core",
-    prices: [30000, 22000, 15000, 8000, 4500],
-    initialIndex: 3, // 2 Core
-  },
-};
-
-// Current values
-let currentValues = {
-  ram: sliderConfig.ram.initialIndex,
-  disk: sliderConfig.disk.initialIndex,
-  cpu: sliderConfig.cpu.initialIndex,
-  location: "ایران",
-  os: "لینوکس",
-};
 
 // Initialize slider functionality
 function initSlider(type, values, unit) {

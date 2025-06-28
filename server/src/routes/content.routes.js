@@ -1,233 +1,239 @@
 const express = require("express");
 const router = express.Router();
+const contentController = require("../controllers/content.controller");
 const authMiddleware = require("../middleware/auth.middleware");
 const { body, validationResult } = require("express-validator");
-const Content = require("../models/content");
 
-// Validation middleware
-const validateContent = [
-  body("title").trim().notEmpty().withMessage("Title is required"),
-  body("content").trim().notEmpty().withMessage("Content is required"),
-  body("type").trim().notEmpty().withMessage("Content type is required"),
-  body("slug").trim().notEmpty().withMessage("Slug is required"),
-];
+/**
+ * @swagger
+ * /api/content/{type}:
+ *   get:
+ *     summary: Get content by type
+ *     tags: [Content]
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Content type (terms, privacy, about-us, etc.)
+ *     responses:
+ *       200:
+ *         description: Content retrieved successfully
+ *       404:
+ *         description: Content not found
+ */
+router.get("/:type", contentController.getContentByType);
 
-// Get all content
-router.get("/", async (req, res) => {
-  try {
-    const content = await Content.findAll({
-      where: { isActive: true },
-      order: [["updatedAt", "DESC"]],
-    });
-    res.json({ success: true, data: content });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: {
-        message: "Error fetching content",
-        code: "INTERNAL_ERROR",
-      },
-    });
-  }
-});
-
-// Get content by slug
-router.get("/:slug", async (req, res) => {
-  try {
-    const content = await Content.findOne({
-      where: {
-        slug: req.params.slug,
-        isActive: true,
-      },
-    });
-
-    if (!content) {
-      return res.status(404).json({
-        success: false,
-        error: {
-          message: "Content not found",
-          code: "NOT_FOUND",
-        },
-      });
-    }
-
-    res.json({ success: true, data: content });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: {
-        message: "Error fetching content",
-        code: "INTERNAL_ERROR",
-      },
-    });
-  }
-});
-
-// Create content (admin only)
-router.post(
-  "/",
+/**
+ * @swagger
+ * /api/content:
+ *   get:
+ *     summary: Get all content (admin only)
+ *     tags: [Content]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all content
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin access required
+ */
+router.get("/",
   authMiddleware.protect,
   authMiddleware.isAdmin,
-  validateContent,
-  async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          error: {
-            message: "Validation error",
-            code: "INVALID_INPUT",
-            details: errors.array(),
-          },
-        });
-      }
-
-      const content = await Content.create({
-        title: req.body.title,
-        content: req.body.content,
-        type: req.body.type,
-        slug: req.body.slug,
-        metaDescription: req.body.metaDescription,
-        metaKeywords: req.body.metaKeywords,
-        isActive: true,
-      });
-
-      res.status(201).json({ success: true, data: content });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        error: {
-          message: "Error creating content",
-          code: "INTERNAL_ERROR",
-        },
-      });
-    }
-  }
+  contentController.getAllContent
 );
 
-// Update content (admin only)
-router.put(
-  "/:id",
+/**
+ * @swagger
+ * /api/content:
+ *   post:
+ *     summary: Create or update content (admin only)
+ *     tags: [Content]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - type
+ *               - title
+ *               - content
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 description: Content type
+ *               title:
+ *                 type: string
+ *                 description: Content title
+ *               content:
+ *                 type: string
+ *                 description: Content body
+ *     responses:
+ *       201:
+ *         description: Content created successfully
+ *       200:
+ *         description: Content updated successfully
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin access required
+ */
+router.post("/",
   authMiddleware.protect,
   authMiddleware.isAdmin,
-  validateContent,
-  async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          error: {
-            message: "Validation error",
-            code: "INVALID_INPUT",
-            details: errors.array(),
-          },
-        });
-      }
-
-      const content = await Content.findByPk(req.params.id);
-      if (!content) {
-        return res.status(404).json({
-          success: false,
-          error: {
-            message: "Content not found",
-            code: "NOT_FOUND",
-          },
-        });
-      }
-
-      await content.update({
-        title: req.body.title,
-        content: req.body.content,
-        type: req.body.type,
-        slug: req.body.slug,
-        metaDescription: req.body.metaDescription,
-        metaKeywords: req.body.metaKeywords,
-      });
-
-      res.json({ success: true, data: content });
-    } catch (error) {
-      res.status(500).json({
+  [
+    body('type').notEmpty().withMessage('Content type is required'),
+    body('title').notEmpty().withMessage('Content title is required'),
+    body('content').notEmpty().withMessage('Content body is required')
+  ],
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
         success: false,
-        error: {
-          message: "Error updating content",
-          code: "INTERNAL_ERROR",
-        },
+        message: "Validation error",
+        errors: errors.array()
       });
     }
-  }
+    next();
+  },
+  contentController.createOrUpdateContent
 );
 
-// Delete content (admin only)
-router.delete(
-  "/:id",
+/**
+ * @swagger
+ * /api/content/{id}:
+ *   delete:
+ *     summary: Delete content (admin only)
+ *     tags: [Content]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Content ID
+ *     responses:
+ *       200:
+ *         description: Content deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin access required
+ *       404:
+ *         description: Content not found
+ */
+router.delete("/:id",
   authMiddleware.protect,
   authMiddleware.isAdmin,
-  async (req, res) => {
-    try {
-      const content = await Content.findByPk(req.params.id);
-      if (!content) {
-        return res.status(404).json({
-          success: false,
-          error: {
-            message: "Content not found",
-            code: "NOT_FOUND",
-          },
-        });
-      }
-
-      await content.update({ isActive: false });
-      res.json({ success: true, message: "Content deleted successfully" });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        error: {
-          message: "Error deleting content",
-          code: "INTERNAL_ERROR",
-        },
-      });
-    }
-  }
+  contentController.deleteContent
 );
 
-// Example dynamic content endpoints for static pages
-router.get('/about-us', (req, res) => {
-  res.json({ content: 'This is the dynamic About Us content from the backend.' });
-});
+/**
+ * @swagger
+ * /api/content/terms:
+ *   get:
+ *     summary: Get terms and conditions
+ *     tags: [Content]
+ *     responses:
+ *       200:
+ *         description: Terms and conditions
+ */
+router.get("/terms", contentController.getTerms);
 
-router.get('/layout', (req, res) => {
-  res.json({ content: 'Dynamic layout content from backend.' });
-});
+/**
+ * @swagger
+ * /api/content/privacy:
+ *   get:
+ *     summary: Get privacy policy
+ *     tags: [Content]
+ *     responses:
+ *       200:
+ *         description: Privacy policy
+ */
+router.get("/privacy", contentController.getPrivacy);
 
-router.get('/success-pass', (req, res) => {
-  res.json({ content: 'Your password was successfully changed! (from backend)' });
-});
+/**
+ * @swagger
+ * /api/content/about-us:
+ *   get:
+ *     summary: Get about us page content
+ *     tags: [Content]
+ *     responses:
+ *       200:
+ *         description: About us content
+ */
+router.get("/about-us", contentController.getAboutUs);
 
-router.get('/index', (req, res) => {
-  res.json({ content: 'Welcome to Nettoria! (dynamic content from backend)' });
-});
+/**
+ * @swagger
+ * /api/content/contact-us:
+ *   get:
+ *     summary: Get contact us page content
+ *     tags: [Content]
+ *     responses:
+ *       200:
+ *         description: Contact us content
+ */
+router.get("/contact-us", contentController.getContactUs);
 
-router.get('/contact-us', (req, res) => {
-  res.json({ content: 'Contact us at info@nettoria.com or call 021-12345678. (Dynamic content from backend)' });
-});
+/**
+ * @swagger
+ * /api/content/faq:
+ *   get:
+ *     summary: Get FAQ page content
+ *     tags: [Content]
+ *     responses:
+ *       200:
+ *         description: FAQ content
+ */
+router.get("/faq", contentController.getFAQ);
 
-router.get('/faq', (req, res) => {
-  res.json({ content: 'Frequently Asked Questions: (Dynamic content from backend)' });
-});
+/**
+ * @swagger
+ * /api/content/success-password:
+ *   get:
+ *     summary: Get success password page content
+ *     tags: [Content]
+ *     responses:
+ *       200:
+ *         description: Success password page content
+ */
+router.get("/success-password", contentController.getSuccessPassword);
 
-router.get('/terms', (req, res) => {
-  res.json({ content: 'Terms and Conditions: (Dynamic content from backend)' });
-});
+/**
+ * @swagger
+ * /api/content/layout:
+ *   get:
+ *     summary: Get layout content (header, footer, etc.)
+ *     tags: [Content]
+ *     responses:
+ *       200:
+ *         description: Layout content
+ */
+router.get("/layout", contentController.getLayout);
 
-router.get('/privacy', (req, res) => {
-  res.json({ content: 'Privacy Policy: (Dynamic content from backend)' });
-});
-
-router.get('/support', (req, res) => {
-  res.json({ content: 'Support: For help, contact our 24/7 support team at support@nettoria.com or open a ticket in your dashboard. (Dynamic content from backend)' });
-});
-
-// Add more endpoints for other static pages as needed
+/**
+ * @swagger
+ * /api/content/index:
+ *   get:
+ *     summary: Get index page content
+ *     tags: [Content]
+ *     responses:
+ *       200:
+ *         description: Index page content
+ */
+router.get("/index", contentController.getIndex);
 
 module.exports = router;

@@ -234,9 +234,11 @@ try {
     const contactRoutes = require("./routes/contact.routes");
     const cloudHostRoutes = require("./routes/cloud-host.routes");
     const virtualServerRoutes = require("./routes/virtual-server.routes");
+    const cloudServerRoutes = require("./routes/cloud-server.routes");
     const contentRoutes = require("./routes/content.routes");
     const blogPostRoutes = require("./routes/blogPost.routes");
     const commentRoutes = require("./routes/comment.routes");
+    const adminRoutes = require("./routes/admin.routes");
 
     console.log("All routes imported successfully, now mounting...");
 
@@ -279,12 +281,16 @@ try {
     console.log("Cloud host routes mounted at /api/cloud-host");
     app.use("/api/virtual-server", virtualServerRoutes);
     console.log("Virtual server routes mounted at /api/virtual-server");
+    app.use("/api/cloud-server", cloudServerRoutes);
+    console.log("Cloud server routes mounted at /api/cloud-server");
     app.use("/api/content", contentRoutes);
     console.log("Content routes mounted at /api/content");
     app.use("/api/blog-posts", blogPostRoutes);
     console.log("Blog post routes mounted at /api/blog-posts");
     app.use("/api/comments", commentRoutes);
     console.log("Comment routes mounted at /api/comments");
+    app.use("/api/admin", adminRoutes);
+    console.log("Admin routes mounted at /api/admin");
 
     console.log("API routes loaded and mounted successfully");
   } catch (error) {
