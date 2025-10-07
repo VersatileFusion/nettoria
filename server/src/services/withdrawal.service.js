@@ -1,7 +1,7 @@
 const { Withdrawal, PaymentMethod, User, Wallet } = require('../models');
 const { Op } = require('sequelize');
 const { sendEmail } = require('../utils/email');
-const { createNotification } = require('../utils/notifications');
+const NotificationUtil = require('../utils/notification.util');
 
 class WithdrawalService {
   static async getHistory(userId, page = 1, limit = 10) {
@@ -234,7 +234,7 @@ class WithdrawalService {
 
   static async notifyAdmin(withdrawal) {
     // Create admin notification
-    await createNotification({
+    await NotificationUtil.sendNotification({
       type: 'withdrawal_request',
       title: 'New Withdrawal Request',
       message: `New withdrawal request for ${withdrawal.amount}`,
@@ -259,7 +259,7 @@ class WithdrawalService {
     if (!user) return;
 
     // Create user notification
-    await createNotification({
+    await NotificationUtil.sendNotification({
       userId: user.id,
       type: 'withdrawal_status',
       title: 'Withdrawal Status Update',

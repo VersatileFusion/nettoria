@@ -1,7 +1,7 @@
 const { Contact } = require("../models");
 const ApiError = require("../utils/ApiError");
 const logger = require("../utils/logger");
-const emailService = require("../services/email.service");
+const emailService = require("../utils/email");
 
 const contactController = {
   /**

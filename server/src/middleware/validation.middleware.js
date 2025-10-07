@@ -16,6 +16,16 @@ const validate = (schema) => (req, res, next) => {
     next();
 };
 
+// Express-validator result handler
+const validateRequest = (req, res, next) => {
+    const errors = require('express-validator').validationResult(req);
+    if (!errors.isEmpty()) {
+        const errorMessages = errors.array().map(error => error.msg).join('. ');
+        return next(new ApiError(errorMessages, 400));
+    }
+    next();
+};
+
 // Common validation schemas
 const schemas = {
     // User schemas
@@ -54,22 +64,22 @@ const schemas = {
         plan: Joi.string().required(),
         os: Joi.string().when('type', {
             is: 'vm',
-            then: Joi.required(),
+            then: Joi.string().required(),
             otherwise: Joi.forbidden()
         }),
         cpu: Joi.number().when('type', {
             is: 'vm',
-            then: Joi.required().min(1),
+            then: Joi.number().required().min(1),
             otherwise: Joi.forbidden()
         }),
         ram: Joi.number().when('type', {
             is: 'vm',
-            then: Joi.required().min(1),
+            then: Joi.number().required().min(1),
             otherwise: Joi.forbidden()
         }),
         storage: Joi.number().when('type', {
             is: 'vm',
-            then: Joi.required().min(1),
+            then: Joi.number().required().min(1),
             otherwise: Joi.forbidden()
         })
     }),
@@ -92,5 +102,6 @@ const schemas = {
 
 module.exports = {
     validate,
+    validateRequest,
     schemas
 }; 

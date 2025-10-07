@@ -1,6 +1,6 @@
 const { BlogPost, Comment, Category, User } = require('../models');
 const { Op } = require('sequelize');
-const { createNotification } = require('../utils/notifications');
+const NotificationUtil = require('../utils/notification.util');
 
 class BlogService {
   static async getPosts(page = 1, limit = 10, category = null, search = null) {
@@ -223,7 +223,7 @@ class BlogService {
 
     // Notify post author
     if (post.userId !== userId) {
-      await createNotification({
+      await NotificationUtil.sendNotification({
         userId: post.userId,
         type: 'new_comment',
         title: 'New Comment',
@@ -236,7 +236,7 @@ class BlogService {
     if (parentId) {
       const parentComment = await Comment.findByPk(parentId, { include: [User] });
       if (parentComment && parentComment.userId !== userId) {
-        await createNotification({
+        await NotificationUtil.sendNotification({
           userId: parentComment.userId,
           type: 'comment_reply',
           title: 'New Reply',
@@ -319,7 +319,7 @@ class BlogService {
 
     // Create notifications for each subscriber
     for (const subscriber of subscribers) {
-      await createNotification({
+      await NotificationUtil.sendNotification({
         userId: subscriber.id,
         type: 'new_blog_post',
         title: 'New Blog Post',

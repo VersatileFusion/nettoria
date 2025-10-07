@@ -16,15 +16,24 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
   <script src="./Assets/Js/utils.js"></script>
   <script src="./Assets/Js/api-client.js"></script>
-  <script src="./Assets/Js/vcenter-client.js"></script>
-  <script src="./Assets/Js/task-monitor.js"></script>
-  <script src="./Assets/Js/vm-monitor.js"></script>
   <script src="./Assets/Js/cart-new.js"></script>
   <script src="./Assets/Js/virtual-server.js" defer></script>
   <script src="Assets/Js/network-manager.js"></script>
   <script src="Assets/Js/snapshot-manager.js"></script>
   <script src="Assets/Js/resource-manager.js"></script>
   <script src="./Assets/Js/vm-scaler.js"></script>
+  <script type="module">
+    import vmService from './Assets/js/services/vm.service.js';
+    import RouteGuard from './Assets/js/utils/routeGuard.js';
+    
+    // Make vmService available globally for other scripts
+    window.vmService = vmService;
+    
+    // Initialize route protection
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Virtual server page loaded with route protection');
+    });
+  </script>
 </head>
 
 <body>

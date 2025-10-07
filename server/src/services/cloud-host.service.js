@@ -1,6 +1,6 @@
 const { CloudServer, CloudBackup, FirewallRule, User } = require('../models');
 const { Op } = require('sequelize');
-const { createNotification } = require('../utils/notifications');
+const NotificationUtil = require('../utils/notification.util');
 const { calculateServerPrice } = require('../utils/pricing');
 const { cloudAPI } = require('../utils/cloud-api');
 
@@ -76,7 +76,7 @@ class CloudHostService {
         });
 
         // Create notification
-        await createNotification({
+        await NotificationUtil.sendNotification({
             userId,
             type: 'server_created',
             title: 'Server Created',
@@ -286,7 +286,7 @@ class CloudHostService {
         await server.destroy();
 
         // Create notification
-        await createNotification({
+        await NotificationUtil.sendNotification({
             userId,
             type: 'server_deleted',
             title: 'Server Deleted',

@@ -1,6 +1,6 @@
 const { Domain, DNSRecord, User } = require('../models');
 const { Op } = require('sequelize');
-const { createNotification } = require('../utils/notifications');
+const NotificationUtil = require('../utils/notification.util');
 const { calculateDomainPrice } = require('../utils/pricing');
 const { registrarAPI } = require('../utils/registrar-api');
 
@@ -74,7 +74,7 @@ class DomainService {
     });
 
     // Create notification
-    await createNotification({
+    await NotificationUtil.sendNotification({
       userId,
       type: 'domain_registered',
       title: 'Domain Registered',
@@ -143,7 +143,7 @@ class DomainService {
     });
 
     // Create notification
-    await createNotification({
+    await NotificationUtil.sendNotification({
       userId,
       type: 'domain_renewed',
       title: 'Domain Renewed',
@@ -176,7 +176,7 @@ class DomainService {
     });
 
     // Create notification
-    await createNotification({
+    await NotificationUtil.sendNotification({
       userId,
       type: 'domain_transfer',
       title: 'Domain Transfer Initiated',

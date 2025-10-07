@@ -1,0 +1,62 @@
+name: Deploy to Ubuntu Server
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        npm ci
+        cd server && npm ci && cd ..
+        
+    - name: Run tests
+      run: |
+        npm test
+        cd server && npm test && cd ..
+        
+    - name: Deploy to Ubuntu Server
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          # Navigate to application directory
+          cd /var/www/nettoria
+          
+          # Pull latest changes
+          git pull origin main
+          
+          # Install dependencies
+          npm ci --only=production
+          cd server && npm ci --only=production && cd ..
+          
+          # Restart application
+          pm2 restart nettoria-app
+          
+          # Check status
+          pm2 status
+          
+    - name: Health Check
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      run: |
+        sleep 30
+        curl -f http://${{ secrets.HOST }}/health || exit 1 

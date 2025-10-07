@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
-const { authenticateToken } = require("../middleware/auth");
+const { auth } = require("../middleware/auth");
 const { validateWithdrawal } = require("../validations/withdrawal.validation");
 const WithdrawalController = require("../controllers/withdrawal.controller");
 const WithdrawalService = require('../services/withdrawal.service');
@@ -9,7 +9,7 @@ const WithdrawalService = require('../services/withdrawal.service');
 // Get withdrawal history
 router.get(
   "/history",
-  authenticateToken,
+  auth,
   [
     body('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
     body('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100')
@@ -33,7 +33,7 @@ router.get(
 // Request withdrawal
 router.post(
   "/request",
-  authenticateToken,
+  auth,
   [
     body('amount').isFloat({ min: 0.01 }).withMessage('Amount must be greater than 0'),
     body('paymentMethodId').isUUID().withMessage('Invalid payment method ID'),
@@ -63,7 +63,7 @@ router.post(
 // Get withdrawal status
 router.get(
   "/status/:withdrawalId",
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const { withdrawalId } = req.params;
@@ -78,7 +78,7 @@ router.get(
 // Cancel withdrawal request
 router.post(
   "/cancel/:withdrawalId",
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const { withdrawalId } = req.params;
@@ -92,7 +92,7 @@ router.post(
 
 // Get available payment methods
 router.get('/payment-methods',
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const methods = await WithdrawalService.getPaymentMethods(req.user.id);
@@ -105,7 +105,7 @@ router.get('/payment-methods',
 
 // Add payment method
 router.post('/payment-methods',
-  authenticateToken,
+  auth,
   [
     body('type').isIn(['bank', 'crypto', 'paypal']).withMessage('Invalid payment method type'),
     body('details').isObject().withMessage('Details must be an object')
@@ -128,7 +128,7 @@ router.post('/payment-methods',
 
 // Remove payment method
 router.delete('/payment-methods/:methodId',
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const { methodId } = req.params;
@@ -142,7 +142,7 @@ router.delete('/payment-methods/:methodId',
 
 // Get withdrawal limits
 router.get('/limits',
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const limits = await WithdrawalService.getWithdrawalLimits(req.user.id);

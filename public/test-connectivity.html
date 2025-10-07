@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست اتصال - نتوریا</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-online {
+            background: #28a745;
+        }
+        .status-offline {
+            background: #dc3545;
+        }
+        .status-unknown {
+            background: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 تست اتصال فرانت‌اند به بک‌اند</h1>
+    
+    <div class="test-section">
+        <h2>🔌 تست اتصال پایه</h2>
+        <button class="test-button" onclick="testBasicConnection()">تست اتصال API</button>
+        <button class="test-button" onclick="testDatabaseStatus()">تست وضعیت دیتابیس</button>
+        <div id="basic-connection-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔐 تست احراز هویت</h2>
+        <button class="test-button" onclick="testAuthEndpoints()">تست نقاط احراز هویت</button>
+        <button class="test-button" onclick="testProtectedRoutes()">تست مسیرهای محافظت شده</button>
+        <div id="auth-test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🖥️ تست سرویس‌های VM</h2>
+        <button class="test-button" onclick="testVMEndpoints()">تست نقاط VM</button>
+        <button class="test-button" onclick="testVCTemplates()">تست قالب‌های vCenter</button>
+        <div id="vm-test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>💰 تست سرویس‌های مالی</h2>
+        <button class="test-button" onclick="testWalletEndpoints()">تست نقاط کیف پول</button>
+        <button class="test-button" onclick="testPaymentEndpoints()">تست نقاط پرداخت</button>
+        <div id="financial-test-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 خلاصه وضعیت</h2>
+        <div id="status-summary"></div>
+    </div>
+
+    <script type="module">
+        import AuthService from './Assets/js/services/auth.service.js';
+        import vmService from './Assets/js/services/vm.service.js';
+        import walletService from './Assets/js/services/wallet.service.js';
+        import serviceService from './Assets/js/services/service.service.js';
+
+        // Make services available globally for testing
+        window.AuthService = AuthService;
+        window.vmService = vmService;
+        window.walletService = walletService;
+        window.serviceService = serviceService;
+
+        // Test basic API connection
+        window.testBasicConnection = async function() {
+            const resultDiv = document.getElementById('basic-connection-result');
+            resultDiv.innerHTML = '<div class="test-result info">در حال تست...</div>';
+            
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result success">
+                            <span class="status-indicator status-online"></span>
+                            اتصال API موفق: ${data.message}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="test-result error">
+                            <span class="status-indicator status-offline"></span>
+                            خطا در اتصال API: ${data.message || 'خطای نامشخص'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">
+                        <span class="status-indicator status-offline"></span>
+                        خطا در اتصال: ${error.message}
+                    </div>
+                `;
+            }
+        };
+
+        // Test database status
+        window.testDatabaseStatus = async function() {
+            const resultDiv = document.getElementById('basic-connection-result');
+            resultDiv.innerHTML = '<div class="test-result info">در حال تست دیتابیس...</div>';
+            
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                if (data.database?.connected) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result success">
+                            <span class="status-indicator status-online"></span>
+                            دیتابیس متصل: ${data.database.dialect} - ${data.database.host}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="test-result error">
+                            <span class="status-indicator status-offline"></span>
+                            دیتابیس قطع: ${data.database?.error || 'خطای نامشخص'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">
+                        <span class="status-indicator status-offline"></span>
+                        خطا در تست دیتابیس: ${error.message}
+                    </div>
+                `;
+            }
+        };
+
+        // Test authentication endpoints
+        window.testAuthEndpoints = async function() {
+            const resultDiv = document.getElementById('auth-test-result');
+            resultDiv.innerHTML = '<div class="test-result info">در حال تست نقاط احراز هویت...</div>';
+            
+            try {
+                const response = await fetch('/api/auth/demo');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result success">
+                            <span class="status-indicator status-online"></span>
+                            نقاط احراز هویت فعال: ${data.message}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="test-result error">
+                            <span class="status-indicator status-offline"></span>
+                            خطا در نقاط احراز هویت: ${data.message || 'خطای نامشخص'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">
+                        <span class="status-indicator status-offline"></span>
+                        خطا در تست احراز هویت: ${error.message}
+                    </div>
+                `;
+            }
+        };
+
+        // Test protected routes
+        window.testProtectedRoutes = async function() {
+            const resultDiv = document.getElementById('auth-test-result');
+            resultDiv.innerHTML = '<div class="test-result info">در حال تست مسیرهای محافظت شده...</div>';
+            
+            try {
+                const response = await fetch('/api/users/profile');
+                
+                if (response.status === 401) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result success">
+                            <span class="status-indicator status-online"></span>
+                            مسیرهای محافظت شده فعال - احراز هویت مورد نیاز
+                        </div>
+                    `;
+                } else if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result info">
+                            <span class="status-indicator status-unknown"></span>
+                            مسیر بدون احراز هویت قابل دسترسی است
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="test-result error">
+                            <span class="status-indicator status-offline"></span>
+                            خطا در تست مسیرهای محافظت شده: ${response.status}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">
+                        <span class="status-indicator status-offline"></span>
+                        خطا در تست مسیرهای محافظت شده: ${error.message}
+                    </div>
+                `;
+            }
+        };
+
+        // Test VM endpoints
+        window.testVMEndpoints = async function() {
+            const resultDiv = document.getElementById('vm-test-result');
+            resultDiv.innerHTML = '<div class="test-result info">در حال تست نقاط VM...</div>';
+            
+            try {
+                const response = await fetch('/api/vcenter/vms');
+                
+                if (response.status === 401) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result success">
+                            <span class="status-indicator status-online"></span>
+                            نقاط VM فعال - احراز هویت مورد نیاز
+                        </div>
+                    `;
+                } else if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result success">
+                            <span class="status-indicator status-online"></span>
+                            نقاط VM فعال و قابل دسترسی
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="test-result error">
+                            <span class="status-indicator status-offline"></span>
+                            خطا در نقاط VM: ${response.status}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">
+                        <span class="status-indicator status-offline"></span>
+                        خطا در تست نقاط VM: ${error.message}
+                    </div>
+                `;
+            }
+        };
+
+        // Test vCenter templates
+        window.testVCTemplates = async function() {
+            const resultDiv = document.getElementById('vm-test-result');
+            resultDiv.innerHTML = '<div class="test-result info">در حال تست قالب‌های vCenter...</div>';
+            
+            try {
+                const response = await fetch('/api/vcenter/templates');
+                
+                if (response.status === 401) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result success">
+                            <span class="status-indicator status-online"></span>
+                            قالب‌های vCenter فعال - احراز هویت مورد نیاز
+                        </div>
+                    `;
+                } else if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result success">
+                            <span class="status-indicator status-online"></span>
+                            قالب‌های vCenter فعال و قابل دسترسی
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="test-result error">
+                            <span class="status-indicator status-offline"></span>
+                            خطا در قالب‌های vCenter: ${response.status}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">
+                        <span class="status-indicator status-offline"></span>
+                        خطا در تست قالب‌های vCenter: ${error.message}
+                    </div>
+                `;
+            }
+        };
+
+        // Test wallet endpoints
+        window.testWalletEndpoints = async function() {
+            const resultDiv = document.getElementById('financial-test-result');
+            resultDiv.innerHTML = '<div class="test-result info">در حال تست نقاط کیف پول...</div>';
+            
+            try {
+                const response = await fetch('/api/wallet/balance');
+                
+                if (response.status === 401) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result success">
+                            <span class="status-indicator status-online"></span>
+                            نقاط کیف پول فعال - احراز هویت مورد نیاز
+                        </div>
+                    `;
+                } else if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result success">
+                            <span class="status-indicator status-online"></span>
+                            نقاط کیف پول فعال و قابل دسترسی
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="test-result error">
+                            <span class="status-indicator status-offline"></span>
+                            خطا در نقاط کیف پول: ${response.status}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">
+                        <span class="status-indicator status-offline"></span>
+                        خطا در تست نقاط کیف پول: ${error.message}
+                    </div>
+                `;
+            }
+        };
+
+        // Test payment endpoints
+        window.testPaymentEndpoints = async function() {
+            const resultDiv = document.getElementById('financial-test-result');
+            resultDiv.innerHTML = '<div class="test-result info">در حال تست نقاط پرداخت...</div>';
+            
+            try {
+                const response = await fetch('/api/payments/methods');
+                
+                if (response.status === 401) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result success">
+                            <span class="status-indicator status-online"></span>
+                            نقاط پرداخت فعال - احراز هویت مورد نیاز
+                        </div>
+                    `;
+                } else if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="test-result success">
+                            <span class="status-indicator status-online"></span>
+                            نقاط پرداخت فعال و قابل دسترسی
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="test-result error">
+                            <span class="status-indicator status-offline"></span>
+                            خطا در نقاط پرداخت: ${response.status}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">
+                        <span class="status-indicator status-offline"></span>
+                        خطا در تست نقاط پرداخت: ${error.message}
+                    </div>
+                `;
+            }
+        };
+
+        // Update status summary
+        function updateStatusSummary() {
+            const summaryDiv = document.getElementById('status-summary');
+            summaryDiv.innerHTML = `
+                <div class="test-result info">
+                    <h3>وضعیت فعلی:</h3>
+                    <p><span class="status-indicator status-online"></span> فرانت‌اند: فعال</p>
+                    <p><span class="status-indicator status-unknown"></span> بک‌اند: در حال تست</p>
+                    <p><span class="status-indicator status-unknown"></span> دیتابیس: در حال تست</p>
+                    <p><span class="status-indicator status-unknown"></span> احراز هویت: در حال تست</p>
+                    <p><span class="status-indicator status-unknown"></span> سرویس‌های VM: در حال تست</p>
+                    <p><span class="status-indicator status-unknown"></span> سرویس‌های مالی: در حال تست</p>
+                </div>
+            `;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStatusSummary();
+            console.log('صفحه تست اتصال بارگذاری شد');
+        });
+    </script>
+</body>
+</html> 

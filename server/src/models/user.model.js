@@ -1,137 +1,148 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/sequelize');
 const bcrypt = require('bcryptjs');
 
-const userSchema = new mongoose.Schema({
+console.log('Initializing User model...');
+
+const User = sequelize.define('User', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     firstName: {
-        type: String,
-        required: [true, 'نام الزامی است'],
-        trim: true
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'نام الزامی است'
+            }
+        }
     },
     lastName: {
-        type: String,
-        required: [true, 'نام خانوادگی الزامی است'],
-        trim: true
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'نام خانوادگی الزامی است'
+            }
+        }
     },
     email: {
-        type: String,
-        required: [true, 'ایمیل الزامی است'],
+        type: DataTypes.STRING,
+        allowNull: false,
         unique: true,
-        lowercase: true,
-        trim: true,
-        match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'لطفا یک ایمیل معتبر وارد کنید']
+        validate: {
+            isEmail: {
+                msg: 'لطفا یک ایمیل معتبر وارد کنید'
+            },
+            notEmpty: {
+                msg: 'ایمیل الزامی است'
+            }
+        }
     },
     phone: {
-        type: String,
-        required: [true, 'شماره موبایل الزامی است'],
+        type: DataTypes.STRING,
+        allowNull: false,
         unique: true,
-        trim: true,
-        match: [/^09[0-9]{9}$/, 'لطفا یک شماره موبایل معتبر وارد کنید']
+        validate: {
+            is: {
+                args: /^09[0-9]{9}$/,
+                msg: 'لطفا یک شماره موبایل معتبر وارد کنید'
+            },
+            notEmpty: {
+                msg: 'شماره موبایل الزامی است'
+            }
+        }
     },
     password: {
-        type: String,
-        required: [true, 'رمز عبور الزامی است'],
-        minlength: [8, 'رمز عبور باید حداقل ۸ کاراکتر باشد'],
-        select: false
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            len: {
+                args: [8, 255],
+                msg: 'رمز عبور باید حداقل ۸ کاراکتر باشد'
+            },
+            notEmpty: {
+                msg: 'رمز عبور الزامی است'
+            }
+        }
     },
     company: {
-        type: String,
-        trim: true
+        type: DataTypes.STRING,
+        allowNull: true
     },
     address: {
-        type: String,
-        trim: true
+        type: DataTypes.TEXT,
+        allowNull: true
     },
     role: {
-        type: String,
-        enum: ['user', 'admin'],
-        default: 'user'
+        type: DataTypes.ENUM('user', 'admin'),
+        defaultValue: 'user'
     },
     status: {
-        type: String,
-        enum: ['active', 'inactive', 'suspended'],
-        default: 'active'
+        type: DataTypes.ENUM('active', 'inactive', 'suspended'),
+        defaultValue: 'active'
     },
     twoFactorEnabled: {
-        type: Boolean,
-        default: false
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     },
     twoFactorSecret: {
-        type: String,
-        select: false
+        type: DataTypes.STRING,
+        allowNull: true
     },
     notificationSettings: {
-        notify_email: {
-            type: Boolean,
-            default: true
-        },
-        notify_sms: {
-            type: Boolean,
-            default: true
-        },
-        notify_service: {
-            type: Boolean,
-            default: true
-        },
-        notify_payment: {
-            type: Boolean,
-            default: true
+        type: DataTypes.JSON,
+        defaultValue: {
+            notify_email: true,
+            notify_sms: true,
+            notify_service: true,
+            notify_payment: true
         }
     },
-    loginHistory: [{
-        date: {
-            type: Date,
-            default: Date.now
-        },
-        ip: String,
-        device: String,
-        status: {
-            type: String,
-            enum: ['success', 'failed'],
-            default: 'success'
-        }
-    }],
+    loginHistory: {
+        type: DataTypes.JSON,
+        defaultValue: []
+    },
     lastLogin: {
-        type: Date
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
+        type: DataTypes.DATE,
+        allowNull: true
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    hooks: {
+        beforeCreate: async (user) => {
+            if (user.password) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(user.password, salt);
+            }
+        },
+        beforeUpdate: async (user) => {
+            if (user.changed('password')) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(user.password, salt);
+            }
+        }
+    }
 });
 
-// Hash password before saving
-userSchema.pre('save', async function(next) {
-    if (!this.isModified('password')) {
-        return next();
-    }
-
-    try {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-        next();
-    } catch (error) {
-        next(error);
-    }
-});
-
-// Add login history
-userSchema.methods.addLoginHistory = async function(ip, device, status) {
-    this.loginHistory.unshift({
+// Add login history instance method
+User.prototype.addLoginHistory = async function(ip, device, status) {
+    const loginHistory = this.loginHistory || [];
+    loginHistory.unshift({
+        date: new Date(),
         ip,
         device,
         status
     });
 
     // Keep only last 10 login attempts
-    if (this.loginHistory.length > 10) {
-        this.loginHistory = this.loginHistory.slice(0, 10);
+    if (loginHistory.length > 10) {
+        loginHistory.splice(10);
     }
+
+    this.loginHistory = loginHistory;
 
     if (status === 'success') {
         this.lastLogin = new Date();
@@ -140,8 +151,8 @@ userSchema.methods.addLoginHistory = async function(ip, device, status) {
     await this.save();
 };
 
-// Compare password
-userSchema.methods.comparePassword = async function(candidatePassword) {
+// Compare password instance method
+User.prototype.comparePassword = async function(candidatePassword) {
     try {
         return await bcrypt.compare(candidatePassword, this.password);
     } catch (error) {
@@ -149,14 +160,14 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
     }
 };
 
-// Get public profile
-userSchema.methods.getPublicProfile = function() {
-    const userObject = this.toObject();
+// Get public profile instance method
+User.prototype.getPublicProfile = function() {
+    const userObject = this.toJSON();
     delete userObject.password;
     delete userObject.twoFactorSecret;
     return userObject;
 };
 
-const User = mongoose.model('User', userSchema);
+console.log('User model initialized successfully');
 
 module.exports = User; 

@@ -2,7 +2,7 @@ const { Domain, DNSRecord } = require("../models");
 const ApiError = require("../utils/ApiError");
 const logger = require("../utils/logger");
 const domainService = require("../services/domain.service");
-const emailService = require("../services/email.service");
+const emailService = require("../utils/email");
 const { validateDomain } = require("../utils/domain.validator");
 
 const domainController = {

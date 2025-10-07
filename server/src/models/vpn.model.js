@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('../config/sequelize');
 
 const vpnSchema = new mongoose.Schema(
   {

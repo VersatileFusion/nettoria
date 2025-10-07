@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
-const { authenticateToken } = require("../middleware/auth");
+const { auth } = require("../middleware/auth");
 const { validateCartItem } = require("../validations/cart.validation");
 const CartController = require("../controllers/cart.controller");
 const CartService = require("../services/cart.service");
 
 // Get user's cart
-router.get("/", authenticateToken, async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const cart = await CartService.getCart(req.user.id);
     res.json(cart);
@@ -19,7 +19,7 @@ router.get("/", authenticateToken, async (req, res) => {
 // Add item to cart
 router.post(
   "/add",
-  authenticateToken,
+  auth,
   [
     body("serviceId").isUUID().withMessage("Invalid service ID"),
     body("quantity").isInt({ min: 1 }).withMessage("Quantity must be at least 1"),
@@ -44,7 +44,7 @@ router.post(
 // Update cart item quantity
 router.put(
   "/update/:itemId",
-  authenticateToken,
+  auth,
   [
     body("quantity").isInt({ min: 1 }).withMessage("Quantity must be at least 1"),
     body("options").optional().isObject().withMessage("Options must be an object")
@@ -69,7 +69,7 @@ router.put(
 // Remove item from cart
 router.delete(
   "/remove/:itemId",
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const { itemId } = req.params;
@@ -82,7 +82,7 @@ router.delete(
 );
 
 // Clear cart
-router.delete("/clear", authenticateToken, async (req, res) => {
+router.delete("/clear", auth, async (req, res) => {
   try {
     await CartService.clearCart(req.user.id);
     res.json({ message: "Cart cleared successfully" });
@@ -94,7 +94,7 @@ router.delete("/clear", authenticateToken, async (req, res) => {
 // Apply coupon
 router.post(
   "/apply-coupon",
-  authenticateToken,
+  auth,
   [
     body("couponCode").isString().notEmpty().withMessage("Coupon code is required")
   ],
@@ -115,7 +115,7 @@ router.post(
 );
 
 // Remove coupon
-router.delete("/remove-coupon", authenticateToken, async (req, res) => {
+router.delete("/remove-coupon", auth, async (req, res) => {
   try {
     const cart = await CartService.removeCoupon(req.user.id);
     res.json(cart);
@@ -125,7 +125,7 @@ router.delete("/remove-coupon", authenticateToken, async (req, res) => {
 });
 
 // Get cart total
-router.get("/total", authenticateToken, async (req, res) => {
+router.get("/total", auth, async (req, res) => {
   try {
     const total = await CartService.getCartTotal(req.user.id);
     res.json({ total });

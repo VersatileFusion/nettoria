@@ -4,7 +4,7 @@ const authMiddleware = require("../middleware/auth.middleware");
 const { body, validationResult } = require("express-validator");
 const CloudHost = require("../models/cloud-host");
 const CloudHostService = require('../services/cloud-host.service');
-const { validateRequest } = require('../middleware/validation');
+const { validateRequest } = require('../middleware/validation.middleware');
 const { param } = require('express-validator');
 
 // Validation middleware

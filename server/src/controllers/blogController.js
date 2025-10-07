@@ -188,4 +188,34 @@ exports.getTags = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error fetching tags', error: error.message });
   }
+};
+
+// Update blog status (admin only)
+exports.updateBlogStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!['draft', 'published', 'archived'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status. Must be draft, published, or archived' });
+    }
+
+    const blog = await Blog.findByPk(id);
+
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+
+    const updates = { status };
+    
+    if (status === 'published' && !blog.publishedAt) {
+      updates.publishedAt = new Date();
+    }
+
+    await blog.update(updates);
+
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating blog status', error: error.message });
+  }
 }; 

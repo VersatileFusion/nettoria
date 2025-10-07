@@ -6,7 +6,7 @@ const vpnController = require("../controllers/vpn.controller");
 const vpnValidators = require("../validators/vpn.validator");
 const { validateRequest } = require("../middleware/validate-request");
 const { requireAuth } = require("../middleware/require-auth");
-const { authenticateToken } = require("../middleware/auth");
+const { auth } = require("../middleware/auth");
 const VPNService = require('../services/vpn.service');
 
 // Validation middleware
@@ -330,7 +330,7 @@ router.delete("/:id", authMiddleware.authenticate, async (req, res) => {
 
 // Get user's VPN connections
 router.get("/connections",
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const connections = await VPNService.getUserConnections(req.user.id);
@@ -343,7 +343,7 @@ router.get("/connections",
 
 // Get VPN connection details
 router.get("/connections/:connectionId",
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const connection = await VPNService.getConnectionDetails(req.user.id, req.params.connectionId);
@@ -356,7 +356,7 @@ router.get("/connections/:connectionId",
 
 // Create new VPN connection
 router.post("/connections/create",
-  authenticateToken,
+  auth,
   [
     body('name').isString().notEmpty().withMessage('Connection name is required'),
     body('serverId').isUUID().withMessage('Invalid server ID'),
@@ -380,7 +380,7 @@ router.post("/connections/create",
 
 // Update VPN connection
 router.put("/connections/:connectionId",
-  authenticateToken,
+  auth,
   [
     body('name').optional().isString().notEmpty().withMessage('Connection name cannot be empty'),
     body('config').optional().isObject().withMessage('Configuration must be an object')
@@ -402,7 +402,7 @@ router.put("/connections/:connectionId",
 
 // Get connection configuration
 router.get("/connections/:connectionId/config",
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const config = await VPNService.getConnectionConfig(req.user.id, req.params.connectionId);
@@ -415,7 +415,7 @@ router.get("/connections/:connectionId/config",
 
 // Get available servers
 router.get("/servers",
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const servers = await VPNService.getAvailableServers();
@@ -428,7 +428,7 @@ router.get("/servers",
 
 // Get server status
 router.get("/servers/:serverId/status",
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const status = await VPNService.getServerStatus(req.params.serverId);
@@ -441,7 +441,7 @@ router.get("/servers/:serverId/status",
 
 // Get connection statistics
 router.get("/connections/:connectionId/stats",
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const stats = await VPNService.getConnectionStats(req.user.id, req.params.connectionId);
@@ -454,7 +454,7 @@ router.get("/connections/:connectionId/stats",
 
 // Delete VPN connection
 router.delete("/connections/:connectionId",
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       await VPNService.deleteConnection(req.user.id, req.params.connectionId);
@@ -467,7 +467,7 @@ router.delete("/connections/:connectionId",
 
 // Get connection logs
 router.get("/connections/:connectionId/logs",
-  authenticateToken,
+  auth,
   [
     body('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
     body('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100')
@@ -490,7 +490,7 @@ router.get("/connections/:connectionId/logs",
 
 // Get connection usage
 router.get("/connections/:connectionId/usage",
-  authenticateToken,
+  auth,
   async (req, res) => {
     try {
       const usage = await VPNService.getConnectionUsage(req.user.id, req.params.connectionId);

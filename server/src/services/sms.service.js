@@ -2,7 +2,7 @@ const axios = require("axios");
 const { SMS, SMSTemplate, User, SMSCategory } = require("../models");
 const logger = require("../utils/logger");
 const { Op } = require('sequelize');
-const { createNotification } = require('../utils/notifications');
+const NotificationUtil = require('../utils/notification.util');
 const { sendSMS } = require('../utils/sms-provider');
 const { RateLimiter } = require('../utils/rate-limiter');
 

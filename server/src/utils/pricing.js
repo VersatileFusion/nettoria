@@ -37,22 +37,17 @@ function calculateServerPrice({ plan, region, backups, monitoring }) {
   return parseFloat(totalPrice.toFixed(2));
 }
 
-function calculateBackupPrice(size) {
-  return parseFloat((size * config.pricing.cloud.backupStorage).toFixed(2));
-}
 
-function calculateUpgradePrice(currentConfig, newConfig) {
+const calculateServerUpgradePrice = (currentConfig, newConfig) => {
   const currentPrice = calculateServerPrice(currentConfig);
   const newPrice = calculateServerPrice(newConfig);
-
   return parseFloat((newPrice - currentPrice).toFixed(2));
-}
+};
 
 module.exports = {
   calculateVMPrice,
-  calculateBackupPrice: calculateVMBackupPrice,
-  calculateUpgradePrice: calculateVMUpgradePrice,
+  calculateBackupPrice,
+  calculateUpgradePrice,
   calculateServerPrice,
-  calculateCloudBackupPrice: calculateBackupPrice,
-  calculateServerUpgradePrice: calculateUpgradePrice
+  calculateServerUpgradePrice
 }; 

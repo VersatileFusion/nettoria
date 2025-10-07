@@ -90,6 +90,7 @@
   <script type="module">
     import AuthService from './Assets/js/services/auth.service.js';
     import ErrorHandler from './Assets/js/utils/errorHandler.js';
+    import RouteGuard from './Assets/js/utils/routeGuard.js';
 
     document.addEventListener('DOMContentLoaded', () => {
       const loginForm = document.getElementById('loginForm');
@@ -102,7 +103,7 @@
 
       // Check if user is already logged in
       if (AuthService.isAuthenticated()) {
-        window.location.href = '/panel.html';
+        RouteGuard.redirectToIntended();
       }
 
       // Toggle password visibility
@@ -140,8 +141,8 @@
               localStorage.removeItem('rememberMe');
             }
 
-            // Redirect to dashboard
-            window.location.href = '/panel.html';
+            // Redirect to intended page or dashboard
+            RouteGuard.redirectToIntended();
           }
         } catch (error) {
           ErrorHandler.displayError(errorMessage, error.message);
@@ -160,7 +161,7 @@
 
         try {
           await AuthService.verify2FA(code);
-          window.location.href = '/panel.html';
+          RouteGuard.redirectToIntended();
         } catch (error) {
           ErrorHandler.displayError(twoFAErrorMessage, error.message);
         }

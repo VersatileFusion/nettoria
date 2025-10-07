@@ -1,6 +1,6 @@
 const { VirtualServer, VMTemplate, VMBackup, User } = require('../models');
 const { Op } = require('sequelize');
-const { createNotification } = require('../utils/notifications');
+const NotificationUtil = require('../utils/notification.util');
 const { vCenterAPI } = require('../utils/vcenter-api');
 const { calculateVMPrice } = require('../utils/pricing');
 
@@ -79,7 +79,7 @@ class VirtualServerService {
     });
 
     // Create notification
-    await createNotification({
+    await NotificationUtil.sendNotification({
       userId,
       type: 'vm_created',
       title: 'VM Created',
@@ -294,7 +294,7 @@ class VirtualServerService {
     await vm.destroy();
 
     // Create notification
-    await createNotification({
+    await NotificationUtil.sendNotification({
       userId,
       type: 'vm_deleted',
       title: 'VM Deleted',

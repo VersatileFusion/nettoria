@@ -21,13 +21,13 @@ router.get("/tags", blogController.getTags);
 router.get("/:slug", blogController.getBlogBySlug);
 
 // Protected routes (require authentication)
-router.post("/", [authMiddleware, validateBlog], blogController.createBlog);
-router.put("/:id", [authMiddleware, validateBlog], blogController.updateBlog);
-router.delete("/:id", authMiddleware, blogController.deleteBlog);
+router.post("/", [auth, validateBlog], blogController.createBlog);
+router.put("/:id", [auth, validateBlog], blogController.updateBlog);
+router.delete("/:id", auth, blogController.deleteBlog);
 
 // Admin routes
-router.get("/admin/all", [authMiddleware, adminAuth], blogController.getAllBlogs);
-router.put("/admin/:id/status", [authMiddleware, adminAuth], blogController.updateBlogStatus);
+router.get("/admin/all", [auth, adminAuth], blogController.getAllBlogs);
+router.put("/admin/:id/status", [auth, adminAuth], blogController.updateBlogStatus);
 
 // Get all blogs with pagination
 router.get("/", async (req, res) => {
@@ -216,7 +216,7 @@ router.get('/posts/:postId/comments',
 
 // Add comment
 router.post('/posts/:postId/comments',
-  authMiddleware,
+  auth,
   [
     body('content').isString().notEmpty().withMessage('Comment content is required'),
     body('parentId').optional().isUUID().withMessage('Invalid parent comment ID')
@@ -240,7 +240,7 @@ router.post('/posts/:postId/comments',
 
 // Update comment
 router.put('/comments/:commentId',
-  authMiddleware,
+  auth,
   [
     body('content').isString().notEmpty().withMessage('Comment content is required')
   ],
@@ -263,7 +263,7 @@ router.put('/comments/:commentId',
 
 // Delete comment
 router.delete('/comments/:commentId',
-  authMiddleware,
+  auth,
   async (req, res) => {
     try {
       const { commentId } = req.params;

@@ -1,15 +1,23 @@
-const vsphereSoap = require("node-vsphere-soap");
 const config = require("../config");
 const logger = require("../utils/logger");
 
-// Extract the Client constructor from the module
-const Client = vsphereSoap.Client;
+// Try to import vsphere-soap, but make it optional
+let vsphereSoap, Client;
+try {
+  vsphereSoap = require("node-vsphere-soap");
+  Client = vsphereSoap.Client;
+} catch (error) {
+  logger.warn('node-vsphere-soap not installed. vCenter functionality will be disabled.');
+  vsphereSoap = null;
+  Client = null;
+}
 
 class VCenterService {
   constructor() {
     this.vCenterClient = null;
     this.serviceContent = null;
     this.isConnected = false;
+    this.isAvailable = vsphereSoap !== null;
   }
 
   /**
@@ -18,6 +26,11 @@ class VCenterService {
    */
   async initialize() {
     try {
+      if (!this.isAvailable) {
+        logger.warn('vCenter service not available - node-vsphere-soap not installed');
+        return false;
+      }
+      
       if (this.isConnected) {
         return true;
       }

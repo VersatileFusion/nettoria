@@ -1,172 +1,261 @@
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
+
 /**
- * Validates a password based on security requirements
- * @param {string} password - The password to validate
- * @returns {string|null} Error message if validation fails, null if validation passes
+ * Validation utility functions
  */
-exports.validatePassword = (password) => {
+class ValidationService {
+  constructor() {
+    this.passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    this.phoneRegex = /^09[0-9]{9}$/;
+    this.persianNameRegex = /^[\u0600-\u06FF\s]+$/;
+  }
+
+  /**
+   * Validate email address
+   * @param {string} email - Email to validate
+   * @returns {boolean} - True if valid
+   */
+  validateEmail(email) {
+    return validator.isEmail(email);
+  }
+
+  /**
+   * Validate password strength
+   * @param {string} password - Password to validate
+   * @returns {Object} - Validation result
+   */
+  validatePassword(password) {
+    const result = {
+      isValid: false,
+      errors: [],
+    };
+
     if (!password) {
-        return 'رمز عبور الزامی است';
+      result.errors.push("Password is required");
+      return result;
     }
 
     if (password.length < 8) {
-        return 'رمز عبور باید حداقل ۸ کاراکتر باشد';
-    }
-
-    if (!/[A-Z]/.test(password)) {
-        return 'رمز عبور باید حداقل یک حرف بزرگ داشته باشد';
+      result.errors.push("Password must be at least 8 characters long");
     }
 
     if (!/[a-z]/.test(password)) {
-        return 'رمز عبور باید حداقل یک حرف کوچک داشته باشد';
+      result.errors.push("Password must contain at least one lowercase letter");
     }
 
-    if (!/[0-9]/.test(password)) {
-        return 'رمز عبور باید حداقل یک عدد داشته باشد';
+    if (!/[A-Z]/.test(password)) {
+      result.errors.push("Password must contain at least one uppercase letter");
     }
 
-    if (!/[!@#$%^&*]/.test(password)) {
-        return 'رمز عبور باید حداقل یک کاراکتر خاص (!@#$%^&*) داشته باشد';
+    if (!/\d/.test(password)) {
+      result.errors.push("Password must contain at least one number");
     }
 
-    return null;
-};
-
-/**
- * Validates an email address
- * @param {string} email - The email to validate
- * @returns {boolean} True if email is valid, false otherwise
- */
-exports.validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-};
-
-/**
- * Validates a phone number (Iranian format)
- * @param {string} phone - The phone number to validate
- * @returns {boolean} True if phone number is valid, false otherwise
- */
-exports.validatePhone = (phone) => {
-    const phoneRegex = /^09[0-9]{9}$/;
-    return phoneRegex.test(phone);
-};
-
-/**
- * Validates a national ID (Iranian format)
- * @param {string} nationalId - The national ID to validate
- * @returns {boolean} True if national ID is valid, false otherwise
- */
-exports.validateNationalId = (nationalId) => {
-    if (!nationalId || nationalId.length !== 10) {
-        return false;
+    if (!/[@$!%*?&]/.test(password)) {
+      result.errors.push(
+        "Password must contain at least one special character (@$!%*?&)"
+      );
     }
 
-    const digits = nationalId.split('').map(Number);
-    const lastDigit = digits[9];
-    const sum = digits.slice(0, 9).reduce((acc, digit, index) => {
-        return acc + digit * (10 - index);
-    }, 0);
+    result.isValid = result.errors.length === 0;
+    return result;
+  }
 
-    const remainder = sum % 11;
-    const checkDigit = remainder < 2 ? remainder : 11 - remainder;
+  /**
+   * Validate Iranian phone number
+   * @param {string} phone - Phone number to validate
+   * @returns {boolean} - True if valid
+   */
+  validatePhoneNumber(phone) {
+    if (!phone) return false;
+    return this.phoneRegex.test(phone);
+  }
 
-    return checkDigit === lastDigit;
-};
+  /**
+   * Validate Persian name
+   * @param {string} name - Name to validate
+   * @returns {boolean} - True if valid
+   */
+  validatePersianName(name) {
+    if (!name) return false;
+    return this.persianNameRegex.test(name.trim());
+  }
 
-/**
- * Validates a postal code (Iranian format)
- * @param {string} postalCode - The postal code to validate
- * @returns {boolean} True if postal code is valid, false otherwise
- */
-exports.validatePostalCode = (postalCode) => {
-    const postalCodeRegex = /^\d{10}$/;
-    return postalCodeRegex.test(postalCode);
-};
+  /**
+   * Validate URL
+   * @param {string} url - URL to validate
+   * @returns {boolean} - True if valid
+   */
+  validateUrl(url) {
+    return validator.isURL(url);
+  }
 
-/**
- * Validates a URL
- * @param {string} url - The URL to validate
- * @returns {boolean} True if URL is valid, false otherwise
- */
-exports.validateUrl = (url) => {
+  /**
+   * Validate UUID
+   * @param {string} uuid - UUID to validate
+   * @returns {boolean} - True if valid
+   */
+  validateUUID(uuid) {
+    return validator.isUUID(uuid);
+  }
+
+  /**
+   * Validate domain name
+   * @param {string} domain - Domain to validate
+   * @returns {boolean} - True if valid
+   */
+  validateDomain(domain) {
+    const domainRegex =
+      /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])*$/;
+    return domainRegex.test(domain);
+  }
+
+  /**
+   * Validate IP address
+   * @param {string} ip - IP address to validate
+   * @returns {boolean} - True if valid
+   */
+  validateIPAddress(ip) {
+    return validator.isIP(ip);
+  }
+
+  /**
+   * Validate date string
+   * @param {string} date - Date string to validate
+   * @returns {boolean} - True if valid
+   */
+  validateDate(date) {
+    return validator.isISO8601(date);
+  }
+
+  /**
+   * Validate numeric string
+   * @param {string} str - String to validate
+   * @returns {boolean} - True if valid
+   */
+  validateNumeric(str) {
+    return validator.isNumeric(str);
+  }
+
+  /**
+   * Validate alphanumeric string
+   * @param {string} str - String to validate
+   * @returns {boolean} - True if valid
+   */
+  validateAlphanumeric(str) {
+    return validator.isAlphanumeric(str);
+  }
+
+  /**
+   * Validate string length
+   * @param {string} str - String to validate
+   * @param {number} min - Minimum length
+   * @param {number} max - Maximum length
+   * @returns {boolean} - True if valid
+   */
+  validateLength(str, min, max) {
+    if (!str) return false;
+    return str.length >= min && str.length <= max;
+  }
+
+  /**
+   * Sanitize string
+   * @param {string} str - String to sanitize
+   * @returns {string} - Sanitized string
+   */
+  sanitizeString(str) {
+    if (!str) return "";
+    return validator.escape(str.trim());
+  }
+
+  /**
+   * Normalize phone number
+   * @param {string} phone - Phone number to normalize
+   * @returns {string} - Normalized phone number
+   */
+  normalizePhoneNumber(phone) {
+    if (!phone) return "";
+
+    // Remove all non-digit characters
+    const cleaned = phone.replace(/\D/g, "");
+
+    // Handle different formats
+    if (cleaned.startsWith("98")) {
+      return "0" + cleaned.substring(2);
+    } else if (cleaned.startsWith("0098")) {
+      return "0" + cleaned.substring(4);
+    } else if (!cleaned.startsWith("0")) {
+      return "0" + cleaned;
+    }
+
+    return cleaned;
+  }
+
+  /**
+   * Normalize email
+   * @param {string} email - Email to normalize
+   * @returns {string} - Normalized email
+   */
+  normalizeEmail(email) {
+    if (!email) return "";
+    return validator.normalizeEmail(email);
+  }
+
+  /**
+   * Compare password with hash
+   * @param {string} password - Plain password
+   * @param {string} hash - Hashed password
+   * @returns {Promise<boolean>} - True if match
+   */
+  async comparePassword(password, hash) {
     try {
-        new URL(url);
-        return true;
-    } catch {
-        return false;
+      return await bcrypt.compare(password, hash);
+    } catch (error) {
+      throw new Error("Password comparison failed");
     }
+  }
+
+  /**
+   * Hash password
+   * @param {string} password - Plain password
+   * @returns {Promise<string>} - Hashed password
+   */
+  async hashPassword(password) {
+    try {
+      const saltRounds = 12;
+      return await bcrypt.hash(password, saltRounds);
+    } catch (error) {
+      throw new Error("Password hashing failed");
+    }
+  }
+}
+
+// Create singleton instance
+const validationService = new ValidationService();
+
+// Export individual functions for backward compatibility
+module.exports = {
+  validateEmail: (email) => validationService.validateEmail(email),
+  validatePassword: (password) => validationService.validatePassword(password),
+  validatePhoneNumber: (phone) => validationService.validatePhoneNumber(phone),
+  validatePersianName: (name) => validationService.validatePersianName(name),
+  validateUrl: (url) => validationService.validateUrl(url),
+  validateUUID: (uuid) => validationService.validateUUID(uuid),
+  validateDomain: (domain) => validationService.validateDomain(domain),
+  validateIPAddress: (ip) => validationService.validateIPAddress(ip),
+  validateDate: (date) => validationService.validateDate(date),
+  validateNumeric: (str) => validationService.validateNumeric(str),
+  validateAlphanumeric: (str) => validationService.validateAlphanumeric(str),
+  validateLength: (str, min, max) =>
+    validationService.validateLength(str, min, max),
+  sanitizeString: (str) => validationService.sanitizeString(str),
+  normalizePhoneNumber: (phone) =>
+    validationService.normalizePhoneNumber(phone),
+  normalizeEmail: (email) => validationService.normalizeEmail(email),
+  comparePassword: (password, hash) =>
+    validationService.comparePassword(password, hash),
+  hashPassword: (password) => validationService.hashPassword(password),
+  ValidationService,
 };
-
-/**
- * Validates a date string
- * @param {string} date - The date string to validate
- * @returns {boolean} True if date is valid, false otherwise
- */
-exports.validateDate = (date) => {
-    const dateObj = new Date(date);
-    return dateObj instanceof Date && !isNaN(dateObj);
-};
-
-/**
- * Validates a credit card number
- * @param {string} cardNumber - The credit card number to validate
- * @returns {boolean} True if credit card number is valid, false otherwise
- */
-exports.validateCreditCard = (cardNumber) => {
-    // Remove spaces and dashes
-    const cleanNumber = cardNumber.replace(/[\s-]/g, '');
-
-    // Check if the number is 16 digits
-    if (!/^\d{16}$/.test(cleanNumber)) {
-        return false;
-    }
-
-    // Luhn algorithm
-    let sum = 0;
-    let isEven = false;
-
-    // Loop through values starting from the rightmost digit
-    for (let i = cleanNumber.length - 1; i >= 0; i--) {
-        let digit = parseInt(cleanNumber.charAt(i));
-
-        if (isEven) {
-            digit *= 2;
-            if (digit > 9) {
-                digit -= 9;
-            }
-        }
-
-        sum += digit;
-        isEven = !isEven;
-    }
-
-    return sum % 10 === 0;
-};
-
-/**
- * Validates a sheba number (Iranian bank account)
- * @param {string} sheba - The sheba number to validate
- * @returns {boolean} True if sheba number is valid, false otherwise
- */
-exports.validateSheba = (sheba) => {
-    // Remove spaces and convert to uppercase
-    const cleanSheba = sheba.replace(/\s/g, '').toUpperCase();
-
-    // Check if the number starts with IR and is 26 characters long
-    if (!/^IR\d{24}$/.test(cleanSheba)) {
-        return false;
-    }
-
-    // Move country code to the end
-    const rearranged = cleanSheba.slice(4) + cleanSheba.slice(0, 4);
-
-    // Convert letters to numbers (A=10, B=11, etc.)
-    const numeric = rearranged.split('').map(char => {
-        const code = char.charCodeAt(0);
-        return code >= 65 ? code - 55 : char;
-    }).join('');
-
-    // Check if the number is divisible by 97
-    const remainder = BigInt(numeric) % BigInt(97);
-    return remainder === BigInt(1);
-}; 

@@ -41,7 +41,7 @@
     <div class="user-menu mobile-only">
       <div class="user-info">
         <i class="bx bx-user"></i>
-        <span class="user-name">محمد فک کج</span>
+        <span class="user-name" data-username>محمد فک کج</span>
         <i class="bx bx-chevron-down"></i>
       </div>
       <div class="user-menu-dropdown">
@@ -252,7 +252,7 @@
       <div class="side-menu-header">
         <div class="user-dropdown">
           <button class="user-button">
-            <span id="username-display">محمد فک کج</span
+            <span id="username-display" data-username>محمد فک کج</span
             ><i class="bx bx-chevron-down"></i>
           </button>
           <div class="dropdown-content">
@@ -300,22 +300,134 @@
     </div>
     <!-- End Side Menu -->
     <script src="./Assets/Js/panel.js"></script>
-    <script>
-      // Remember username functionality
-      document.addEventListener("DOMContentLoaded", function () {
-        const usernameDisplay = document.getElementById("username-display");
-        const storedUsername = localStorage.getItem("username");
-
-        if (storedUsername) {
-          usernameDisplay.textContent = storedUsername;
-        }
-
-        // Update username in mobile menu
-        const mobileUsername = document.querySelector(".user-name");
-        if (mobileUsername && storedUsername) {
-          mobileUsername.textContent = storedUsername;
+    <script type="module">
+      import RouteGuard from './Assets/js/utils/routeGuard.js';
+      import dashboardService from './Assets/js/services/dashboard.service.js';
+      
+      // The route guard will automatically load user data and protect this page
+      document.addEventListener("DOMContentLoaded", async function () {
+        console.log('Panel page loaded with route protection');
+        
+        try {
+          // Load dashboard data
+          const [summary, services] = await Promise.all([
+            dashboardService.getDashboardSummary(),
+            dashboardService.getUserServicesByCategory()
+          ]);
+          
+          // Update the dashboard display
+          dashboardService.updateDashboardDisplay(summary, services);
+          
+          // Populate service sections with real data
+          populateServiceSections(services);
+          
+        } catch (error) {
+          console.error('Error loading dashboard data:', error);
         }
       });
+      
+      // Function to populate service sections with real data
+      function populateServiceSections(services) {
+        // Populate domains section
+        populateDomainSection(services.domains);
+        
+        // Populate hosts section
+        populateHostSection(services.hosts);
+        
+        // Populate VPS section
+        populateVPSSection(services.vps);
+        
+        // Populate cloud servers section
+        populateCloudServerSection(services.cloudServers);
+        
+        // Populate VPN section
+        populateVPNSection(services.vpns);
+      }
+      
+      function populateDomainSection(domains) {
+        const domainSection = document.querySelector('[data-category="domain"] .services-row');
+        if (domainSection && domains.length > 0) {
+          domainSection.innerHTML = domains.map(domain => `
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">دامنه</span>
+                  <span class="service-domain">${domain.name}</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+          `).join('');
+        }
+      }
+      
+      function populateHostSection(hosts) {
+        const hostSection = document.querySelector('[data-category="host"] .services-row');
+        if (hostSection && hosts.length > 0) {
+          hostSection.innerHTML = hosts.map(host => `
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">هاست ${host.location}</span>
+                  <span class="service-domain">${host.domain}</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+          `).join('');
+        }
+      }
+      
+      function populateVPSSection(vps) {
+        const vpsSection = document.querySelector('[data-category="vps"] .services-row');
+        if (vpsSection && vps.length > 0) {
+          vpsSection.innerHTML = vps.map(vm => `
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">سرور ${vm.dataCenter}</span>
+                  <span class="service-domain">${vm.ipAddresses?.[0] || 'در حال راه‌اندازی'}</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+          `).join('');
+        }
+      }
+      
+      function populateCloudServerSection(cloudServers) {
+        const cloudSection = document.querySelector('[data-category="cloud"] .services-row');
+        if (cloudSection && cloudServers.length > 0) {
+          cloudSection.innerHTML = cloudServers.map(server => `
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">سرور ابری ${server.location}</span>
+                  <span class="service-domain">${server.ipAddress || 'در حال راه‌اندازی'}</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+          `).join('');
+        }
+      }
+      
+      function populateVPNSection(vpns) {
+        const vpnSection = document.querySelector('[data-category="vpn"] .services-row');
+        if (vpnSection && vpns.length > 0) {
+          vpnSection.innerHTML = vpns.map(vpn => `
+            <div class="service-box">
+              <div class="service-content">
+                <div class="service-info">
+                  <span class="service-title">پنل ${vpn.type}</span>
+                  <span class="service-domain">${vpn.serverIP || 'در حال راه‌اندازی'}</span>
+                </div>
+              </div>
+              <i class="bx bx-chevron-left service-arrow"></i>
+            </div>
+          `).join('');
+        }
+      }
     </script>
   </body>
 </html>
